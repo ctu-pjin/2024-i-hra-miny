@@ -17,12 +17,22 @@ screen = pygame.display.set_mode((screen_width, screen_height), pygame.RESIZABLE
 
 
 # Part for loading images
-to_delete_surf = pygame.image.load("surfaces/to_delete.jpg") #surfaces of the object
-to_delete_rect = to_delete_surf.get_rect(topright=(screen_width, 0)) #rectangle of the surface. Easier to specify an exact location
-#
-#
+new_game_surf_off = pygame.image.load("surfaces/yellow_white_border_1.png").convert_alpha() #surfaces of the object
+new_game_surf_on = pygame.image.load("surfaces/yellow_white_border_2.png").convert_alpha() 
+new_game_rect_off = new_game_surf_off.get_rect(midbottom=(screen_width/2, 400)) #rectangle of the surface. Easier to specify an exact location
+new_game_rect_on = new_game_surf_on.get_rect(midbottom=(screen_width/2, 400))
+load_surf_off = pygame.image.load("surfaces/yellow_white_border_load_2.png").convert_alpha()
+load_surf_on = pygame.image.load("surfaces/yellow_white_border_load_1.png").convert_alpha()
+load_rect_off = load_surf_off.get_rect(midbottom=(screen_width/2, 500)) 
+load_rect_on = load_surf_on.get_rect(midbottom=(screen_width/2, 500))
 
 
+
+# Part for loading fonts
+karma_font_160 = pygame.font.Font("fonts/KarmaFuture.otf", 160)
+text_miny_surf = karma_font_160.render("Miny", False, "Black")
+text_miny_rect = text_miny_surf.get_rect(midtop=(screen_width/2, 40))
+screen.blit(text_miny_surf,text_miny_rect)
 
 def main():
     game_active = True
@@ -33,9 +43,18 @@ def main():
                 pygame.quit()
                 exit()
         if game_active:
-            screen.fill((0, 0, 0))  # Creates a black screen
-            pygame.draw.rect(screen, (255, 0, 0), (0, 0, 80, 80))  # Draw a red rectangle
-            screen.blit(to_delete_surf, to_delete_rect)
+            screen.fill((255, 255, 255))  # Creates a black screen
+            #pygame.draw.rect(screen, (255, 0, 0), (0, 0, 80, 80))  # Draw a red rectangle
+            if new_game_rect_on.collidepoint(pygame.mouse.get_pos()):
+                    screen.blit(new_game_surf_on, new_game_rect_on)
+            else:
+                screen.blit(new_game_surf_off, new_game_rect_off)
+            if load_rect_on.collidepoint(pygame.mouse.get_pos()):
+                    screen.blit(load_surf_on, load_rect_on)
+            else:
+                screen.blit(load_surf_off, load_rect_off)
+            screen.blit(text_miny_surf,text_miny_rect)
+                
         pygame.display.flip()
 
 
