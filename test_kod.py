@@ -14,3 +14,5 @@ def fibonacci(n):
 
 
 print(fibonacci(10))
+
+print('Informatika je super')
