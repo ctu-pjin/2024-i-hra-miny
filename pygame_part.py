@@ -31,11 +31,15 @@ four_surf = pygame.image.load("mines/four.png").convert()
 five_surf = pygame.image.load("mines/five.png").convert()
 six_surf = pygame.image.load("mines/six.png").convert()
 null_surf = pygame.image.load("mines/empty.png").convert()
+mine_surf = pygame.image.load("mines/mine.png").convert()
+flag_surf = pygame.image.load("mines/flag.png").convert()
+seven_surf = pygame.image.load("mines/seven.png").convert()
+eight_surf = pygame.image.load("mines/eight.png").convert()
 
 
 """Functions for mine_menu background generation"""
 def random_mine_surf():
-    return choice([box_surf] * 10 + [one_surf, two_surf, three_surf, four_surf, null_surf, null_surf, five_surf, six_surf])
+    return choice([box_surf] * 30 + [null_surf, flag_surf] * 5 + [mine_surf] * 2 + [one_surf] * 4 + [two_surf] * 3 + [three_surf, four_surf, five_surf] * 2 + [six_surf, seven_surf, eight_surf])
 
 
 def random_mine_screen_plot(w, h, mine_field):
