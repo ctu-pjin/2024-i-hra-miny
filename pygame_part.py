@@ -12,7 +12,7 @@ os.environ['SDL_RENDER_SCALE_QUALITY'] = '2' # '0' is the worst quality | '2' is
                                         # May reduce later
 pygame.init()
 
-screen_width, screen_height = 500, 550
+screen_width, screen_height = 480, 540
 screen = pygame.display.set_mode((screen_width, screen_height))
 
 
@@ -23,6 +23,40 @@ load_surf_off = pygame.image.load("surfaces/yellow_white_border_load_2.png").con
 load_surf_on = pygame.image.load("surfaces/yellow_white_border_load_1.png").convert_alpha()
 back_arrow_surf_on = pygame.image.load("surfaces/back_arrow_pressed_200.png").convert_alpha()
 back_arrow_surf_off = pygame.image.load("surfaces/back_arrow_200.png").convert_alpha()
+box_surf = pygame.image.load("mines/box.png").convert()
+one_surf = pygame.image.load("mines/one.png").convert()
+two_surf = pygame.image.load("mines/two.png").convert()
+three_surf = pygame.image.load("mines/three.png").convert()
+four_surf = pygame.image.load("mines/four.png").convert()
+five_surf = pygame.image.load("mines/five.png").convert()
+six_surf = pygame.image.load("mines/six.png").convert()
+null_surf = pygame.image.load("mines/empty.png").convert()
+
+
+"""Functions for mine_menu background generation"""
+def random_mine_surf():
+    return choice([box_surf] * 10 + [one_surf, two_surf, three_surf, four_surf, null_surf, null_surf, five_surf, six_surf])
+
+
+def random_mine_screen_plot(w, h, mine_field):
+    random_h, random_w = randint(0, int(h/30)-1), randint(0, int(w/30)-1)
+    mine_field[random_h][random_w] = random_mine_surf()
+    for hh in range(0, h, 30):
+            for ww in range(0, w, 30):
+                screen.blit(mine_field[int(hh/30)][int(ww/30)], (ww, hh))
+
+
+def random_mine_screen_generation(w, h):
+    mine_field = []
+    for _ in range(int(h/30)):
+        radek = []
+        for _ in range(int(w/30)):
+            radek.append(random_mine_surf())
+        mine_field.append(radek)
+    return mine_field
+
+                         
+
 
 # Create rectangles
 new_game_rect_off = new_game_surf_off.get_rect(midbottom=(screen_width/2, 400)) #rectangle of the surface. Easier to specify an exact location
@@ -45,8 +79,11 @@ text_to_delete_new_game_rect = text_to_delete_new_game_surf.get_rect(midtop=(scr
 
 
 clock = pygame.time.Clock()
+random_mine_field = random_mine_screen_generation(screen_width, screen_height)
+print(type(random_mine_field))
 
 def main():
+
     menu = True
     new_game_menu = False
     while True: 
@@ -70,6 +107,7 @@ def main():
         if menu:  # this is drawn, while menu is active
             screen.fill((255, 255, 255))  # Creates a white screen (to erase the previos iteration)
             #pygame.draw.rect(screen, (255, 0, 0), (0, 0, 80, 80))  # Draw a red rectangle
+            random_mine_screen_plot(screen_width, screen_height, random_mine_field)
             if new_game_rect_on.collidepoint(pygame.mouse.get_pos()):
                 screen.blit(new_game_surf_on, new_game_rect_on)
             else:
