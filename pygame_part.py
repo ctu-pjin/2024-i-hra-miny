@@ -14,6 +14,7 @@ pygame.init()
 
 screen_width, screen_height = 480, 540
 screen = pygame.display.set_mode((screen_width, screen_height))
+buffer_surface = pygame.Surface((screen_width, screen_height))
 
 
 # Part for loading images
@@ -48,19 +49,31 @@ def random_mine_screen_plot(w, h, mine_field):
     for hh in range(0, h, 30):
             for ww in range(0, w, 30):
                 screen.blit(mine_field[int(hh/30)][int(ww/30)], (ww, hh))
+                
+
+def draw_to_buffer(buffer_surface, mine_field, cell_size=30):
+    """Draw the entire minefield onto the buffer surface."""
+    for row in range(len(mine_field)):
+        for col in range(len(mine_field[row])):
+            buffer_surface.blit(mine_field[row][col], (col * cell_size, row * cell_size))
 
 
-def random_mine_screen_generation(w, h):
+def random_mine_screen_generation(w, h, cell_size = 30):
     mine_field = []
-    for _ in range(int(h/30)):
+    for _ in range(int(h/cell_size)):
         radek = []
-        for _ in range(int(w/30)):
+        for _ in range(int(w/cell_size)):
             radek.append(random_mine_surf())
         mine_field.append(radek)
     return mine_field
 
-                         
 
+def update_cell(buffer_surface, mine_field, cell_size=30):
+    """Randomly update a specific cell in the minefield and redraw it on the buffer."""
+    row = randint(0, len(mine_field) - 1)
+    col = randint(0, len(mine_field[0]) - 1)
+    mine_field[row][col] = random_mine_surf()
+    buffer_surface.blit(mine_field[row][col], (col * cell_size, row * cell_size))
 
 # Create rectangles
 new_game_rect_off = new_game_surf_off.get_rect(midbottom=(screen_width/2, 400)) #rectangle of the surface. Easier to specify an exact location
@@ -83,11 +96,11 @@ text_to_delete_new_game_rect = text_to_delete_new_game_surf.get_rect(midtop=(scr
 
 
 clock = pygame.time.Clock()
-random_mine_field = random_mine_screen_generation(screen_width, screen_height)
-print(type(random_mine_field))
+mine_field = random_mine_screen_generation(screen_width, screen_height)
+draw_to_buffer(buffer_surface, mine_field)
 
 def main():
-
+    it = 0
     menu = True
     new_game_menu = False
     while True: 
@@ -111,7 +124,8 @@ def main():
         if menu:  # this is drawn, while menu is active
             screen.fill((255, 255, 255))  # Creates a white screen (to erase the previos iteration)
             #pygame.draw.rect(screen, (255, 0, 0), (0, 0, 80, 80))  # Draw a red rectangle
-            random_mine_screen_plot(screen_width, screen_height, random_mine_field)
+            update_cell(buffer_surface, mine_field)
+            screen.blit(buffer_surface, (0, 0))
             if new_game_rect_on.collidepoint(pygame.mouse.get_pos()):
                 screen.blit(new_game_surf_on, new_game_rect_on)
             else:
@@ -134,7 +148,7 @@ def main():
                 
         pygame.display.flip()
         clock.tick(60) # Limits the game to 60 fps, better for slower CPU
-
+        it += 1
 
 if __name__ == "__main__":
     main()
