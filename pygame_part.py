@@ -18,10 +18,10 @@ buffer_surface = pygame.Surface((screen_width, screen_height))
 
 
 # Part for loading images
-new_game_surf_off = pygame.image.load("surfaces/yellow_white_border_1.png").convert_alpha() #surfaces of the object
-new_game_surf_on = pygame.image.load("surfaces/yellow_white_border_2.png").convert_alpha() 
-load_surf_off = pygame.image.load("surfaces/yellow_white_border_load_2.png").convert_alpha()
-load_surf_on = pygame.image.load("surfaces/yellow_white_border_load_1.png").convert_alpha()
+new_game_surf_off = pygame.image.load("surfaces/new_game_button_off.png").convert_alpha() #surfaces of the object
+new_game_surf_on = pygame.image.load("surfaces/new_game_button_on.png").convert_alpha() 
+load_surf_off = pygame.image.load("surfaces/load_button_off.png").convert_alpha()
+load_surf_on = pygame.image.load("surfaces/load_button_on.png").convert_alpha()
 back_arrow_surf_on = pygame.image.load("surfaces/back_arrow_pressed_200.png").convert_alpha()
 back_arrow_surf_off = pygame.image.load("surfaces/back_arrow_200.png").convert_alpha()
 box_surf = pygame.image.load("mines/box.png").convert()
@@ -98,6 +98,38 @@ text_to_delete_new_game_rect = text_to_delete_new_game_surf.get_rect(midtop=(scr
 clock = pygame.time.Clock()
 mine_field = random_mine_screen_generation(screen_width, screen_height)
 draw_to_buffer(buffer_surface, mine_field)
+
+def plot_bool_field(bool_field, field, cell_size = 30): # minefield plotting
+    dw = 10
+    dh = 100
+    for i in field:
+        for j in field[i]:
+            match bool_field[i,j]:
+                case 0:
+                    screen.blit(box_surf, (i*cell_size+dh, j*cell_size+dw))
+                case 1:
+                    match field[i,j]:
+                        case 1: 
+                            screen.blit(one_surf, (i*cell_size+dh, j*cell_size+dw))
+                        case 2: 
+                            screen.blit(two_surf, (i*cell_size+dh, j*cell_size+dw))
+                        case 3: 
+                            screen.blit(three_surf, (i*cell_size+dh, j*cell_size+dw))
+                        case 4: 
+                            screen.blit(four_surf, (i*cell_size+dh, j*cell_size+dw))
+                        case 5: 
+                            screen.blit(five_surf, (i*cell_size+dh, j*cell_size+dw))
+                        case 6: 
+                            screen.blit(six_surf, (i*cell_size+dh, j*cell_size+dw))
+                        case 7: 
+                            screen.blit(seven_surf, (i*cell_size+dh, j*cell_size+dw))
+                        case 8: 
+                            screen.blit(eight_surf, (i*cell_size+dh, j*cell_size+dw))
+                        case 9: 
+                            screen.blit(mine_surf, (i*cell_size+dh, j*cell_size+dw))
+                case 2:
+                    screen.blit(flag_surf, (i*cell_size+dh, j*cell_size+dw))
+
 
 def main():
     it = 0
