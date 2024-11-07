@@ -6,6 +6,8 @@ dr = [-1, 1, 0, 0, -1, -1, 1, 1]
 dc = [0, 0, -1, 1, -1, 1, -1, 1]
 queue = []
 
+pg.init()
+
 def neighbours(row , column, field, bool_field): # variace na BFS
     global dr, dc, queue
     for i in range(8):
@@ -33,8 +35,13 @@ def reveal(row, column, bool_field):
 def random_mine(width, height):
     return rand.randint(0,height-1), rand.randint(0,width-1)
 
+def pre_start(width, height, pocet_min):
+    ...
+
 def field_description(width, height, mines):
-    xy = pg.mouse.get_pos()
+    if pg.MOUSEBUTTONDOWN:
+        if pg.mouse.get_pressed()[0]:
+            xy = pg.mouse.get_pos()
     starting_row, starting_column = click(xy[0], xy[1])
     while True:
         field = np.zeros((height, width), dtype=int)
@@ -73,8 +80,7 @@ def click(x, y, cell_size = 30):
     return row, column
 
 def start(width, height, mines): # prozatimní
-    field, bool_field = field_description(width, height, mines)
+    field, bool_field, mines_position = field_description(width, height, mines)
+    return field, bool_field
 
 
-
-start(10,10,10)
