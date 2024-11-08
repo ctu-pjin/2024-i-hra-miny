@@ -38,11 +38,11 @@ def random_mine(width, height):
 def pre_start(width, height, pocet_min):
     ...
 
-def field_description(width, height, mines):
+def field_description(width, height, mines, row, column):
     if pg.MOUSEBUTTONDOWN:
         if pg.mouse.get_pressed()[0]:
             xy = pg.mouse.get_pos()
-    starting_row, starting_column = click(xy[0], xy[1])
+    starting_row, starting_column = row, column
     while True:
         field = np.zeros((height, width), dtype=int)
         bool_field = np.zeros((height, width), dtype=int)
@@ -79,8 +79,8 @@ def click(x, y, cell_size = 30):
     column = int((x-dw)/cell_size)
     return row, column
 
-def start(width, height, mines): # prozatimní
-    field, bool_field, mines_position = field_description(width, height, mines)
+def start(width, height, mines, row, column): # prozatimní
+    field, bool_field, mines_position = field_description(width, height, mines, row, column)
     return field, bool_field
 
 

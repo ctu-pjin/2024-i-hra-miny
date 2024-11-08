@@ -152,40 +152,79 @@ def plot_bool_field(bool_field, field, cell_size = 30): # minefield plotting
                 case 2:
                     screen.blit(flag_surf, (col*cell_size+dw, row*cell_size+dh))
 
+def plot_empty_field(width, height, cell_size = 30):
+    dw = 10
+    dh = 100
+    for row in range(height):
+        for col in range(width):
+            screen.blit(box_surf, (col*cell_size+dw, row*cell_size+dh))
+
 
 def main():
     it = 0
     menu = True
+    first_click = False
     new_game_menu = False
     game = False
     global screen
+
+    mines_rect = pygame.Rect(0, 0, 0, 0)
+
     while True: 
-        for event in pygame.event.get(): # All events are written in this for loop
+        for event in pygame.event.get():  # All events are written in this for loop
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+                
             if menu:
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if pygame.mouse.get_pressed()[0]:
+                if event.type == pygame.MOUSEBUTTONUP:
+                    if event.button == 1: # To check if it is a left mouse click
                         if new_game_rect_on.collidepoint(pygame.mouse.get_pos()):
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             new_game_menu = True
                             menu = False
-            if new_game_menu:
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if pygame.mouse.get_pressed()[0]:
+            
+            elif new_game_menu:  
+                if event.type == pygame.MOUSEBUTTONUP:  
+                    if event.button == 1: 
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 15, 10, 20
-                            screen = pygame.display.set_mode((width*30+20, height*30 + 110))
-                            new_game_menu = False
-                            game = True
-                            if pygame.MOUSEBUTTONUP:
-                                if pygame.mouse.get_pressed()[0]:
-                                    field, bool_field = pole_funkce.start(width, height, pocet_min)
+                            width, height, pocet_min = 8, 8, 10
+                        elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
+                            width, height, pocet_min = 10, 10, 18
+                        elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
+                            width, height, pocet_min = 15, 15, 40        
                         elif back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             menu = True
                             new_game_menu = False
+                            continue  # Skip the rest of this loop iteration if going back to menu
+
+                        # Set up the game if a difficulty button was clicked
+                        if not menu: 
+                            mines_rect = pygame.Rect(10, 100, width*30, height*30)
+                            screen = pygame.display.set_mode((width*30+20, height*30 + 110))
+                            new_game_menu = False
+                            game = True
+                            first_click = True
+
+                    
+                            
+            elif game:
+                if first_click is True:
+                    if event.type == pygame.MOUSEBUTTONDOWN:  
+                        if event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
+                            x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
+                            row, collumn = pole_funkce.click(x_click, y_click)
+                            first_click = False
+                            field, bool_field = pole_funkce.start(width, height, pocet_min, row, collumn)
+                else:
+                    if event.type == pygame.MOUSEBUTTONDOWN:  
+                        if event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
+                            x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
+                            row, collumn = pole_funkce.click(x_click, y_click)
+                            # pole_funkce.update_field(row, collumn)
+
+
         # This part is for drawing pictures on the screen         
         if menu:  # this is drawn, while menu is active
             screen.fill((255, 255, 255))  # Creates a white screen (to erase the previos iteration)
@@ -227,9 +266,15 @@ def main():
             else:
                 screen.blit(back_arrow_surf_off, back_arrow_rect)
         if game:
-            screen.fill((100, 100, 100))
-            pygame.draw.rect(screen, (180, 180, 180), (5, 5, width*30+10, height*30+100))
-            plot_bool_field(bool_field, field)
+            if first_click is True:
+                screen.fill((100, 100, 100))
+                pygame.draw.rect(screen, (180, 180, 180), (5, 5, width*30+10, height*30+100))
+                plot_empty_field(width, height)
+            else:
+                # plot_bool_field()
+                screen.fill((100, 100, 100))
+                pygame.draw.rect(screen, (180, 180, 180), (5, 5, width*30+10, height*30+100))
+                plot_bool_field(bool_field, field)
                 
         pygame.display.flip()
         clock.tick(60) # Limits the game to 60 fps, better for slower CPU
