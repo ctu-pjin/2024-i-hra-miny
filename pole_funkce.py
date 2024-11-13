@@ -30,7 +30,7 @@ def reveal(row, column, bool_field):
             continue
         elif cc < 0 or cc >= len(bool_field[0]): # šířka
             continue
-        bool_field[rr, cc] = 1;
+        bool_field[rr, cc] = 1
 
 def random_mine(width, height):
     return rand.randint(0,height-1), rand.randint(0,width-1)
@@ -38,10 +38,23 @@ def random_mine(width, height):
 def pre_start(width, height, pocet_min):
     ...
 
+def  update_field(field, bool_field, row, column):
+    if field[row][column] == 0:
+        queue.append([row, column])
+        bool_field[row, column] = 1
+        while len(queue) > 0:
+            neighbours(queue[0][0], queue[0][1], field, bool_field)
+            reveal(queue[0][0], queue[0][1], bool_field)
+            queue.pop(0)
+    elif field[row][column] == 9:
+        # to write
+        bool_field[row, column] = 1
+    else:
+        bool_field[row, column] = 1
+    return field, bool_field
+
+
 def field_description(width, height, mines, row, column):
-    if pg.MOUSEBUTTONDOWN:
-        if pg.mouse.get_pressed()[0]:
-            xy = pg.mouse.get_pos()
     starting_row, starting_column = row, column
     while True:
         field = np.zeros((height, width), dtype=int)
