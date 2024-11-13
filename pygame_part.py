@@ -188,11 +188,11 @@ def main():
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 8, 8, 10
+                            width, height, pocet_min = 4, 4, 9
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 10, 10, 18
+                            width, height, pocet_min = 11, 11, 25
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 15, 15, 40        
+                            width, height, pocet_min = 40, 21, 95
                         elif back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             menu = True
@@ -223,7 +223,17 @@ def main():
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
                             row, collumn = pole_funkce.click(x_click, y_click)
                             # pole_funkce.update_field(row, collumn)
-
+                            if field[row][collumn] == 9:
+                                ...
+                                #exit()
+                            field, bool_field = pole_funkce.update_field(field, bool_field, row, collumn)
+                        elif event.button == 3 and mines_rect.collidepoint(pygame.mouse.get_pos()):
+                            x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
+                            row, collumn = pole_funkce.click(x_click, y_click)
+                            if bool_field[row][collumn] == 0:
+                                bool_field[row][collumn] = 2
+                            elif bool_field[row][collumn] == 2:
+                                bool_field[row][collumn] = 0
 
         # This part is for drawing pictures on the screen         
         if menu:  # this is drawn, while menu is active
@@ -274,6 +284,9 @@ def main():
                 # plot_bool_field()
                 screen.fill((100, 100, 100))
                 pygame.draw.rect(screen, (180, 180, 180), (5, 5, width*30+10, height*30+100))
+                """for radek in range(len(bool_field)):
+                    for sloupec in range(len(bool_field[0])):
+                        bool_field[radek][sloupec] = 1"""
                 plot_bool_field(bool_field, field)
                 
         pygame.display.flip()
