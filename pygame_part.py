@@ -46,7 +46,9 @@ mine_surf = pygame.image.load("mines/mine.png").convert()
 flag_surf = pygame.image.load("mines/flag.png").convert()
 seven_surf = pygame.image.load("mines/seven.png").convert()
 eight_surf = pygame.image.load("mines/eight.png").convert()
-
+reshuffle_on_surf = pygame.image.load("surfaces/reshuffle_on.png").convert_alpha()
+reshuffle_off_surf = pygame.image.load("surfaces/reshuffle_off.png").convert_alpha()
+flag_only_surf = pygame.image.load("surfaces/flag_only.png").convert_alpha()
 
 """Functions for mine_menu background generation"""
 def random_mine_surf():
@@ -107,7 +109,8 @@ medium_rect_off = medium_surf_off.get_rect(midbottom=(screen_width/2, 350))
 hard_rect_on = hard_surf_on.get_rect(midbottom=(screen_width/2, 450))
 hard_rect_off = hard_surf_off.get_rect(midbottom=(screen_width/2, 450))
 back_arrow_rect = back_arrow_surf_off.get_rect(topleft = (20, 20))
-
+reshuffle_rect = reshuffle_on_surf.get_rect(bottomleft = (10, 20))
+flag_rect = flag_only_surf.get_rect(bottomright = (screen_width-10, screen_height-10))
 
 
 # Part for loading fonts
@@ -201,7 +204,7 @@ def main():
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
                             width, height, pocet_min = 13, 13, 30
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 30, 18, 80
+                            width, height, pocet_min = 30, 18, 160
                         elif back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             menu = True
@@ -225,7 +228,7 @@ def main():
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
                             row, collumn = pole_funkce.click(x_click, y_click)
                             first_click = False
-                            field, bool_field = pole_funkce.start(width, height, pocet_min, row, collumn)
+                            field, bool_field = pole_funkce.field_description(width, height, pocet_min, row, collumn)
                 else:
                     if event.type == pygame.MOUSEBUTTONDOWN:  
                         if event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
@@ -243,6 +246,8 @@ def main():
                                 bool_field[row][collumn] = 2
                             elif bool_field[row][collumn] == 2:
                                 bool_field[row][collumn] = 0
+                        elif event.button == 1 and reshuffle_rect.collidepoint(pygame.mouse.get_pos()):
+                            field, bool_field = pole_funkce.reshuffle(field, bool_field)
 
         # This part is for drawing pictures on the screen         
         if menu:  # this is drawn, while menu is active
@@ -289,6 +294,11 @@ def main():
                 screen.fill((100, 100, 100))
                 pygame.draw.rect(screen, (180, 180, 180), (5, 5, width*30+10, height*30+100))
                 plot_empty_field(width, height)
+                if reshuffle_rect.collidepoint(pygame.mouse.get_pos()):
+                    screen.blit(reshuffle_on_surf, reshuffle_rect)
+                else:
+                    screen.blit(reshuffle_off_surf, reshuffle_rect)
+                screen.blit(flag_only_surf, flag_rect)
             else:
                 # plot_bool_field()
                 screen.fill((100, 100, 100))
@@ -297,7 +307,12 @@ def main():
                     for sloupec in range(len(bool_field[0])):
                         bool_field[radek][sloupec] = 1"""
                 plot_bool_field(bool_field, field)
-                
+                if reshuffle_rect.collidepoint(pygame.mouse.get_pos()):
+                    screen.blit(reshuffle_on_surf, (10, 50+height*30))
+                else:
+                    screen.blit(reshuffle_off_surf, (10, 50+height*30))
+                screen.blit(flag_only_surf, flag_rect)
+
         pygame.display.flip()
         clock.tick(60) # Limits the game to 60 fps, better for slower CPU
         it += 1
