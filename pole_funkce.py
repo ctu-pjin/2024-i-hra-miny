@@ -56,16 +56,29 @@ def  update_field(field, bool_field, row, column):
 
 def field_description(width, height, mines, row, column):
     starting_row, starting_column = row, column
+    not_mines_positions = set()
+    field = np.zeros((height, width), dtype=int)
+    bool_field = np.zeros((height, width), dtype=int)
+    not_mines_positions.add((starting_row, starting_column))
+    for i in range(8):
+        rr = row + dr[i]
+        cc = column + dc[i]
+        if rr < 0 or rr >= len(bool_field): # výška
+            continue
+        elif cc < 0 or cc >= len(bool_field[0]): # šířka
+            continue
+        not_mines_positions.add((rr, cc))
+    print(not_mines_positions)
     while True:
         field = np.zeros((height, width), dtype=int)
         bool_field = np.zeros((height, width), dtype=int)
-        mines_position = []
+        mines_position = set()
         for i in range(mines):
             position = random_mine(width,height)
-            while position in mines_position:
+            while position in mines_position or position in not_mines_positions:
                 position = random_mine(width,height)
             field[position] = 9
-            mines_position.append(position)
+            mines_position.add(position)
         for i, row in enumerate(field):
             for j, item in enumerate(row):
                 if item == 9:
