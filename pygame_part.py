@@ -197,7 +197,7 @@ def main():
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 9, 9, 60
+                            width, height, pocet_min = 9, 9, 15
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
                             width, height, pocet_min = 13, 13, 30
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):

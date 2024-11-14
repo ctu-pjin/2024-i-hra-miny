@@ -68,6 +68,17 @@ def field_description(width, height, mines, row, column):
         elif cc < 0 or cc >= len(bool_field[0]): # šířka
             continue
         not_mines_positions.add((rr, cc))
+    neighbour_zero = rand.choice(list(not_mines_positions))
+    while neighbour_zero == (row, column):
+        neighbour_zero = rand.choice(list(not_mines_positions))
+    for i in range(8):
+        rr = neighbour_zero[0] + dr[i]
+        cc = neighbour_zero[1] + dc[i]
+        if rr < 0 or rr >= len(bool_field): # výška
+            continue
+        elif cc < 0 or cc >= len(bool_field[0]): # šířka
+            continue
+        not_mines_positions.add((rr, cc))
     print(not_mines_positions)
     while True:
         field = np.zeros((height, width), dtype=int)
