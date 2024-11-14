@@ -12,6 +12,9 @@ os.environ['SDL_RENDER_SCALE_QUALITY'] = '2' # '0' is the worst quality | '2' is
 pygame.init()
 
 screen_width, screen_height = 480, 540
+screen_width_game, screen_height_game = 100, 100
+dw = 10
+dh = 50
 
 MENU_SCREEN_DIMENSIONS = (480, 540)
 GAME_SCREEN_DIMENSIONS = (1024, 768)
@@ -28,6 +31,8 @@ load_surf_off = pygame.image.load("surfaces/load_button_off.png").convert_alpha(
 load_surf_on = pygame.image.load("surfaces/load_button_on.png").convert_alpha()
 back_arrow_surf_on = pygame.image.load("surfaces/back_arrow_flow_on.png").convert_alpha()
 back_arrow_surf_off = pygame.image.load("surfaces/back_arrow_flow_off.png").convert_alpha()
+back_arrow_surf_on_small = pygame.transform.scale_by(back_arrow_surf_on, 0.7)
+back_arrow_surf_off_small = pygame.transform.scale_by(back_arrow_surf_off, 0.7)
 easy_surf_on  = pygame.image.load("surfaces/easy_button_on.png").convert_alpha()
 easy_surf_off  = pygame.image.load("surfaces/easy_button_off.png").convert_alpha()
 medium_surf_on  = pygame.image.load("surfaces/medium_button_on.png").convert_alpha()
@@ -49,6 +54,26 @@ eight_surf = pygame.image.load("mines/eight.png").convert()
 reshuffle_on_surf = pygame.image.load("surfaces/reshuffle_on.png").convert_alpha()
 reshuffle_off_surf = pygame.image.load("surfaces/reshuffle_off.png").convert_alpha()
 flag_only_surf = pygame.image.load("surfaces/flag_only.png").convert_alpha()
+save_icon_on_surf = pygame.image.load("surfaces/save_icon_on.png").convert_alpha()
+save_icon_off_surf = pygame.image.load("surfaces/save_icon_off.png").convert_alpha()
+
+
+# Create rectangles
+new_game_rect_off = new_game_surf_off.get_rect(midbottom=(screen_width/2, 400)) #rectangle of the surface. Easier to specify an exact location
+new_game_rect_on = new_game_surf_on.get_rect(midbottom=(screen_width/2, 400))
+load_rect_off = load_surf_off.get_rect(midbottom=(screen_width/2, 500)) 
+load_rect_on = load_surf_on.get_rect(midbottom=(screen_width/2, 500))
+easy_rect_on = easy_surf_on.get_rect(midbottom=(screen_width/2, 250))
+easy_rect_off = easy_surf_off.get_rect(midbottom=(screen_width/2, 250))
+medium_rect_on = medium_surf_on.get_rect(midbottom=(screen_width/2, 350))
+medium_rect_off = medium_surf_off.get_rect(midbottom=(screen_width/2, 350))
+hard_rect_on = hard_surf_on.get_rect(midbottom=(screen_width/2, 450))
+hard_rect_off = hard_surf_off.get_rect(midbottom=(screen_width/2, 450))
+back_arrow_rect = back_arrow_surf_off.get_rect(topleft = (20, 20))
+back_arrow_rect_small = back_arrow_surf_off_small.get_rect(topleft = (10, 15))
+reshuffle_rect = reshuffle_on_surf.get_rect(bottomleft = (10, 20))
+flag_rect = flag_only_surf.get_rect(bottomright = (screen_width-10, screen_height-10))
+
 
 """Functions for mine_menu background generation"""
 def random_mine_surf():
@@ -97,22 +122,6 @@ def load_save():
             print(line)
             
 
-# Create rectangles
-new_game_rect_off = new_game_surf_off.get_rect(midbottom=(screen_width/2, 400)) #rectangle of the surface. Easier to specify an exact location
-new_game_rect_on = new_game_surf_on.get_rect(midbottom=(screen_width/2, 400))
-load_rect_off = load_surf_off.get_rect(midbottom=(screen_width/2, 500)) 
-load_rect_on = load_surf_on.get_rect(midbottom=(screen_width/2, 500))
-easy_rect_on = easy_surf_on.get_rect(midbottom=(screen_width/2, 250))
-easy_rect_off = easy_surf_off.get_rect(midbottom=(screen_width/2, 250))
-medium_rect_on = medium_surf_on.get_rect(midbottom=(screen_width/2, 350))
-medium_rect_off = medium_surf_off.get_rect(midbottom=(screen_width/2, 350))
-hard_rect_on = hard_surf_on.get_rect(midbottom=(screen_width/2, 450))
-hard_rect_off = hard_surf_off.get_rect(midbottom=(screen_width/2, 450))
-back_arrow_rect = back_arrow_surf_off.get_rect(topleft = (20, 20))
-reshuffle_rect = reshuffle_on_surf.get_rect(bottomleft = (10, 20))
-flag_rect = flag_only_surf.get_rect(bottomright = (screen_width-10, screen_height-10))
-
-
 # Part for loading fonts
 karma_font_160 = pygame.font.Font("fonts/KarmaFuture.otf", 160)
 karma_font_60 = pygame.font.Font("fonts/KarmaFuture.otf", 60)
@@ -132,8 +141,6 @@ draw_to_buffer(buffer_surface, mine_field)
 
 
 def plot_bool_field(bool_field, field, cell_size = 30): # minefield plotting
-    dw = 10
-    dh = 100
     for row in range(len(field)):
         for col in range(len(field[row])):
             match bool_field[row,col]:
@@ -165,8 +172,6 @@ def plot_bool_field(bool_field, field, cell_size = 30): # minefield plotting
                     screen.blit(flag_surf, (col*cell_size+dw, row*cell_size+dh))
 
 def plot_empty_field(width, height, cell_size = 30):
-    dw = 10
-    dh = 100
     for row in range(height):
         for col in range(width):
             screen.blit(box_surf, (col*cell_size+dw, row*cell_size+dh))
@@ -178,7 +183,7 @@ def main():
     first_click = False
     new_game_menu = False
     game = False
-    global screen
+    global screen, screen_height_game, screen_width_game
     load_save()
     mines_rect = pygame.Rect(0, 0, 0, 0)
 
@@ -200,11 +205,11 @@ def main():
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 9, 9, 15
+                            width, height, pocet_min = 9, 9, 12
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
                             width, height, pocet_min = 13, 13, 30
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 30, 18, 160
+                            width, height, pocet_min = 60, 30, 130
                         elif back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             menu = True
@@ -213,8 +218,10 @@ def main():
 
                         # Set up the game if a difficulty button was clicked
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()) or medium_rect_on.collidepoint(pygame.mouse.get_pos()) or hard_rect_on.collidepoint(pygame.mouse.get_pos()): 
-                            mines_rect = pygame.Rect(10, 100, width*30, height*30)
-                            screen = pygame.display.set_mode((width*30+20, height*30 + 110))
+                            mines_rect = pygame.Rect(dw, dh, width*30, height*30)
+                            screen_width_game = width*30 + dw + 10
+                            screen_height_game = height*30 + 2*dh + 10
+                            screen = pygame.display.set_mode((screen_width_game, screen_height_game))
                             new_game_menu = False
                             game = True
                             first_click = True
@@ -223,17 +230,31 @@ def main():
                             
             elif game:
                 if first_click is True:
-                    if event.type == pygame.MOUSEBUTTONDOWN:  
+                    if event.type == pygame.MOUSEBUTTONUP:
+                        if event.button == 1 and back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
+                            game = False
+                            new_game_menu = True
+                            first_click = True
+                            screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
+                    elif event.type == pygame.MOUSEBUTTONDOWN:  
                         if event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
-                            row, collumn = pole_funkce.click(x_click, y_click)
+                            row, collumn = pole_funkce.click(x_click, y_click, dw, dh)
                             first_click = False
                             field, bool_field = pole_funkce.field_description(width, height, pocet_min, row, collumn)
                 else:
-                    if event.type == pygame.MOUSEBUTTONDOWN:  
-                        if event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
+                    if event.type == pygame.MOUSEBUTTONUP:
+                        if event.button == 1 and back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
+                            game = False
+                            new_game_menu = True
+                            first_click = True
+                            screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
+                    elif event.type == pygame.MOUSEBUTTONDOWN:  
+                        if event.button == 1 and 15 < pygame.mouse.get_pos()[0] < 55 and screen_height_game - 50 < pygame.mouse.get_pos()[1] < screen_height_game - 10:
+                            field, bool_field = pole_funkce.reshuffle(field, bool_field)
+                        elif event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
-                            row, collumn = pole_funkce.click(x_click, y_click)
+                            row, collumn = pole_funkce.click(x_click, y_click, dw, dh)
                             # pole_funkce.update_field(row, collumn)
                             if field[row][collumn] == 9:
                                 ...
@@ -241,13 +262,12 @@ def main():
                             field, bool_field = pole_funkce.update_field(field, bool_field, row, collumn)
                         elif event.button == 3 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
-                            row, collumn = pole_funkce.click(x_click, y_click)
+                            row, collumn = pole_funkce.click(x_click, y_click, dw, dh)
                             if bool_field[row][collumn] == 0:
                                 bool_field[row][collumn] = 2
                             elif bool_field[row][collumn] == 2:
                                 bool_field[row][collumn] = 0
-                        elif event.button == 1 and reshuffle_rect.collidepoint(pygame.mouse.get_pos()):
-                            field, bool_field = pole_funkce.reshuffle(field, bool_field)
+                        
 
         # This part is for drawing pictures on the screen         
         if menu:  # this is drawn, while menu is active
@@ -292,26 +312,43 @@ def main():
         if game:
             if first_click is True:
                 screen.fill((100, 100, 100))
-                pygame.draw.rect(screen, (180, 180, 180), (5, 5, width*30+10, height*30+100))
+                pygame.draw.rect(screen, (180, 180, 180), (5, 5, width*30+10, height*30+dh*2))
                 plot_empty_field(width, height)
-                if reshuffle_rect.collidepoint(pygame.mouse.get_pos()):
-                    screen.blit(reshuffle_on_surf, reshuffle_rect)
+
+                if 15 < pygame.mouse.get_pos()[0] < 55 and screen_height_game - 50 < pygame.mouse.get_pos()[1] < screen_height_game - 10:
+                    screen.blit(reshuffle_on_surf, (15, screen_height_game-50))
                 else:
-                    screen.blit(reshuffle_off_surf, reshuffle_rect)
-                screen.blit(flag_only_surf, flag_rect)
+                    screen.blit(reshuffle_off_surf, (15, screen_height_game-50))
+
+                screen.blit(flag_only_surf, (screen_width_game-30, screen_height_game-30))
+
+                if back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
+                    screen.blit(back_arrow_surf_on_small, back_arrow_rect_small)
+                else:
+                    screen.blit(back_arrow_surf_off_small, back_arrow_rect_small)
+
+                if screen_width_game - 46 < pygame.mouse.get_pos()[0] < screen_width_game - 10 and 10 < pygame.mouse.get_pos()[1] < 46:
+                    screen.blit(save_icon_on_surf, (screen_width_game - 46, 10))
+                else:
+                    screen.blit(save_icon_off_surf, (screen_width_game - 46, 10))
             else:
                 # plot_bool_field()
                 screen.fill((100, 100, 100))
-                pygame.draw.rect(screen, (180, 180, 180), (5, 5, width*30+10, height*30+100))
-                """for radek in range(len(bool_field)):
-                    for sloupec in range(len(bool_field[0])):
-                        bool_field[radek][sloupec] = 1"""
+                pygame.draw.rect(screen, (180, 180, 180), (5, 5, width*30+10, height*30 + dh*2))
                 plot_bool_field(bool_field, field)
-                if reshuffle_rect.collidepoint(pygame.mouse.get_pos()):
-                    screen.blit(reshuffle_on_surf, (10, 50+height*30))
+                if 15 < pygame.mouse.get_pos()[0] < 55 and screen_height_game - 50 < pygame.mouse.get_pos()[1] < screen_height_game - 10:
+                    screen.blit(reshuffle_on_surf, (15, screen_height_game-50))
                 else:
-                    screen.blit(reshuffle_off_surf, (10, 50+height*30))
-                screen.blit(flag_only_surf, flag_rect)
+                    screen.blit(reshuffle_off_surf, (15, screen_height_game-50))
+                screen.blit(flag_only_surf, (screen_width_game-30, screen_height_game-30))
+                if back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
+                    screen.blit(back_arrow_surf_on_small, back_arrow_rect_small)
+                else:
+                    screen.blit(back_arrow_surf_off_small, back_arrow_rect_small)
+                if screen_width_game - 46 < pygame.mouse.get_pos()[0] < screen_width_game - 10 and 10 < pygame.mouse.get_pos()[1] < 46:
+                    screen.blit(save_icon_on_surf, (screen_width_game - 46, 10))
+                else:
+                    screen.blit(save_icon_off_surf, (screen_width_game - 46, 10))
 
         pygame.display.flip()
         clock.tick(60) # Limits the game to 60 fps, better for slower CPU

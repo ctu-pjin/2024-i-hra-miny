@@ -18,8 +18,6 @@ def uncaged_mines(field, bool_field):
             elif item == 9:
                 field[i,j] = -1
     uncaged_mines = total_mines - caged_mines
-    print(uncaged_mines)
-    print
     return uncaged_mines, field
 
 def reshuffle(field, bool_field):
@@ -148,9 +146,7 @@ def field_description(width, height, mines, row, column):
     return field, bool_field
         
 
-def click(x, y, cell_size = 30): 
-    dh = 100
-    dw = 10
+def click(x, y, dw, dh, cell_size = 30): 
     row = int((y - dh)/cell_size)
     column = int((x-dw)/cell_size)
     return row, column
