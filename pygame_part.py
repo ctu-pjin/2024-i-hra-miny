@@ -1,10 +1,9 @@
 import pygame
 from sys import exit
-from time import time, sleep
 from random import choice, randint
 import os
-import math
 import pole_funkce
+import json
 
 # Initialize Pygame
 os.environ['SDL_VIDEO_CENTERED'] = '1' # Centers the screen on the display
@@ -85,6 +84,16 @@ def update_cell(buffer_surface, mine_field, cell_size=30):
     col = randint(0, len(mine_field[0]) - 1)
     mine_field[row][col] = random_mine_surf()
     buffer_surface.blit(mine_field[row][col], (col * cell_size, row * cell_size))
+
+
+def load_save():
+    with open("saves.txt") as miny_file:
+        while True:
+            line = miny_file.readline()
+            if line.strip() == "***":
+                break
+            print(line)
+            
 
 # Create rectangles
 new_game_rect_off = new_game_surf_off.get_rect(midbottom=(screen_width/2, 400)) #rectangle of the surface. Easier to specify an exact location
@@ -167,7 +176,7 @@ def main():
     new_game_menu = False
     game = False
     global screen
-
+    load_save()
     mines_rect = pygame.Rect(0, 0, 0, 0)
 
     while True: 
@@ -188,11 +197,11 @@ def main():
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 4, 4, 9
+                            width, height, pocet_min = 9, 9, 60
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 11, 11, 25
+                            width, height, pocet_min = 13, 13, 30
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 40, 21, 95
+                            width, height, pocet_min = 30, 18, 80
                         elif back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             menu = True
@@ -200,7 +209,7 @@ def main():
                             continue  # Skip the rest of this loop iteration if going back to menu
 
                         # Set up the game if a difficulty button was clicked
-                        if not menu: 
+                        if easy_rect_on.collidepoint(pygame.mouse.get_pos()) or medium_rect_on.collidepoint(pygame.mouse.get_pos()) or hard_rect_on.collidepoint(pygame.mouse.get_pos()): 
                             mines_rect = pygame.Rect(10, 100, width*30, height*30)
                             screen = pygame.display.set_mode((width*30+20, height*30 + 110))
                             new_game_menu = False
