@@ -214,9 +214,9 @@ def main():
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 15, 1, 2
+                            width, height, pocet_min = 8, 8, 10
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 4, 5, 2
+                            width, height, pocet_min = 15, 12, 40
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
                             width, height, pocet_min = 41, 20, 200
                         elif back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
@@ -251,9 +251,9 @@ def main():
                     elif event.type == pygame.MOUSEBUTTONDOWN:  
                         if event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
-                            row, collumn = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
+                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
                             first_click = False
-                            field, bool_field = pole_funkce.field_description(width, height, pocet_min, row, collumn)
+                            field, bool_field = pole_funkce.field_description(width, height, pocet_min, row, column)
                 else:
                     if event.type == pygame.MOUSEBUTTONUP:
                         if event.button == 1 and back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
@@ -266,19 +266,24 @@ def main():
                             field, bool_field = pole_funkce.reshuffle(field, bool_field)
                         elif event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
-                            row, collumn = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
+                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
                             # pole_funkce.update_field(row, collumn)
-                            if field[row][collumn] == 9:
+                            if field[row][column] == 9:
                                 ...
                                 #exit()
-                            field, bool_field = pole_funkce.update_field(field, bool_field, row, collumn)
+                            field, bool_field = pole_funkce.update_field(field, bool_field, row, column)
+                        elif event.button == 2 and mines_rect.collidepoint(pygame.mouse.get_pos()):
+                            x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
+                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
+                            if bool_field[row][column] == 1 and pole_funkce.verify_amount_of_flags(field, bool_field, row, column):
+                                field, bool_field = pole_funkce.cluster_reveal(field, bool_field, row, column)
                         elif event.button == 3 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
-                            row, collumn = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
-                            if bool_field[row][collumn] == 0:
-                                bool_field[row][collumn] = 2
-                            elif bool_field[row][collumn] == 2:
-                                bool_field[row][collumn] = 0
+                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
+                            if bool_field[row][column] == 0:
+                                bool_field[row][column] = 2
+                            elif bool_field[row][column] == 2:
+                                bool_field[row][column] = 0
             elif end_game_screen:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:

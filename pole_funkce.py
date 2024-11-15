@@ -8,6 +8,18 @@ queue = []
 
 pg.init()
 
+def verify_amount_of_flags(field, bool_field, row, column):
+    sub_array = bool_field[max(0, row-1):row+2, max(0, column-1):column+2]
+    if np.count_nonzero(sub_array == 2) == field[row][column]:
+        return True
+    else:
+        return False
+
+def cluster_reveal(field, bool_field, row, column):
+    queue.append([row, column])
+    reveal_around_zeroes(field, bool_field)
+    return field, bool_field
+
 def uncaged_mines(field, bool_field):
     caged_mines = 0
     total_mines = np.count_nonzero(field == 9)
@@ -45,7 +57,7 @@ def reshuffle(field, bool_field):
 def reveal_around_zeroes(field, bool_field):
     while len(queue) > 0:
         neighbours(queue[0][0], queue[0][1], field, bool_field)
-        reveal(queue[0][0], queue[0][1], bool_field)
+        reveal(queue[0][0], queue[0][1], bool_field, field)
         queue.pop(0)
 
 def neighbours(row , column, field, bool_field): # variace na BFS
@@ -62,7 +74,7 @@ def neighbours(row , column, field, bool_field): # variace na BFS
                 bool_field[rr, cc] = 1
                 queue.append([rr, cc])
 
-def reveal(row, column, bool_field):
+def reveal(row, column, bool_field, field):
     for i in range(8):
         rr = row + dr[i]
         cc = column + dc[i]
@@ -70,6 +82,10 @@ def reveal(row, column, bool_field):
             continue
         elif cc < 0 or cc >= len(bool_field[0]): # šířka
             continue
+        elif bool_field[rr, cc] == 2:
+            continue
+        if field[rr, cc] == 9:
+            print("Hra by skončila, actual podmínka TBA")
         bool_field[rr, cc] = 1
 
 def random_mine(width, height):
@@ -79,10 +95,7 @@ def  update_field(field, bool_field, row, column):
     if field[row][column] == 0:
         queue.append([row, column])
         bool_field[row, column] = 1
-        while len(queue) > 0:
-            neighbours(queue[0][0], queue[0][1], field, bool_field)
-            reveal(queue[0][0], queue[0][1], bool_field)
-            queue.pop(0)
+        reveal_around_zeroes(field, bool_field)
     elif field[row][column] == 9:
         # to write
         bool_field[row, column] = 1
