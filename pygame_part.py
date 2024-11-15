@@ -4,6 +4,7 @@ from random import choice, randint
 import os
 import pole_funkce
 import json
+import numpy as np
 
 # Initialize Pygame
 os.environ['SDL_VIDEO_CENTERED'] = '1' # Centers the screen on the display
@@ -15,6 +16,7 @@ screen_width, screen_height = 480, 540
 screen_width_game, screen_height_game = 100, 100
 dw = 10
 dh = 50
+additional_dw = 0
 
 MENU_SCREEN_DIMENSIONS = (480, 540)
 GAME_SCREEN_DIMENSIONS = (1024, 768)
@@ -56,6 +58,7 @@ reshuffle_off_surf = pygame.image.load("surfaces/reshuffle_off.png").convert_alp
 flag_only_surf = pygame.image.load("surfaces/flag_only.png").convert_alpha()
 save_icon_on_surf = pygame.image.load("surfaces/save_icon_on.png").convert_alpha()
 save_icon_off_surf = pygame.image.load("surfaces/save_icon_off.png").convert_alpha()
+transparent_bg_surf = pygame.image.load("surfaces/transparent_bg_80.png").convert_alpha()
 
 
 # Create rectangles
@@ -125,13 +128,18 @@ def load_save():
 # Part for loading fonts
 karma_font_160 = pygame.font.Font("fonts/KarmaFuture.otf", 160)
 karma_font_60 = pygame.font.Font("fonts/KarmaFuture.otf", 60)
+karma_font_26 = pygame.font.Font("fonts/KarmaSuture.otf", 23)
+karma_font_35 = pygame.font.Font("fonts/KarmaFuture.otf", 35)
 
 # Part for loading texts
 text_miny_surf = karma_font_160.render("Miny", False, "Black")
 text_miny_rect = text_miny_surf.get_rect(midtop=(screen_width/2, 40))
 text_difficulty_surf = karma_font_60.render("Difficulty", False, "Black")
 text_difficulty_rect = text_difficulty_surf.get_rect(midtop=(screen_width/2, 70))
-
+victory_lines = ["Press space", "to return", "to main menu"]
+text_victory_surfs = [karma_font_26.render(text, False, "White") for text in victory_lines]
+text_victory_surf = karma_font_35.render("You won!", False, "White")
+text_miny_rect = text_miny_surf.get_rect(midtop=(screen_width/2, 40))
 
 
 
@@ -145,36 +153,36 @@ def plot_bool_field(bool_field, field, cell_size = 30): # minefield plotting
         for col in range(len(field[row])):
             match bool_field[row,col]:
                 case 0:
-                    screen.blit(box_surf, (col*cell_size+dw, row*cell_size+dh))
+                    screen.blit(box_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                 case 1:
                     match field[row,col]:
                         case 0:
-                            screen.blit(null_surf, (col*cell_size+dw, row*cell_size+dh))
+                            screen.blit(null_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 1: 
-                            screen.blit(one_surf, (col*cell_size+dw, row*cell_size+dh))
+                            screen.blit(one_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 2: 
-                            screen.blit(two_surf, (col*cell_size+dw, row*cell_size+dh))
+                            screen.blit(two_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 3: 
-                            screen.blit(three_surf, (col*cell_size+dw, row*cell_size+dh))
+                            screen.blit(three_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 4: 
-                            screen.blit(four_surf, (col*cell_size+dw, row*cell_size+dh))
+                            screen.blit(four_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 5: 
-                            screen.blit(five_surf, (col*cell_size+dw, row*cell_size+dh))
+                            screen.blit(five_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 6: 
-                            screen.blit(six_surf, (col*cell_size+dw, row*cell_size+dh))
+                            screen.blit(six_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 7: 
-                            screen.blit(seven_surf, (col*cell_size+dw, row*cell_size+dh))
+                            screen.blit(seven_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 8: 
-                            screen.blit(eight_surf, (col*cell_size+dw, row*cell_size+dh))
+                            screen.blit(eight_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 9: 
-                            screen.blit(mine_surf, (col*cell_size+dw, row*cell_size+dh))
+                            screen.blit(mine_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                 case 2:
-                    screen.blit(flag_surf, (col*cell_size+dw, row*cell_size+dh))
+                    screen.blit(flag_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
 
 def plot_empty_field(width, height, cell_size = 30):
     for row in range(height):
         for col in range(width):
-            screen.blit(box_surf, (col*cell_size+dw, row*cell_size+dh))
+            screen.blit(box_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
 
 
 def main():
@@ -182,8 +190,9 @@ def main():
     menu = True
     first_click = False
     new_game_menu = False
+    end_game_screen = False
     game = False
-    global screen, screen_height_game, screen_width_game
+    global screen, screen_height_game, screen_width_game, additional_dw
     load_save()
     mines_rect = pygame.Rect(0, 0, 0, 0)
 
@@ -205,11 +214,11 @@ def main():
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 9, 9, 12
+                            width, height, pocet_min = 15, 1, 2
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 13, 13, 30
+                            width, height, pocet_min = 4, 5, 2
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 60, 30, 130
+                            width, height, pocet_min = 41, 20, 200
                         elif back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             menu = True
@@ -217,10 +226,13 @@ def main():
                             continue  # Skip the rest of this loop iteration if going back to menu
 
                         # Set up the game if a difficulty button was clicked
-                        if easy_rect_on.collidepoint(pygame.mouse.get_pos()) or medium_rect_on.collidepoint(pygame.mouse.get_pos()) or hard_rect_on.collidepoint(pygame.mouse.get_pos()): 
-                            mines_rect = pygame.Rect(dw, dh, width*30, height*30)
-                            screen_width_game = width*30 + dw + 10
+                        if easy_rect_on.collidepoint(pygame.mouse.get_pos()) or medium_rect_on.collidepoint(pygame.mouse.get_pos()) or hard_rect_on.collidepoint(pygame.mouse.get_pos()):
+                            if width*30 + dw + 10 < 200:
+                                additional_dw = (200 - width*30 - dw - 10)/2 
+                            mines_rect = pygame.Rect(dw + additional_dw, dh, width*30, height*30)
+                            screen_width_game = max(width*30 + dw + 10, 200)
                             screen_height_game = height*30 + 2*dh + 10
+                            
                             screen = pygame.display.set_mode((screen_width_game, screen_height_game))
                             new_game_menu = False
                             game = True
@@ -239,7 +251,7 @@ def main():
                     elif event.type == pygame.MOUSEBUTTONDOWN:  
                         if event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
-                            row, collumn = pole_funkce.click(x_click, y_click, dw, dh)
+                            row, collumn = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
                             first_click = False
                             field, bool_field = pole_funkce.field_description(width, height, pocet_min, row, collumn)
                 else:
@@ -254,7 +266,7 @@ def main():
                             field, bool_field = pole_funkce.reshuffle(field, bool_field)
                         elif event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
-                            row, collumn = pole_funkce.click(x_click, y_click, dw, dh)
+                            row, collumn = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
                             # pole_funkce.update_field(row, collumn)
                             if field[row][collumn] == 9:
                                 ...
@@ -262,12 +274,17 @@ def main():
                             field, bool_field = pole_funkce.update_field(field, bool_field, row, collumn)
                         elif event.button == 3 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
-                            row, collumn = pole_funkce.click(x_click, y_click, dw, dh)
+                            row, collumn = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
                             if bool_field[row][collumn] == 0:
                                 bool_field[row][collumn] = 2
                             elif bool_field[row][collumn] == 2:
                                 bool_field[row][collumn] = 0
-                        
+            elif end_game_screen:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        end_game_screen = False
+                        menu = True
+                        screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
 
         # This part is for drawing pictures on the screen         
         if menu:  # this is drawn, while menu is active
@@ -311,8 +328,8 @@ def main():
                 screen.blit(back_arrow_surf_off, back_arrow_rect)
         if game:
             if first_click is True:
-                screen.fill((100, 100, 100))
-                pygame.draw.rect(screen, (180, 180, 180), (5, 5, width*30+10, height*30+dh*2))
+                screen.fill((140, 140, 140))
+                pygame.draw.rect(screen, (195, 195, 195), (5, 5, max(width*30 + dw, 190), height*30+dh*2))
                 plot_empty_field(width, height)
 
                 if 15 < pygame.mouse.get_pos()[0] < 55 and screen_height_game - 50 < pygame.mouse.get_pos()[1] < screen_height_game - 10:
@@ -332,9 +349,8 @@ def main():
                 else:
                     screen.blit(save_icon_off_surf, (screen_width_game - 46, 10))
             else:
-                # plot_bool_field()
-                screen.fill((100, 100, 100))
-                pygame.draw.rect(screen, (180, 180, 180), (5, 5, width*30+10, height*30 + dh*2))
+                screen.fill((140, 140, 140))
+                pygame.draw.rect(screen, (195, 195, 195), (5, 5, max(width*30 + dw, 190), height*30+dh*2))
                 plot_bool_field(bool_field, field)
                 if 15 < pygame.mouse.get_pos()[0] < 55 and screen_height_game - 50 < pygame.mouse.get_pos()[1] < screen_height_game - 10:
                     screen.blit(reshuffle_on_surf, (15, screen_height_game-50))
@@ -349,6 +365,28 @@ def main():
                     screen.blit(save_icon_on_surf, (screen_width_game - 46, 10))
                 else:
                     screen.blit(save_icon_off_surf, (screen_width_game - 46, 10))
+
+
+
+                if np.count_nonzero(bool_field == 1) >= width * height - pocet_min:
+                    for radek in range((len(bool_field))):
+                        for sloupec in range((len(bool_field[0]))):
+                            if field[radek][sloupec] == 9:
+                                bool_field[radek][sloupec] = 1
+                    end_game_screen = True
+                    game = False
+                    first_click = True
+                    plot_bool_field(bool_field, field)
+                    print("Výhra")
+                    screen.blit(transparent_bg_surf, (0, 0))
+            
+        if end_game_screen:
+            y_offset = 52
+            add_y_offset = max(0, (screen_height_game - (2*dh+35))/2)
+            screen.blit(text_victory_surf, (screen_width_game/2-text_victory_surf.get_width()/2, 5 + add_y_offset))
+            for text_surf in text_victory_surfs:   
+                screen.blit(text_surf, (screen_width_game/2-text_surf.get_width()/2, y_offset + add_y_offset))
+                y_offset += text_surf.get_height()
 
         pygame.display.flip()
         clock.tick(60) # Limits the game to 60 fps, better for slower CPU
