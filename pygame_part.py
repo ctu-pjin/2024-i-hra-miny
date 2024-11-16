@@ -255,6 +255,7 @@ def main():
                             first_click = False
                             field, bool_field = pole_funkce.field_description(width, height, pocet_min, row, column)
                 else:
+                    flag_count = np.count_nonzero(bool_field == 2)
                     if event.type == pygame.MOUSEBUTTONUP:
                         if event.button == 1 and back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
                             game = False
@@ -268,6 +269,8 @@ def main():
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
                             row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
                             # pole_funkce.update_field(row, collumn)
+                            if bool_field[row][column] == 2:
+                                continue
                             if field[row][column] == 9:
                                 ...
                                 #exit()
@@ -280,7 +283,7 @@ def main():
                         elif event.button == 3 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
                             row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
-                            if bool_field[row][column] == 0:
+                            if bool_field[row][column] == 0  and (pocet_min - flag_count) > 0:
                                 bool_field[row][column] = 2
                             elif bool_field[row][column] == 2:
                                 bool_field[row][column] = 0
