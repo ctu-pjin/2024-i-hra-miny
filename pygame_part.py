@@ -22,9 +22,13 @@ additional_dw = 0
 previous_time = time.time()
 remaining_flags = 0
 reshuffle_count = 3
+field = []
+bool_field = []
+current_it = 0
 
 MENU_SCREEN_DIMENSIONS = (480, 540)
 GAME_SCREEN_DIMENSIONS = (1024, 768)
+fps = 60
 
 
 screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
@@ -122,19 +126,29 @@ def update_cell(buffer_surface, mine_field, cell_size=30):
     buffer_surface.blit(mine_field[row][col], (col * cell_size, row * cell_size))
 
 
-def load_save():
-    with open("saves.txt") as miny_file:
-        while True:
-            line = miny_file.readline()
-            if line.strip() == "***":
-                break
-            print(line)
-            
+"""Save and load functions"""
+
+save_slots = ["save1.json", "save2.json", "save3.json"]
+
+def load_game(slot):
+    filename = "saves/" + save_slots[slot]
+    if os.path.exists(filename):
+        print(filename)
+        with open(filename, 'r') as f:
+            return json.load(f)
+    else:
+        return None
+    
+def save_game(slot):
+    filename = "saves/" + save_slots[slot]
+    with open(filename, 'w') as f:
+        json.dump(data, f)
+
 
 # Part for loading fonts
 karma_font_160 = pygame.font.Font("fonts/KarmaFuture.otf", 160)
 karma_font_60 = pygame.font.Font("fonts/KarmaFuture.otf", 60)
-karma_font_23 = pygame.font.Font("fonts/KarmaSuture.otf", 23)
+karma_sature_font_23 = pygame.font.Font("fonts/KarmaSuture.otf", 23)
 karma_font_35 = pygame.font.Font("fonts/KarmaFuture.otf", 35)
 
 # Part for loading texts
@@ -143,7 +157,7 @@ text_miny_rect = text_miny_surf.get_rect(midtop=(screen_width/2, 40))
 text_difficulty_surf = karma_font_60.render("Difficulty", False, "Black")
 text_difficulty_rect = text_difficulty_surf.get_rect(midtop=(screen_width/2, 70))
 victory_lines = ["Press space", "to return", "to main menu"]
-text_victory_surfs = [karma_font_23.render(text, False, "White") for text in victory_lines]
+text_victory_surfs = [karma_sature_font_23.render(text, False, "White") for text in victory_lines]
 text_victory_surf = karma_font_35.render("You won!", False, "White")
 text_miny_rect = text_miny_surf.get_rect(midtop=(screen_width/2, 40))
 
@@ -198,8 +212,7 @@ def main():
     new_game_menu = False
     end_game_screen = False
     game = False
-    global screen, screen_height_game, screen_width_game, additional_dw, previous_time, remaining_flags
-    load_save()
+    global screen, screen_height_game, screen_width_game, additional_dw, previous_time, remaining_flags, data, current_it
     mines_rect = pygame.Rect(0, 0, 0, 0)
 
     while True: 
@@ -215,12 +228,29 @@ def main():
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             new_game_menu = True
                             menu = False
+                        elif load_rect_on.collidepoint(pygame.mouse.get_pos()):
+                            data = load_game(0)
+                            field = np.array(data["field"])
+                            bool_field = np.array(data["boolField"])
+                            width = len(field[0])
+                            height = len(field)
+                            reshuffle_count = data["reshuffleCount"]
+                            game_time = data["timePlayed"]
+                            pocet_min = data["mineCount"]
+                            first_click = False
+                            menu = False
+                            game = True
+                            additional_dw = max(0, (200 - width*30 - dw - 10)/2)
+                            mines_rect = pygame.Rect(dw + additional_dw, dh, width*30, height*30)
+                            screen_width_game = max(width*30 + dw + 10, 200)
+                            screen_height_game = height*30 + 2*dh + 10
+                            screen = pygame.display.set_mode((screen_width_game, screen_height_game))
             
             elif new_game_menu:  
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 4, 6, 2
+                            width, height, pocet_min = 1, 20, 2
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
                             width, height, pocet_min = 15, 12, 40
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
@@ -233,8 +263,7 @@ def main():
 
                         # Set up the game if a difficulty button was clicked
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()) or medium_rect_on.collidepoint(pygame.mouse.get_pos()) or hard_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            if width*30 + dw + 10 < 200:
-                                additional_dw = (200 - width*30 - dw - 10)/2
+                            additional_dw = max(0, (200 - width*30 - dw - 10)/2)
                             reshuffle_count = 3
                             mines_rect = pygame.Rect(dw + additional_dw, dh, width*30, height*30)
                             screen_width_game = max(width*30 + dw + 10, 200)
@@ -259,7 +288,7 @@ def main():
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
                             row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
                             first_click = False
-                            previous_time = time.time()
+                            game_time = 0
                             field, bool_field = pole_funkce.field_description(width, height, pocet_min, row, column)
                 else:
                     flag_count = np.count_nonzero(bool_field == 2)
@@ -271,9 +300,10 @@ def main():
                             first_click = True
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                     elif event.type == pygame.MOUSEBUTTONDOWN:  
-                        if (event.button == 1 and 15 < pygame.mouse.get_pos()[0] < 55) and (screen_height_game - 50 < pygame.mouse.get_pos()[1] < screen_height_game) - 10 and (reshuffle_count > 0):
+                        if (event.button == 1 and 15 < pygame.mouse.get_pos()[0] < 55 and screen_height_game - 50 < pygame.mouse.get_pos()[1] < screen_height_game - 10) and (reshuffle_count > 0):
                             field, bool_field = pole_funkce.reshuffle(field, bool_field)
                             reshuffle_count -= 1
+
                         elif event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
                             row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
@@ -281,14 +311,16 @@ def main():
                             if bool_field[row][column] == 2:
                                 continue
                             if field[row][column] == 9:
-                                ...
+                                print("konec hry")
                                 #exit()
                             field, bool_field = pole_funkce.update_field(field, bool_field, row, column)
+                            
                         elif event.button == 2 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
                             row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
                             if bool_field[row][column] == 1 and pole_funkce.verify_amount_of_flags(field, bool_field, row, column):
                                 field, bool_field = pole_funkce.cluster_reveal(field, bool_field, row, column)
+
                         elif event.button == 3 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
                             row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
@@ -296,6 +328,17 @@ def main():
                                 bool_field[row][column] = 2
                             elif bool_field[row][column] == 2:
                                 bool_field[row][column] = 0
+
+                        elif event.button == 1 and (screen_width_game - 46 < pygame.mouse.get_pos()[0] < screen_width_game - 10 and 10 < pygame.mouse.get_pos()[1] < 46):
+                            data = {
+                                "boolField":  bool_field.tolist(),
+                                "field": field.tolist(),
+                                "timePlayed": game_time,
+                                "reshuffleCount": reshuffle_count,
+                                "mineCount": pocet_min
+                            }
+                            save_game(0)
+
             elif end_game_screen:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
@@ -345,8 +388,8 @@ def main():
                 screen.blit(back_arrow_surf_off, back_arrow_rect)
         if game:
             if first_click is True:
-                remaining_flags_surf = karma_font_23.render(str(remaining_flags), False, "Black")
-                reshuffle_count_surf = karma_font_23.render(str(reshuffle_count), False, "Black")
+                remaining_flags_surf = karma_sature_font_23.render(str(remaining_flags), False, "Black")
+                reshuffle_count_surf = karma_sature_font_23.render(str(reshuffle_count), False, "Black")
                 screen.fill((140, 140, 140))
                 pygame.draw.rect(screen, (195, 195, 195), (5, 5, max(width*30 + dw, 190), height*30+dh*2))
                 plot_empty_field(width, height)
@@ -370,10 +413,11 @@ def main():
                 else:
                     screen.blit(save_icon_off_surf, (screen_width_game - 46, 10))
             else:
-                reshuffle_count_surf = karma_font_23.render(str(reshuffle_count), False, "Black")
-                game_time = int(time.time() - previous_time)
-                game_time_surf = karma_font_23.render(str(game_time), False, "Black")
-                remaining_flags_surf = karma_font_23.render(str(remaining_flags), False, "Black")
+                reshuffle_count_surf = karma_sature_font_23.render(str(reshuffle_count), False, "Black")
+                if it%fps == 0:
+                    game_time += 1
+                game_time_surf = karma_sature_font_23.render(str(game_time), False, "Black")
+                remaining_flags_surf = karma_sature_font_23.render(str(remaining_flags), False, "Black")
                 screen.fill((140, 140, 140))
                 pygame.draw.rect(screen, (195, 195, 195), (5, 5, max(width*30 + dw, 190), height*30+dh*2))
                 plot_bool_field(bool_field, field)
@@ -417,7 +461,7 @@ def main():
                 y_offset += text_surf.get_height()
 
         pygame.display.flip()
-        clock.tick(60) # Limits the game to 60 fps, better for slower CPU
+        clock.tick(fps) # Limits the game to 60 fps, better for slower CPU
         it += 1
 
 if __name__ == "__main__":
