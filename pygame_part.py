@@ -299,7 +299,7 @@ def main():
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
                             width, height, pocet_min, difficulty = 15, 12, 35, "Medium"
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min, difficulty = 28, 20, 80, "Hard"
+                            width, height, pocet_min, difficulty = 28, 20, 90, "Hard"
                         elif back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             menu = True
@@ -311,7 +311,7 @@ def main():
                             additional_dw = max(0, (200 - width*30 - dw - 10)/2)
                             reshuffle_count = 3
                             mines_rect = pygame.Rect(dw + additional_dw, dh, width*30, height*30)
-                            screen_width_game = max(width*30 + dw + 10, 200)
+                            screen_width_game = max(width*30 + dw * 2, 200)
                             screen_height_game = height*30 + 2*dh + 10
                             
                             screen = pygame.display.set_mode((screen_width_game, screen_height_game))
@@ -433,6 +433,8 @@ def main():
                                 slot = 1
                             elif save_slot_rects[2].collidepoint(pygame.mouse.get_pos()):
                                 slot = 2
+                            if load_game(slot) is None:
+                                continue
                             data = load_game(slot)
                             field = np.array(data["field"])
                             bool_field = np.array(data["boolField"])
@@ -447,7 +449,7 @@ def main():
                             game = True
                             additional_dw = max(0, (200 - width*30 - dw - 10)/2)
                             mines_rect = pygame.Rect(dw + additional_dw, dh, width*30, height*30)
-                            screen_width_game = max(width*30 + dw + 10, 200)
+                            screen_width_game = max(width*30 + dw * 2, 200)
                             screen_height_game = height*30 + 2*dh + 10
                             screen = pygame.display.set_mode((screen_width_game, screen_height_game))
             elif save_screen:
