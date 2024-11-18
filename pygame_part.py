@@ -25,6 +25,9 @@ reshuffle_count = 3
 field = []
 bool_field = []
 current_it = 0
+cell_size = 30
+difficulty = str()
+data_list = []
 
 MENU_SCREEN_DIMENSIONS = (480, 540)
 GAME_SCREEN_DIMENSIONS = (1024, 768)
@@ -69,6 +72,9 @@ flag_only_surf_big = pygame.transform.scale_by(flag_only_surf, 1.5)
 save_icon_on_surf = pygame.image.load("surfaces/save_icon_on.png").convert_alpha()
 save_icon_off_surf = pygame.image.load("surfaces/save_icon_off.png").convert_alpha()
 transparent_bg_surf = pygame.image.load("surfaces/transparent_bg_80.png").convert_alpha()
+empty_save_surf = pygame.image.load("surfaces/empty_save.png").convert_alpha()
+filled_save_surf = pygame.image.load("surfaces/filled_save.png").convert_alpha()
+game_save_surfs = [pygame.image.load("surfaces/filled_save.png").convert_alpha() for _ in range(3)]
 
 
 # Create rectangles
@@ -86,6 +92,15 @@ back_arrow_rect = back_arrow_surf_off.get_rect(topleft = (20, 20))
 back_arrow_rect_small = back_arrow_surf_off_small.get_rect(topleft = (10, 15))
 reshuffle_rect = reshuffle_on_surf.get_rect(bottomleft = (10, 20))
 flag_rect = flag_only_surf.get_rect(bottomright = (screen_width-10, screen_height-10))
+
+save_slot_width = empty_save_surf.get_width()
+save_slot_height = empty_save_surf.get_height()
+save_slot_rects = []
+save_y_offset = 160
+for slot in range(3):
+    save_slot_rect = pygame.Rect(screen_width/2 - save_slot_width/2, save_y_offset, save_slot_width, save_slot_height)
+    save_slot_rects.append(save_slot_rect)
+    save_y_offset += 95
 
 
 """Functions for mine_menu background generation"""
@@ -130,7 +145,8 @@ def update_cell(buffer_surface, mine_field, cell_size=30):
 
 save_slots = ["save1.json", "save2.json", "save3.json"]
 
-def load_game(slot):
+#Stará podoba funkcí
+"""def load_game(slot):
     filename = "saves/" + save_slots[slot]
     if os.path.exists(filename):
         print(filename)
@@ -142,13 +158,39 @@ def load_game(slot):
 def save_game(slot):
     filename = "saves/" + save_slots[slot]
     with open(filename, 'w') as f:
-        json.dump(data, f)
+        json.dump(data, f)"""
+
+def load_game(slot):
+    filename = "saves/" + save_slots[slot]
+    if os.path.exists(filename):
+        try:
+            with open(filename, 'r') as f:
+                data = json.load(f)
+                print(f"Loaded save from {filename}")
+                return data
+        except (json.JSONDecodeError, ValueError) as e:
+            print(f"Error loading {filename}: {e}")
+            return None  # Return None if file is invalid
+    else:
+        print(f"Save file {filename} does not exist.")
+        return None  # Return None if file does not exist
+
+
+def save_game(slot, data):
+    filename = "saves/" + save_slots[slot]
+    try:
+        with open(filename, 'w') as f:
+            json.dump(data, f)
+            print(f"Game saved to {filename}")
+    except Exception as e:
+        print(f"Error saving to {filename}: {e}")
 
 
 # Part for loading fonts
 karma_font_160 = pygame.font.Font("fonts/KarmaFuture.otf", 160)
 karma_font_60 = pygame.font.Font("fonts/KarmaFuture.otf", 60)
 karma_sature_font_23 = pygame.font.Font("fonts/KarmaSuture.otf", 23)
+karma_sature_font_30 = pygame.font.Font("fonts/KarmaSuture.otf", 30)
 karma_font_35 = pygame.font.Font("fonts/KarmaFuture.otf", 35)
 
 # Part for loading texts
@@ -156,6 +198,8 @@ text_miny_surf = karma_font_160.render("Miny", False, "Black")
 text_miny_rect = text_miny_surf.get_rect(midtop=(screen_width/2, 40))
 text_difficulty_surf = karma_font_60.render("Difficulty", False, "Black")
 text_difficulty_rect = text_difficulty_surf.get_rect(midtop=(screen_width/2, 70))
+text_save_system_surf = karma_font_60.render("Save system", False, "Black")
+text_save_system_rect = text_save_system_surf.get_rect(midtop=(screen_width/2, 70))
 victory_lines = ["Press space", "to return", "to main menu"]
 text_victory_surfs = [karma_sature_font_23.render(text, False, "White") for text in victory_lines]
 text_victory_surf = karma_font_35.render("You won!", False, "White")
@@ -166,7 +210,7 @@ text_miny_rect = text_miny_surf.get_rect(midtop=(screen_width/2, 40))
 clock = pygame.time.Clock()
 mine_field = random_mine_screen_generation(screen_width, screen_height)
 draw_to_buffer(buffer_surface, mine_field)
-
+data_list = [load_game(slot) or {} for slot in range(3)]
 
 def plot_bool_field(bool_field, field, cell_size = 30): # minefield plotting
     for row in range(len(field)):
@@ -212,7 +256,8 @@ def main():
     new_game_menu = False
     end_game_screen = False
     game = False
-    global screen, screen_height_game, screen_width_game, additional_dw, previous_time, remaining_flags, data, current_it
+    save_screen = False
+    global screen, screen_height_game, screen_width_game, additional_dw, previous_time, remaining_flags, data_list, current_it
     mines_rect = pygame.Rect(0, 0, 0, 0)
 
     while True: 
@@ -229,32 +274,19 @@ def main():
                             new_game_menu = True
                             menu = False
                         elif load_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            data = load_game(0)
-                            field = np.array(data["field"])
-                            bool_field = np.array(data["boolField"])
-                            width = len(field[0])
-                            height = len(field)
-                            reshuffle_count = data["reshuffleCount"]
-                            game_time = data["timePlayed"]
-                            pocet_min = data["mineCount"]
-                            first_click = False
                             menu = False
-                            game = True
-                            additional_dw = max(0, (200 - width*30 - dw - 10)/2)
-                            mines_rect = pygame.Rect(dw + additional_dw, dh, width*30, height*30)
-                            screen_width_game = max(width*30 + dw + 10, 200)
-                            screen_height_game = height*30 + 2*dh + 10
-                            screen = pygame.display.set_mode((screen_width_game, screen_height_game))
+                            save_screen = True
+                            data_list = [load_game(slot) or {} for slot in range(3)]
             
             elif new_game_menu:  
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 1, 20, 2
+                            width, height, pocet_min, difficulty = 1, 20, 2, "Easy"
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 15, 12, 40
+                            width, height, pocet_min, difficulty = 15, 12, 40, "Medium"
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min = 41, 20, 101
+                            width, height, pocet_min, difficulty = 41, 20, 101, "Hard"
                         elif back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             menu = True
@@ -280,7 +312,7 @@ def main():
                     if event.type == pygame.MOUSEBUTTONUP:
                         if event.button == 1 and back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
                             game = False
-                            new_game_menu = True
+                            menu = True
                             first_click = True
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                     elif event.type == pygame.MOUSEBUTTONDOWN:  
@@ -296,7 +328,7 @@ def main():
                     if event.type == pygame.MOUSEBUTTONUP:
                         if event.button == 1 and back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
                             game = False
-                            new_game_menu = True
+                            menu = True
                             first_click = True
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                     elif event.type == pygame.MOUSEBUTTONDOWN:  
@@ -330,14 +362,18 @@ def main():
                                 bool_field[row][column] = 0
 
                         elif event.button == 1 and (screen_width_game - 46 < pygame.mouse.get_pos()[0] < screen_width_game - 10 and 10 < pygame.mouse.get_pos()[1] < 46):
-                            data = {
+                            slot = 1
+                            data_list[slot] = {
                                 "boolField":  bool_field.tolist(),
                                 "field": field.tolist(),
                                 "timePlayed": game_time,
                                 "reshuffleCount": reshuffle_count,
-                                "mineCount": pocet_min
+                                "mineCount": pocet_min,
+                                "difficulty": difficulty
                             }
-                            save_game(0)
+                            print(data_list)
+                            save_game(slot, data_list[slot])
+                            
 
             elif end_game_screen:
                 if event.type == pygame.KEYDOWN:
@@ -345,6 +381,39 @@ def main():
                         end_game_screen = False
                         menu = True
                         screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
+            
+            elif save_screen:
+                if event.type == pygame.MOUSEBUTTONUP:  
+                    if event.button == 1: 
+                        if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
+                            screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
+                            menu = True
+                            save_screen = False
+                        elif any(rect.collidepoint(pygame.mouse.get_pos()) for rect in save_slot_rects):
+                            if save_slot_rects[0].collidepoint(pygame.mouse.get_pos()):
+                                slot = 0
+                            elif save_slot_rects[1].collidepoint(pygame.mouse.get_pos()):
+                                slot = 1
+                            elif save_slot_rects[2].collidepoint(pygame.mouse.get_pos()):
+                                slot = 2
+                            data = load_game(slot)
+                            field = np.array(data["field"])
+                            bool_field = np.array(data["boolField"])
+                            width = len(field[0])
+                            height = len(field)
+                            reshuffle_count = data["reshuffleCount"]
+                            game_time = data["timePlayed"]
+                            pocet_min = data["mineCount"]
+                            difficulty = data["difficulty"]
+                            first_click = False
+                            save_screen = False
+                            game = True
+                            additional_dw = max(0, (200 - width*30 - dw - 10)/2)
+                            mines_rect = pygame.Rect(dw + additional_dw, dh, width*30, height*30)
+                            screen_width_game = max(width*30 + dw + 10, 200)
+                            screen_height_game = height*30 + 2*dh + 10
+                            screen = pygame.display.set_mode((screen_width_game, screen_height_game))
+                            
 
         # This part is for drawing pictures on the screen         
         if menu:  # this is drawn, while menu is active
@@ -451,14 +520,36 @@ def main():
                     plot_bool_field(bool_field, field)
                     print("Výhra")
                     screen.blit(transparent_bg_surf, (0, 0))
-            
-        if end_game_screen:
+                
+        elif end_game_screen:
             y_offset = 52
             add_y_offset = max(0, (screen_height_game - (2*dh+35))/2)
             screen.blit(text_victory_surf, (screen_width_game/2-text_victory_surf.get_width()/2, 5 + add_y_offset))
             for text_surf in text_victory_surfs:   
                 screen.blit(text_surf, (screen_width_game/2-text_surf.get_width()/2, y_offset + add_y_offset))
                 y_offset += text_surf.get_height()
+
+        elif save_screen:
+            screen.fill((200, 200, 200))
+            update_cell(buffer_surface, mine_field)
+            screen.blit(buffer_surface, (0, 0))
+            pygame.draw.rect(screen, (50, 50, 50), (screen_width/2-190, 50, 380, 420))
+            pygame.draw.rect(screen, (130, 130, 130), (screen_width/2-185, 55, 370, 410))
+            screen.blit(text_save_system_surf, text_save_system_rect)
+
+            if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
+                screen.blit(back_arrow_surf_on, back_arrow_rect)
+            else:
+                screen.blit(back_arrow_surf_off, back_arrow_rect)
+
+            for slot in range(3):
+                if load_game(slot) is None:
+                    screen.blit(empty_save_surf, save_slot_rects[slot])
+                else:
+                    game_save_surfs[slot].blit(pygame.image.load("surfaces/filled_save.png").convert_alpha(), (0, 0))
+                    game_save_surfs[slot].blit(karma_sature_font_30.render(data_list[slot]["difficulty"], False, "Black"), (10, 10))
+                    game_save_surfs[slot].blit(karma_sature_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue"), (220, 45))
+                    screen.blit(game_save_surfs[slot], save_slot_rects[slot])           
 
         pygame.display.flip()
         clock.tick(fps) # Limits the game to 60 fps, better for slower CPU
