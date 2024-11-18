@@ -77,7 +77,7 @@ def reshuffle(field, bool_field):
 def reveal_around_zeroes(field, bool_field):
     while len(queue) > 0:
         neighbours(queue[0][0], queue[0][1], field, bool_field)
-        reveal(queue[0][0], queue[0][1], bool_field, field)
+        reveal(queue[0][0], queue[0][1], bool_field)
         queue.pop(0)
 
 
@@ -96,7 +96,7 @@ def neighbours(row , column, field, bool_field): # variace na BFS
                 queue.append([rr, cc])
 
 
-def reveal(row, column, bool_field, field):
+def reveal(row, column, bool_field):
     for i in range(8):
         rr = row + dr[i]
         cc = column + dc[i]
@@ -106,8 +106,6 @@ def reveal(row, column, bool_field, field):
             continue
         elif bool_field[rr, cc] == 2:
             continue
-        if field[rr, cc] == 9:
-            print("Hra by skončila, actual podmínka TBA")
         bool_field[rr, cc] = 1
 
 

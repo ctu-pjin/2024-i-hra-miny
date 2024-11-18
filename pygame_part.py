@@ -208,8 +208,9 @@ text_save_system_surf = karma_font_60.render("Save system", False, "Black")
 text_save_system_rect = text_save_system_surf.get_rect(midtop=(screen_width/2, 70))
 text_load_system_surf = karma_font_60.render("Load system", False, "Black")
 victory_lines = ["Press space", "to return", "to main menu"]
-text_victory_surfs = [karma_sature_font_23.render(text, False, "White") for text in victory_lines]
+text_press_space_surfs = [karma_sature_font_23.render(text, False, "White") for text in victory_lines]
 text_victory_surf = karma_font_35.render("You won!", False, "White")
+text_lose_surf = karma_font_35.render("You lost!", False, "White")
 text_miny_rect = text_miny_surf.get_rect(midtop=(screen_width/2, 40))
 
 
@@ -264,10 +265,11 @@ def main():
     menu = True
     first_click = False
     new_game_menu = False
-    end_game_screen = False
+    win_screen = False
     game = False
     load_screen = False
     save_screen = False
+    end_screen = False
     global screen, screen_height_game, screen_width_game, additional_dw, previous_time, remaining_flags, data_list, current_it
     mines_rect = pygame.Rect(0, 0, 0, 0)
 
@@ -293,11 +295,11 @@ def main():
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min, difficulty = 1, 20, 2, "Easy"
+                            width, height, pocet_min, difficulty = 9, 9, 10, "Easy"
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min, difficulty = 15, 12, 40, "Medium"
+                            width, height, pocet_min, difficulty = 15, 12, 35, "Medium"
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min, difficulty = 41, 20, 101, "Hard"
+                            width, height, pocet_min, difficulty = 28, 20, 80, "Hard"
                         elif back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             menu = True
@@ -350,7 +352,19 @@ def main():
                             row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw)
                             if bool_field[row][column] == 1 and pole_funkce.verify_amount_of_flags(field, bool_field, row, column):
                                 field, bool_field = pole_funkce.cluster_reveal(field, bool_field, row, column)
-
+                                for i in empty_cells_to_plot:
+                                    if field[i[1]][i[0]] == 9:
+                                        for radek in range((len(bool_field))):
+                                            for sloupec in range((len(bool_field[0]))):
+                                                if field[radek][sloupec] == 9:
+                                                    bool_field[radek][sloupec] = 1
+                                        plot_bool_field(bool_field, field)
+                                        pygame.display.flip()
+                                        time.sleep(1.5)
+                                        screen.blit(transparent_bg_surf, (0, 0))
+                                        end_screen = True
+                                        game = False
+                                        first_click = True
                             empty_cells_to_plot.clear()
                         
                         elif event.button == 1 and (screen_width_game - 46 < pygame.mouse.get_pos()[0] < screen_width_game - 10 and 10 < pygame.mouse.get_pos()[1] < 46):
@@ -370,8 +384,18 @@ def main():
                             if bool_field[row][column] == 2:
                                 continue
                             if field[row][column] == 9:
-                                print("konec hry")
-                                #exit()
+                                for radek in range((len(bool_field))):
+                                    for sloupec in range((len(bool_field[0]))):
+                                        if field[radek][sloupec] == 9:
+                                            bool_field[radek][sloupec] = 1
+                                plot_bool_field(bool_field, field)
+                                pygame.display.flip()
+                                time.sleep(1.5)
+                                screen.blit(transparent_bg_surf, (0, 0))
+                                end_screen = True
+                                game = False
+                                first_click = True
+                            
                             field, bool_field = pole_funkce.update_field(field, bool_field, row, column)
 
                         elif event.button == 2 and mines_rect.collidepoint(pygame.mouse.get_pos()):
@@ -387,13 +411,14 @@ def main():
                             elif bool_field[row][column] == 2:
                                 bool_field[row][column] = 0
 
-            elif end_game_screen:
+            elif win_screen or end_screen:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        end_game_screen = False
+                        win_screen = False
+                        end_screen = False
                         menu = True
                         screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
-            
+
             elif load_screen:
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
@@ -560,22 +585,20 @@ def main():
                         screen.blit(null_surf, (i[0]*cell_size+dw+additional_dw, i[1]*cell_size+dh))
 
                 if np.count_nonzero(bool_field == 1) >= width * height - pocet_min:
-                    for radek in range((len(bool_field))):
-                        for sloupec in range((len(bool_field[0]))):
-                            if field[radek][sloupec] == 9:
-                                bool_field[radek][sloupec] = 1
-                    end_game_screen = True
+                    win_screen = True
                     game = False
                     first_click = True
                     plot_bool_field(bool_field, field)
-                    print("Výhra")
                     screen.blit(transparent_bg_surf, (0, 0))
                 
-        elif end_game_screen:
+        elif win_screen or end_screen:
             y_offset = 52
             add_y_offset = max(0, (screen_height_game - (2*dh+35))/2)
-            screen.blit(text_victory_surf, (screen_width_game/2-text_victory_surf.get_width()/2, 5 + add_y_offset))
-            for text_surf in text_victory_surfs:   
+            if win_screen:
+                screen.blit(text_victory_surf, (screen_width_game/2-text_victory_surf.get_width()/2, 5 + add_y_offset))
+            else:
+                screen.blit(text_lose_surf, (screen_width_game/2-text_lose_surf.get_width()/2, 5 + add_y_offset))
+            for text_surf in text_press_space_surfs:   
                 screen.blit(text_surf, (screen_width_game/2-text_surf.get_width()/2, y_offset + add_y_offset))
                 y_offset += text_surf.get_height()
 
