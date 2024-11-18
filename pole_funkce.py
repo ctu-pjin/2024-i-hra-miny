@@ -8,6 +8,22 @@ queue = []
 
 pg.init()
 
+def neighbouring_cells_without_turning(row, column, bool_field):
+    empty_cells_to_plot = []
+    if bool_field[row, column] == 0:
+        empty_cells_to_plot.append([column, row])
+    for i in range(8):
+        rr = row + dr[i]
+        cc = column + dc[i]
+        if rr < 0 or rr >= len(bool_field): # výška
+            continue
+        elif cc < 0 or cc >= len(bool_field[0]): # šířka
+            continue
+        if bool_field[rr, cc] == 0:
+            empty_cells_to_plot.append([cc, rr])
+    return empty_cells_to_plot
+
+
 def verify_amount_of_flags(field, bool_field, row, column):
     sub_array = bool_field[max(0, row-1):row+2, max(0, column-1):column+2]
     if np.count_nonzero(sub_array == 2) == field[row][column]:
@@ -15,10 +31,12 @@ def verify_amount_of_flags(field, bool_field, row, column):
     else:
         return False
 
+
 def cluster_reveal(field, bool_field, row, column):
     queue.append([row, column])
     reveal_around_zeroes(field, bool_field)
     return field, bool_field
+
 
 def uncaged_mines(field, bool_field):
     caged_mines = 0
@@ -31,6 +49,7 @@ def uncaged_mines(field, bool_field):
                 field[i,j] = -1
     uncaged_mines = total_mines - caged_mines
     return uncaged_mines, field
+
 
 def reshuffle(field, bool_field):
     number_of_mines_to_shuffle, field = uncaged_mines(field, bool_field)
@@ -54,11 +73,13 @@ def reshuffle(field, bool_field):
     reveal_around_zeroes(field, bool_field)
     return field, bool_field
 
+
 def reveal_around_zeroes(field, bool_field):
     while len(queue) > 0:
         neighbours(queue[0][0], queue[0][1], field, bool_field)
         reveal(queue[0][0], queue[0][1], bool_field, field)
         queue.pop(0)
+
 
 def neighbours(row , column, field, bool_field): # variace na BFS
     global dr, dc, queue
@@ -74,6 +95,7 @@ def neighbours(row , column, field, bool_field): # variace na BFS
                 bool_field[rr, cc] = 1
                 queue.append([rr, cc])
 
+
 def reveal(row, column, bool_field, field):
     for i in range(8):
         rr = row + dr[i]
@@ -88,8 +110,10 @@ def reveal(row, column, bool_field, field):
             print("Hra by skončila, actual podmínka TBA")
         bool_field[rr, cc] = 1
 
+
 def random_mine(width, height):
     return rand.randint(0,height-1), rand.randint(0,width-1)
+
 
 def  update_field(field, bool_field, row, column):
     if field[row][column] == 0:
@@ -103,6 +127,7 @@ def  update_field(field, bool_field, row, column):
         bool_field[row, column] = 1
     return field, bool_field
 
+
 def count_field(field):
     for i, row in enumerate(field):
             for j, item in enumerate(row):
@@ -112,6 +137,7 @@ def count_field(field):
                     sub_array = field[max(0, i-1):i+2, max(0, j-1):j+2]
                     field[i,j] = np.count_nonzero(sub_array == 9)
     return field
+
 
 def field_description(width, height, mines, row, column):
     starting_row, starting_column = row, column
@@ -163,6 +189,4 @@ def click(x, y, dw, dh, add_dw = 0, cell_size = 30):
     row = int((y - dh)/cell_size)
     column = int((x-dw-add_dw)/cell_size)
     return row, column
-
-
 
