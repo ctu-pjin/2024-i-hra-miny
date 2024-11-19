@@ -376,9 +376,9 @@ def main():
 
                         elif event.button == 2 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
-                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, cell_size)
-                            if bool_field[row][column] == 1 and pole_funkce.verify_amount_of_flags(field, bool_field, row, column):
-                                field, bool_field = pole_funkce.cluster_reveal(field, bool_field, row, column)
+                            up_row, up_column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, cell_size)
+                            if bool_field[up_row][up_column] == 1 and pole_funkce.verify_amount_of_flags(field, bool_field, up_row, up_column) and up_row == down_row and up_column == down_column:
+                                field, bool_field = pole_funkce.cluster_reveal(field, bool_field, up_row, up_column)
                                 for i in empty_cells_to_plot:
                                     if field[i[1]][i[0]] == 9:
                                         for radek in range((len(bool_field))):
@@ -427,8 +427,8 @@ def main():
 
                         elif event.button == 2 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
-                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, cell_size)
-                            empty_cells_to_plot = pole_funkce.neighbouring_cells_without_turning(row, column, bool_field)
+                            down_row, down_column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, cell_size)
+                            empty_cells_to_plot = pole_funkce.neighbouring_cells_without_turning(down_row, down_column, bool_field)
 
                         elif event.button == 3 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
