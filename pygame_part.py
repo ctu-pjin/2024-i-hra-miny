@@ -64,6 +64,7 @@ five_surf = pygame.image.load("mines/five.png").convert()
 six_surf = pygame.image.load("mines/six.png").convert()
 null_surf = pygame.image.load("mines/empty.png").convert()
 mine_surf = pygame.image.load("mines/mine.png").convert()
+mine_purple_surf = pygame.image.load("mines/mine_purple.png").convert()
 flag_surf = pygame.image.load("mines/flag.png").convert()
 seven_surf = pygame.image.load("mines/seven.png").convert()
 eight_surf = pygame.image.load("mines/eight.png").convert()
@@ -177,19 +178,6 @@ def update_cell(buffer_surface, mine_field, cell_size=30):
 save_slots = ["save1.json", "save2.json", "save3.json"]
 
 #Stará podoba funkcí
-"""def load_game(slot):
-    filename = "saves/" + save_slots[slot]
-    if os.path.exists(filename):
-        print(filename)
-        with open(filename, 'r') as f:
-            return json.load(f)
-    else:
-        return None
-    
-def save_game(slot):
-    filename = "saves/" + save_slots[slot]
-    with open(filename, 'w') as f:
-        json.dump(data, f)"""
 
 def load_game(slot):
     filename = "saves/" + save_slots[slot]
@@ -197,15 +185,15 @@ def load_game(slot):
         try:
             with open(filename, 'r') as f:
                 data = json.load(f)
-                print(f"Loaded save from {filename}")
+                #print(f"Loaded save from {filename}")
                 return data
             
         except (json.JSONDecodeError, ValueError) as e:
-            print(f"Error loading {filename}: {e}")
+            #print(f"Error loading {filename}: {e}")
             return None  # Return None if file is invalid
         
     else:
-        print(f"Save file {filename} does not exist.")
+        #print(f"Save file {filename} does not exist.")
         return None  # Return None if file does not exist
 
 
@@ -214,9 +202,10 @@ def save_game(slot, data):
     try:
         with open(filename, 'w') as f:
             json.dump(data, f)
-            print(f"Game saved to {filename}")
+            #print(f"Game saved to {filename}")
     except Exception as e:
-        print(f"Error saving to {filename}: {e}")
+        ...
+        #print(f"Error saving to {filename}: {e}")
 
 
 # Part for loading fonts
@@ -297,7 +286,7 @@ def main():
     load_screen = False
     save_screen = False
     end_screen = False
-    global screen, screen_height_game, screen_width_game, additional_dw, previous_time, remaining_flags, data_list, current_it
+    global screen, screen_height_game, screen_width_game, additional_dw, previous_time, remaining_flags, data_list, current_it, scale_factor
     mines_rect = pygame.Rect(0, 0, 0, 0)
 
     while True: 
@@ -322,7 +311,7 @@ def main():
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min, difficulty = 9, 9, 10, "Easy"
+                            width, height, pocet_min, difficulty = 4, 10, 4, "Easy"
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
                             width, height, pocet_min, difficulty = 15, 12, 35, "Medium"
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
@@ -416,6 +405,7 @@ def main():
                                         if field[radek][sloupec] == 9:
                                             bool_field[radek][sloupec] = 1
                                 plot_bool_field(bool_field, field, cell_size)
+                                screen.blit(mine_purple_surf, (column*cell_size+dw+additional_dw, row*cell_size+dh))
                                 pygame.display.flip()
                                 time.sleep(1.5)
                                 screen.blit(transparent_bg_surf, (0, 0))
@@ -471,6 +461,7 @@ def main():
                             game_time = data["timePlayed"]
                             pocet_min = data["mineCount"]
                             difficulty = data["difficulty"]
+                            remaining_flags = data["remainingFlags"]
                             first_click = False
                             load_screen = False
                             game = True
@@ -499,7 +490,8 @@ def main():
                                 "timePlayed": game_time,
                                 "reshuffleCount": reshuffle_count,
                                 "mineCount": pocet_min,
-                                "difficulty": difficulty
+                                "difficulty": difficulty,
+                                "remainingFlags": remaining_flags
                             }
                             save_game(slot, data_list[slot])                           
 
@@ -631,13 +623,16 @@ def main():
                 screen.blit(text_surf, (screen_width_game/2-text_surf.get_width()/2, y_offset + add_y_offset))
                 y_offset += text_surf.get_height()
 
-        elif load_screen:
+        elif load_screen or save_screen:
             screen.fill((200, 200, 200))
             update_cell(buffer_surface, mine_field, cell_size)
             screen.blit(buffer_surface, (0, 0))
             pygame.draw.rect(screen, (50, 50, 50), (screen_width/2-190, 50, 380, 420))
             pygame.draw.rect(screen, (130, 130, 130), (screen_width/2-185, 55, 370, 410))
-            screen.blit(text_load_system_surf, text_save_system_rect)
+            if load_screen:
+                screen.blit(text_load_system_surf, text_save_system_rect)
+            else:
+                screen.blit(text_save_system_surf, text_save_system_rect)
 
             if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                 screen.blit(back_arrow_surf_on, back_arrow_rect)
@@ -650,30 +645,12 @@ def main():
                 else:
                     game_save_surfs[slot].blit(pygame.image.load("surfaces/filled_save.png").convert_alpha(), (0, 0))
                     game_save_surfs[slot].blit(karma_sature_font_30.render(data_list[slot]["difficulty"], False, "Black"), (10, 10))
-                    game_save_surfs[slot].blit(karma_sature_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue"), (220, 45))
+                    game_save_surfs[slot].blit(flag_only_surf, (game_save_surfs[slot].get_width() - flag_only_surf.get_width() - 10, 15))
+                    game_save_surfs[slot].blit(karma_sature_font_23.render(str(data_list[slot]["remainingFlags"]), False, "Black"), (game_save_surfs[slot].get_width() - karma_sature_font_23.render(str(data_list[slot]["remainingFlags"]),  False, "Black").get_width() - flag_only_surf.get_width() - 15, 11))
+                    game_save_surfs[slot].blit(karma_sature_font_23.render(str(len(data_list[slot]["field"])) + "x" + str(len(data_list[slot]["field"][0])),  False, "Black"), (10, 45))
+                    game_save_surfs[slot].blit(karma_sature_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue"), (game_save_surfs[slot].get_width() - karma_sature_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue").get_width() - 10, 45))
                     screen.blit(game_save_surfs[slot], save_slot_rects[slot]) 
 
-        elif save_screen:
-            screen.fill((200, 200, 200))
-            update_cell(buffer_surface, mine_field, cell_size)
-            screen.blit(buffer_surface, (0, 0))
-            pygame.draw.rect(screen, (50, 50, 50), (screen_width/2-190, 50, 380, 420))
-            pygame.draw.rect(screen, (130, 130, 130), (screen_width/2-185, 55, 370, 410))
-            screen.blit(text_save_system_surf, text_save_system_rect)
-
-            if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
-                screen.blit(back_arrow_surf_on, back_arrow_rect)
-            else:
-                screen.blit(back_arrow_surf_off, back_arrow_rect)
-
-            for slot in range(3):
-                if load_game(slot) is None:
-                    screen.blit(empty_save_surf, save_slot_rects[slot])
-                else:
-                    game_save_surfs[slot].blit(pygame.image.load("surfaces/filled_save.png").convert_alpha(), (0, 0))
-                    game_save_surfs[slot].blit(karma_sature_font_30.render(data_list[slot]["difficulty"], False, "Black"), (10, 10))
-                    game_save_surfs[slot].blit(karma_sature_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue"), (220, 45))
-                    screen.blit(game_save_surfs[slot], save_slot_rects[slot])           
 
         pygame.display.flip()
         clock.tick(fps) # Limits the game to 60 fps, better for slower CPU
