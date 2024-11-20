@@ -118,9 +118,6 @@ def  update_field(field, bool_field, row, column):
         queue.append([row, column])
         bool_field[row, column] = 1
         reveal_around_zeroes(field, bool_field)
-    elif field[row][column] == 9:
-        # to write
-        bool_field[row, column] = 1
     else:
         bool_field[row, column] = 1
     return field, bool_field
@@ -162,24 +159,18 @@ def field_description(width, height, mines, row, column):
         elif cc < 0 or cc >= len(bool_field[0]): # šířka
             continue
         not_mines_positions.add((rr, cc))
-    print(not_mines_positions)
-    while True:
-        field = np.zeros((height, width), dtype=int)
-        bool_field = np.zeros((height, width), dtype=int)
-        mines_position = set()
-        for i in range(mines):
+    mines_position = set()
+    for i in range(mines):
+        position = random_mine(width,height)
+        while position in mines_position or position in not_mines_positions:
             position = random_mine(width,height)
-            while position in mines_position or position in not_mines_positions:
-                position = random_mine(width,height)
-            field[position] = 9
-            mines_position.add(position)
-        field = count_field(field)
-        sub_array = field[max(0,starting_row-1):starting_row+2, max(0,starting_column-1):starting_column+2]
-        if field[starting_row,starting_column] == 0 and np.count_nonzero(sub_array == 0) > 1:
-            queue.append([starting_row, starting_column])
-            bool_field[starting_row, starting_column] = 1
-            reveal_around_zeroes(field, bool_field)
-            break
+        field[position] = 9
+        mines_position.add(position)
+    field = count_field(field)
+    sub_array = field[max(0,starting_row-1):starting_row+2, max(0,starting_column-1):starting_column+2]
+    queue.append([starting_row, starting_column])
+    bool_field[starting_row, starting_column] = 1
+    reveal_around_zeroes(field, bool_field)
     return field, bool_field
         
 

@@ -177,7 +177,6 @@ def update_cell(buffer_surface, mine_field, cell_size=30):
 
 save_slots = ["save1.json", "save2.json", "save3.json"]
 
-#Stará podoba funkcí
 
 def load_game(slot):
     filename = "saves/" + save_slots[slot]
@@ -315,7 +314,7 @@ def main():
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
                             width, height, pocet_min, difficulty = 15, 12, 35, "Medium"
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min, difficulty = 28, 20, 90, "Hard"
+                            width, height, pocet_min, difficulty = 28, 20, 100, "Hard"
                         elif back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             menu = True
