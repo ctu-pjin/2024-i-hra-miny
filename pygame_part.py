@@ -65,12 +65,12 @@ six_surf = pygame.image.load("mines/six.png").convert()
 null_surf = pygame.image.load("mines/empty.png").convert()
 mine_surf = pygame.image.load("mines/mine.png").convert()
 mine_purple_surf = pygame.image.load("mines/mine_purple.png").convert()
+mine_explode_surf = pygame.image.load("mines/mine_explode.png").convert()
 flag_surf = pygame.image.load("mines/flag.png").convert()
 seven_surf = pygame.image.load("mines/seven.png").convert()
 eight_surf = pygame.image.load("mines/eight.png").convert()
 
-scale_factor = 1
-
+scale_factor = 0.8
 def scale_surface(surface, scale):
     width, height = surface.get_size()
     if scale == 1:
@@ -78,18 +78,20 @@ def scale_surface(surface, scale):
     else:
         return pygame.transform.smoothscale(surface, (int(width * scale), int(height * scale)))
 
-box_surf = scale_surface(box_surf, scale_factor)
-one_surf = scale_surface(one_surf, scale_factor)
-two_surf = scale_surface(two_surf, scale_factor)
-three_surf = scale_surface(three_surf, scale_factor)
-four_surf = scale_surface(four_surf, scale_factor)
-five_surf = scale_surface(five_surf, scale_factor)
-six_surf = scale_surface(six_surf, scale_factor)
-null_surf = scale_surface(null_surf, scale_factor)
-mine_surf = scale_surface(mine_surf, scale_factor)
-flag_surf = scale_surface(flag_surf, scale_factor)
-seven_surf = scale_surface(seven_surf, scale_factor)
-eight_surf = scale_surface(eight_surf, scale_factor)
+one_surf_game = scale_surface(one_surf, scale_factor)
+box_surf_game = scale_surface(box_surf, scale_factor)
+two_surf_game = scale_surface(two_surf, scale_factor)
+three_surf_game = scale_surface(three_surf, scale_factor)
+four_surf_game = scale_surface(four_surf, scale_factor)
+five_surf_game = scale_surface(five_surf, scale_factor)
+six_surf_game = scale_surface(six_surf, scale_factor)
+null_surf_game = scale_surface(null_surf, scale_factor)
+mine_surf_game = scale_surface(mine_surf, scale_factor)
+mine_explode_surf_game = scale_surface(mine_explode_surf, scale_factor)
+flag_surf_game = scale_surface(flag_surf, scale_factor)
+seven_surf_game = scale_surface(seven_surf, scale_factor)
+eight_surf_game = scale_surface(eight_surf, scale_factor)
+
 
 
 cell_size *= scale_factor
@@ -136,8 +138,11 @@ for slot in range(3):
 
 
 """Functions for mine_menu background generation"""
-def random_mine_surf():
-    return choice([box_surf] * 30 + [null_surf, flag_surf] * 5 + [mine_surf] * 2 + [one_surf] * 4 + [two_surf] * 3 + [three_surf, four_surf, five_surf] * 2 + [six_surf, seven_surf, eight_surf])
+def random_mine_surf(scale = True):
+    if scale is True:
+        return choice([box_surf_game] * 30 + [null_surf_game, flag_surf_game] * 5 + [mine_surf_game] * 2 + [one_surf_game] * 4 + [two_surf_game] * 3 + [three_surf_game, four_surf_game, five_surf_game] * 2 + [six_surf_game, seven_surf_game, eight_surf_game])
+    else:
+        return choice([box_surf] * 30 + [null_surf, flag_surf] * 5 + [mine_surf] * 2 + [one_surf] * 4 + [two_surf] * 3 + [three_surf, four_surf, five_surf] * 2 + [six_surf, seven_surf, eight_surf])
 
 
 def random_mine_screen_plot(w, h, mine_field):
@@ -160,7 +165,7 @@ def random_mine_screen_generation(w, h, cell_size = 30):
     for _ in range(int(h/cell_size)):
         radek = []
         for _ in range(int(w/cell_size)):
-            radek.append(random_mine_surf())
+            radek.append(random_mine_surf(scale = False))
         mine_field.append(radek)
     return mine_field
 
@@ -169,7 +174,7 @@ def update_cell(buffer_surface, mine_field, cell_size=30):
     """Randomly update a specific cell in the minefield and redraw it on the buffer."""
     row = randint(0, len(mine_field) - 1)
     col = randint(0, len(mine_field[0]) - 1)
-    mine_field[row][col] = random_mine_surf()
+    mine_field[row][col] = random_mine_surf(scale = False)
     buffer_surface.blit(mine_field[row][col], (col * cell_size, row * cell_size))
 
 
@@ -231,8 +236,8 @@ text_miny_rect = text_miny_surf.get_rect(midtop=(screen_width/2, 40))
 
 
 clock = pygame.time.Clock()
-mine_field = random_mine_screen_generation(screen_width, screen_height, cell_size)
-draw_to_buffer(buffer_surface, mine_field, cell_size)
+mine_field = random_mine_screen_generation(screen_width, screen_height)
+draw_to_buffer(buffer_surface, mine_field)
 data_list = [load_game(slot) or {} for slot in range(3)]
 
 
@@ -241,37 +246,37 @@ def plot_bool_field(bool_field, field, cell_size = 30): # minefield plotting
         for col in range(len(field[row])):
             match bool_field[row,col]:
                 case 0:
-                    screen.blit(box_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                    screen.blit(box_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                 case 1:
                     match field[row,col]:
                         case 0:
-                            screen.blit(null_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(null_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 1: 
-                            screen.blit(one_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(one_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 2: 
-                            screen.blit(two_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(two_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 3: 
-                            screen.blit(three_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(three_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 4: 
-                            screen.blit(four_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(four_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 5: 
-                            screen.blit(five_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(five_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 6: 
-                            screen.blit(six_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(six_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 7: 
-                            screen.blit(seven_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(seven_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 8: 
-                            screen.blit(eight_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(eight_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                         case 9: 
-                            screen.blit(mine_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(mine_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
                 case 2:
-                    screen.blit(flag_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                    screen.blit(flag_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
 
 
 def plot_empty_field(width, height, cell_size = 30):
     for row in range(height):
         for col in range(width):
-            screen.blit(box_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+            screen.blit(box_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
 
 
 def main():
@@ -314,7 +319,8 @@ def main():
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
                             width, height, pocet_min, difficulty = 15, 12, 35, "Medium"
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min, difficulty = 28, 20, 100, "Hard"
+                            #width, height, pocet_min, difficulty = 28, 20, 100, "Hard"
+                            width, height, pocet_min, difficulty = 50, 34, 270, "Hard"
                         elif back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             menu = True
@@ -404,7 +410,7 @@ def main():
                                         if field[radek][sloupec] == 9:
                                             bool_field[radek][sloupec] = 1
                                 plot_bool_field(bool_field, field, cell_size)
-                                screen.blit(mine_purple_surf, (column*cell_size+dw+additional_dw, row*cell_size+dh))
+                                screen.blit(mine_explode_surf_game, (column*cell_size+dw+additional_dw, row*cell_size+dh))
                                 pygame.display.flip()
                                 time.sleep(1.5)
                                 screen.blit(transparent_bg_surf, (0, 0))
@@ -498,7 +504,7 @@ def main():
         if menu:  # this is drawn, while menu is active
             screen.fill((255, 255, 255))  # Creates a white screen (to erase the previos iteration)
             #pygame.draw.rect(screen, (255, 0, 0), (0, 0, 80, 80))  # Draw a red rectangle
-            update_cell(buffer_surface, mine_field, cell_size)
+            update_cell(buffer_surface, mine_field)
             screen.blit(buffer_surface, (0, 0))
 
             if new_game_rect_on.collidepoint(pygame.mouse.get_pos()):
@@ -515,7 +521,7 @@ def main():
 
         elif new_game_menu: # this is drawn, while new game menu is active
             screen.fill((200, 200, 200))
-            update_cell(buffer_surface, mine_field, cell_size)
+            update_cell(buffer_surface, mine_field)
             screen.blit(buffer_surface, (0, 0))
             pygame.draw.rect(screen, (50, 50, 50), (screen_width/2-160, 50, 320, 420))
             pygame.draw.rect(screen, (130, 130, 130), (screen_width/2-155, 55, 310, 410))
@@ -602,7 +608,7 @@ def main():
 
                 if len(empty_cells_to_plot) > 0:
                     for i in empty_cells_to_plot:
-                        screen.blit(null_surf, (i[0]*cell_size+dw+additional_dw, i[1]*cell_size+dh))
+                        screen.blit(null_surf_game, (i[0]*cell_size+dw+additional_dw, i[1]*cell_size+dh))
 
                 if np.count_nonzero(bool_field == 1) >= width * height - pocet_min:
                     win_screen = True
@@ -624,7 +630,7 @@ def main():
 
         elif load_screen or save_screen:
             screen.fill((200, 200, 200))
-            update_cell(buffer_surface, mine_field, cell_size)
+            update_cell(buffer_surface, mine_field)
             screen.blit(buffer_surface, (0, 0))
             pygame.draw.rect(screen, (50, 50, 50), (screen_width/2-190, 50, 380, 420))
             pygame.draw.rect(screen, (130, 130, 130), (screen_width/2-185, 55, 370, 410))
