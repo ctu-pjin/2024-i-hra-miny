@@ -174,8 +174,8 @@ def field_description(width, height, mines, row, column):
     return field, bool_field
         
 
-def click(x, y, dw, dh, add_dw = 0, cell_size = 30): 
-    row = int((y - dh)/cell_size)
+def click(x, y, dw, dh, add_dw = 0, add_dh = 0, cell_size = 30): 
+    row = int((y - dh-add_dh)/cell_size)
     column = int((x-dw-add_dw)/cell_size)
     return row, column
 

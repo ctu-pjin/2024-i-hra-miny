@@ -3,9 +3,12 @@ from sys import exit
 from random import choice, randint
 import os
 import pole_funkce
+import score_funkce as ScFn
 import json
 import numpy as np
 import time
+import math
+
 
 # Initialize Pygame
 os.environ['SDL_VIDEO_CENTERED'] = '1' # Centers the screen on the display
@@ -20,6 +23,7 @@ screen_width_game, screen_height_game = 100, 100
 dw = 10
 dh = 50
 additional_dw = 0
+additional_dh = 0
 previous_time = time.time()
 remaining_flags = 0
 reshuffle_count = 3
@@ -30,14 +34,12 @@ cell_size = 30
 difficulty = str()
 data_list = []
 
-
 MENU_SCREEN_DIMENSIONS = (480, 540)
-GAME_SCREEN_DIMENSIONS = (1024, 768)
 fps = 60
 
 
 screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
-buffer_surface = pygame.Surface((screen_width, screen_height))
+menu_bg_surface = pygame.Surface((screen_width, screen_height))
 
 
 # Part for loading images
@@ -70,7 +72,7 @@ flag_surf = pygame.image.load("mines/flag.png").convert()
 seven_surf = pygame.image.load("mines/seven.png").convert()
 eight_surf = pygame.image.load("mines/eight.png").convert()
 
-scale_factor = 0.8
+scale_factor = 1
 def scale_surface(surface, scale):
     width, height = surface.get_size()
     if scale == 1:
@@ -153,7 +155,7 @@ def random_mine_screen_plot(w, h, mine_field):
                 screen.blit(mine_field[int(hh/cell_size)][int(ww/cell_size)], (ww, hh))
                 
 
-def draw_to_buffer(buffer_surface, mine_field, cell_size=30):
+def draw_to_menu_bg(buffer_surface, mine_field, cell_size=30):
     """Draw the entire minefield onto the buffer surface."""
     for row in range(len(mine_field)):
         for col in range(len(mine_field[row])):
@@ -216,6 +218,7 @@ def save_game(slot, data):
 karma_font_160 = pygame.font.Font("fonts/KarmaFuture.otf", 160)
 karma_font_60 = pygame.font.Font("fonts/KarmaFuture.otf", 60)
 karma_sature_font_23 = pygame.font.Font("fonts/KarmaSuture.otf", 23)
+karma_sature_font_21 = pygame.font.Font("fonts/KarmaSuture.otf", 21)
 karma_sature_font_30 = pygame.font.Font("fonts/KarmaSuture.otf", 30)
 karma_font_35 = pygame.font.Font("fonts/KarmaFuture.otf", 35)
 
@@ -227,17 +230,20 @@ text_difficulty_rect = text_difficulty_surf.get_rect(midtop=(screen_width/2, 70)
 text_save_system_surf = karma_font_60.render("Save system", False, "Black")
 text_save_system_rect = text_save_system_surf.get_rect(midtop=(screen_width/2, 70))
 text_load_system_surf = karma_font_60.render("Load system", False, "Black")
-victory_lines = ["Press space", "to return", "to main menu"]
+victory_lines = ["Press Space to", "return to main menu", "OR", "Press Enter to", "submit your score"]
+lose_lines = ["Press Space to", "return to main menu", "", "Good luck", "next time"]
 text_press_space_surfs = [karma_sature_font_23.render(text, False, "White") for text in victory_lines]
+text_press_enter_surfs = [karma_sature_font_23.render(text, False, "White") for text in lose_lines]
 text_victory_surf = karma_font_35.render("You won!", False, "White")
 text_lose_surf = karma_font_35.render("You lost!", False, "White")
 text_miny_rect = text_miny_surf.get_rect(midtop=(screen_width/2, 40))
+text_submit_username_surf = karma_sature_font_21.render("Enter your Username:", False, "Black")
 
 
 
 clock = pygame.time.Clock()
 mine_field = random_mine_screen_generation(screen_width, screen_height)
-draw_to_buffer(buffer_surface, mine_field)
+draw_to_menu_bg(menu_bg_surface, mine_field)
 data_list = [load_game(slot) or {} for slot in range(3)]
 
 
@@ -246,37 +252,48 @@ def plot_bool_field(bool_field, field, cell_size = 30): # minefield plotting
         for col in range(len(field[row])):
             match bool_field[row,col]:
                 case 0:
-                    screen.blit(box_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                    screen.blit(box_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                 case 1:
                     match field[row,col]:
                         case 0:
-                            screen.blit(null_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(null_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 1: 
-                            screen.blit(one_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(one_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 2: 
-                            screen.blit(two_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(two_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 3: 
-                            screen.blit(three_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(three_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 4: 
-                            screen.blit(four_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(four_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 5: 
-                            screen.blit(five_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(five_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 6: 
-                            screen.blit(six_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(six_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 7: 
-                            screen.blit(seven_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(seven_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 8: 
-                            screen.blit(eight_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(eight_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 9: 
-                            screen.blit(mine_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                            screen.blit(mine_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                 case 2:
-                    screen.blit(flag_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+                    screen.blit(flag_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
 
 
 def plot_empty_field(width, height, cell_size = 30):
     for row in range(height):
         for col in range(width):
-            screen.blit(box_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh))
+            screen.blit(box_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+
+
+"""Provizorni"""
+# Input Box
+username_box = pygame.Rect(40, 90, 220, 40)
+username_text = ""
+username_button_active = False
+
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GRAY = (200, 200, 200)
 
 
 def main():
@@ -290,7 +307,9 @@ def main():
     load_screen = False
     save_screen = False
     end_screen = False
-    global screen, screen_height_game, screen_width_game, additional_dw, previous_time, remaining_flags, data_list, current_it, scale_factor
+    submit_score_screen = False
+    global screen, screen_height_game, screen_width_game, additional_dw, additional_dh, previous_time, remaining_flags, data_list, current_it, scale_factor
+    global username_text, username_button_active
     mines_rect = pygame.Rect(0, 0, 0, 0)
 
     while True: 
@@ -310,12 +329,12 @@ def main():
                             menu = False
                             load_screen = True
                             data_list = [load_game(slot) or {} for slot in range(3)]
-            
+
             elif new_game_menu:  
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min, difficulty = 4, 10, 4, "Easy"
+                            width, height, pocet_min, difficulty = 11, 11, 17, "Easy"
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
                             width, height, pocet_min, difficulty = 15, 12, 35, "Medium"
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
@@ -329,16 +348,20 @@ def main():
 
                         # Set up the game if a difficulty button was clicked
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()) or medium_rect_on.collidepoint(pygame.mouse.get_pos()) or hard_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            additional_dw = max(0, (200 - width*cell_size - dw - 10)/2)
+                            additional_dw = max(0, (260 - width*cell_size - dw*2)/2) # 260 je stejná jako o 3 řádky níže
+                            additional_dh = max(0, (280 - height*cell_size - dw*2-90)/2)
                             reshuffle_count = 3
-                            mines_rect = pygame.Rect(dw + additional_dw, dh, width*cell_size, height*cell_size)
-                            screen_width_game = max(width*cell_size + dw * 2, 200)
-                            screen_height_game = height*cell_size + 2*dh + 10
+                            mines_rect = pygame.Rect(dw + additional_dw, dh + additional_dh, width*cell_size, height*cell_size)
+                            screen_width_game = max(width*cell_size + dw * 2, 260) # Zde
+                            screen_height_game = max(height*cell_size + 2*dh + 10, 280)
                             
                             screen = pygame.display.set_mode((screen_width_game, screen_height_game))
                             new_game_menu = False
                             game = True
                             first_click = True
+                            all_scores = ScFn.update_or_add_game_data(width, height, pocet_min)
+                            key = str((width, height, pocet_min))
+                            game_scores = all_scores[key]
                
             elif game:
                 if first_click is True:
@@ -353,7 +376,7 @@ def main():
                     elif event.type == pygame.MOUSEBUTTONDOWN:  
                         if event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
-                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, cell_size)
+                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, additional_dh, cell_size)
                             first_click = False
                             game_time = 0
                             field, bool_field = pole_funkce.field_description(width, height, pocet_min, row, column)
@@ -370,7 +393,7 @@ def main():
 
                         elif event.button == 2 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
-                            up_row, up_column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, cell_size)
+                            up_row, up_column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, additional_dh, cell_size)
                             if bool_field[up_row][up_column] == 1 and pole_funkce.verify_amount_of_flags(field, bool_field, up_row, up_column) and up_row == down_row and up_column == down_column:
                                 field, bool_field = pole_funkce.cluster_reveal(field, bool_field, up_row, up_column)
                                 for i in empty_cells_to_plot:
@@ -400,7 +423,7 @@ def main():
 
                         elif event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
-                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, cell_size)
+                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, additional_dh, cell_size)
                             # pole_funkce.update_field(row, collumn)
                             if bool_field[row][column] == 2:
                                 continue
@@ -410,7 +433,7 @@ def main():
                                         if field[radek][sloupec] == 9:
                                             bool_field[radek][sloupec] = 1
                                 plot_bool_field(bool_field, field, cell_size)
-                                screen.blit(mine_explode_surf_game, (column*cell_size+dw+additional_dw, row*cell_size+dh))
+                                screen.blit(mine_explode_surf_game, (column*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                                 pygame.display.flip()
                                 time.sleep(1.5)
                                 screen.blit(transparent_bg_surf, (0, 0))
@@ -422,24 +445,36 @@ def main():
 
                         elif event.button == 2 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
-                            down_row, down_column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, cell_size)
+                            down_row, down_column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, additional_dh, cell_size)
                             empty_cells_to_plot = pole_funkce.neighbouring_cells_without_turning(down_row, down_column, bool_field)
 
                         elif event.button == 3 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
-                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, cell_size)
+                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, additional_dh, cell_size)
                             if bool_field[row][column] == 0  and remaining_flags > 0:
                                 bool_field[row][column] = 2
                             elif bool_field[row][column] == 2:
                                 bool_field[row][column] = 0
 
-            elif win_screen or end_screen:
+            elif win_screen:
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
+                    if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                         win_screen = False
                         end_screen = False
+                        if event.key == pygame.K_SPACE:
+                            menu = True
+                            screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
+                        else:      
+                            submit_score_screen = True
+                            screen = pygame.display.set_mode((10*30, 8*30))
+            
+            elif end_screen:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
                         menu = True
                         screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
+                        win_screen = False
+                        end_screen = False
 
             elif load_screen:
                 if event.type == pygame.MOUSEBUTTONUP:  
@@ -498,14 +533,37 @@ def main():
                                 "difficulty": difficulty,
                                 "remainingFlags": remaining_flags
                             }
-                            save_game(slot, data_list[slot])                           
+                            save_game(slot, data_list[slot])        
+
+            elif submit_score_screen:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    # Check if the input box was clicked
+                    if username_box.collidepoint(event.pos):
+                        username_button_active = True
+                    else:
+                        username_button_active = False
+
+                elif event.type == pygame.KEYDOWN and username_button_active:
+                    if event.key == pygame.K_RETURN: # User pressed enter and validated his game username
+                        if username_text.strip():
+                            game_scores = ScFn.add_user_score(width, height, pocet_min, username_text.strip(), game_time)
+                            print(f"Score submitted for {username_text.strip()}.")
+                            submit_score_screen = False
+                            menu = True
+                            screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
+                            username_text = ""
+                    elif event.key == pygame.K_BACKSPACE:
+                        username_text = username_text[:-1]
+                    else:
+                        if len(username_text) < 17:
+                            username_text += event.unicode                   
 
         # This part is for drawing pictures on the screen         
         if menu:  # this is drawn, while menu is active
             screen.fill((255, 255, 255))  # Creates a white screen (to erase the previos iteration)
             #pygame.draw.rect(screen, (255, 0, 0), (0, 0, 80, 80))  # Draw a red rectangle
-            update_cell(buffer_surface, mine_field)
-            screen.blit(buffer_surface, (0, 0))
+            update_cell(menu_bg_surface, mine_field)
+            screen.blit(menu_bg_surface, (0, 0))
 
             if new_game_rect_on.collidepoint(pygame.mouse.get_pos()):
                 screen.blit(new_game_surf_on, new_game_rect_on)
@@ -521,8 +579,8 @@ def main():
 
         elif new_game_menu: # this is drawn, while new game menu is active
             screen.fill((200, 200, 200))
-            update_cell(buffer_surface, mine_field)
-            screen.blit(buffer_surface, (0, 0))
+            update_cell(menu_bg_surface, mine_field)
+            screen.blit(menu_bg_surface, (0, 0))
             pygame.draw.rect(screen, (50, 50, 50), (screen_width/2-160, 50, 320, 420))
             pygame.draw.rect(screen, (130, 130, 130), (screen_width/2-155, 55, 310, 410))
             screen.blit(text_difficulty_surf, text_difficulty_rect)
@@ -552,7 +610,7 @@ def main():
                 remaining_flags_surf = karma_sature_font_23.render(str(remaining_flags), False, "Black")
                 reshuffle_count_surf = karma_sature_font_23.render(str(reshuffle_count), False, "Black")
                 screen.fill((140, 140, 140))
-                pygame.draw.rect(screen, (195, 195, 195), (5, 5, max(width*cell_size + dw, 190), height*cell_size+dh*2))
+                pygame.draw.rect(screen, (195, 195, 195), (5, 5, screen_width_game-10, screen_height_game-10))
                 plot_empty_field(width, height, cell_size)
 
                 if (15 < pygame.mouse.get_pos()[0] < 55 and screen_height_game - 50 < pygame.mouse.get_pos()[1] < screen_height_game - 10) or (reshuffle_count == 0):
@@ -583,7 +641,7 @@ def main():
                 game_time_surf = karma_sature_font_23.render(str(game_time), False, "Black")
                 remaining_flags_surf = karma_sature_font_23.render(str(remaining_flags), False, "Black")
                 screen.fill((140, 140, 140))
-                pygame.draw.rect(screen, (195, 195, 195), (5, 5, max(width*cell_size + dw, 190), height*cell_size+dh*2))
+                pygame.draw.rect(screen, (195, 195, 195), (5, 5, screen_width_game-10, screen_height_game-10))
                 plot_bool_field(bool_field, field, cell_size)
 
                 if (15 < pygame.mouse.get_pos()[0] < 55 and screen_height_game - 50 < pygame.mouse.get_pos()[1] < screen_height_game - 10) or (reshuffle_count == 0):
@@ -608,7 +666,7 @@ def main():
 
                 if len(empty_cells_to_plot) > 0:
                     for i in empty_cells_to_plot:
-                        screen.blit(null_surf_game, (i[0]*cell_size+dw+additional_dw, i[1]*cell_size+dh))
+                        screen.blit(null_surf_game, (i[0]*cell_size+dw+additional_dw, i[1]*cell_size+dh+additional_dh))
 
                 if np.count_nonzero(bool_field == 1) >= width * height - pocet_min:
                     win_screen = True
@@ -619,19 +677,22 @@ def main():
                 
         elif win_screen or end_screen:
             y_offset = 52
-            add_y_offset = max(0, (screen_height_game - (2*dh+35))/2)
+            add_y_offset = max(0, (screen_height_game - (2*dh+35)-additional_dh*2)/2)
             if win_screen:
                 screen.blit(text_victory_surf, (screen_width_game/2-text_victory_surf.get_width()/2, 5 + add_y_offset))
+                for text_surf in text_press_space_surfs:   
+                    screen.blit(text_surf, (screen_width_game/2-text_surf.get_width()/2, y_offset + add_y_offset))
+                    y_offset += text_surf.get_height()
             else:
                 screen.blit(text_lose_surf, (screen_width_game/2-text_lose_surf.get_width()/2, 5 + add_y_offset))
-            for text_surf in text_press_space_surfs:   
-                screen.blit(text_surf, (screen_width_game/2-text_surf.get_width()/2, y_offset + add_y_offset))
-                y_offset += text_surf.get_height()
+                for text_surf in text_press_enter_surfs:   
+                    screen.blit(text_surf, (screen_width_game/2-text_surf.get_width()/2, y_offset + add_y_offset))
+                    y_offset += text_surf.get_height()
 
         elif load_screen or save_screen:
             screen.fill((200, 200, 200))
-            update_cell(buffer_surface, mine_field)
-            screen.blit(buffer_surface, (0, 0))
+            update_cell(menu_bg_surface, mine_field)
+            screen.blit(menu_bg_surface, (0, 0))
             pygame.draw.rect(screen, (50, 50, 50), (screen_width/2-190, 50, 380, 420))
             pygame.draw.rect(screen, (130, 130, 130), (screen_width/2-185, 55, 370, 410))
             if load_screen:
@@ -656,6 +717,16 @@ def main():
                     game_save_surfs[slot].blit(karma_sature_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue"), (game_save_surfs[slot].get_width() - karma_sature_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue").get_width() - 10, 45))
                     screen.blit(game_save_surfs[slot], save_slot_rects[slot]) 
 
+        elif submit_score_screen:
+            screen.fill((200, 200, 200))
+            update_cell(menu_bg_surface, mine_field)
+            screen.blit(menu_bg_surface, (0, 0))
+            pygame.draw.rect(screen, (100, 100, 100), (30, 30, 8*30, 6*30))
+            pygame.draw.rect(screen, (150, 150, 150), (35, 35, 8*30 - 10, 6*30 - 10))
+            screen.blit(text_submit_username_surf, (screen.get_size()[0]/2 - text_submit_username_surf.get_size()[0]/2, 50))
+            pygame.draw.rect(screen, GRAY if username_button_active else WHITE, username_box, 2)
+            username_input_surface = karma_sature_font_21.render(username_text, True, BLACK)
+            screen.blit(username_input_surface, (username_box.x + 5, username_box.y + 5))
 
         pygame.display.flip()
         clock.tick(fps) # Limits the game to 60 fps, better for slower CPU
