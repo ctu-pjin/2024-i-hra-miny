@@ -60,6 +60,14 @@
             "wnqeidjON9zXeSryNvvH": {
                 "username": "Brick",
                 "time": "489"
+            },
+            "gNG4sJ1usiytgSSA8mHI": {
+                "username": "Sir Meowsington",
+                "time": "130"
+            },
+            "mWd2Q4G3SF1twfcKfXRQ": {
+                "username": "Blahblahblah",
+                "time": "152"
             }
         }
     },
@@ -280,6 +288,38 @@
             "o1tqs9zhOKou8uCVdNM9": {
                 "username": "sir meowsington",
                 "time": "60"
+            }
+        }
+    },
+    "(1, 11, 5)": {
+        "scores": {
+            "gold": {
+                "username": "gold",
+                "time": "8"
+            },
+            "silver": {
+                "username": "silver",
+                "time": "16"
+            },
+            "bronze": {
+                "username": "bronze",
+                "time": "33"
+            }
+        }
+    },
+    "(11, 10, 17)": {
+        "scores": {
+            "gold": {
+                "username": "gold",
+                "time": "89"
+            },
+            "silver": {
+                "username": "silver",
+                "time": "178"
+            },
+            "bronze": {
+                "username": "bronze",
+                "time": "356"
             }
         }
     }

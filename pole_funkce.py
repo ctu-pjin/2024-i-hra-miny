@@ -8,6 +8,22 @@ queue = []
 
 pg.init()
 
+def current_mines_positions(field, bool_field):
+    current_mines = []
+    for i, row in enumerate(field):
+        for j, item in enumerate(row):
+            if item == 9 and bool_field[i][j] == 0:
+                current_mines.append((i,j))
+    return current_mines
+
+
+def hint(field, bool_field):
+    current_mines = current_mines_positions(field, bool_field)
+    hint = rand.choice(current_mines)
+    bool_field[hint[0],hint[1]] = 2
+    return bool_field
+
+
 def neighbouring_cells_without_turning(row, column, bool_field):
     empty_cells_to_plot = []
     if bool_field[row, column] == 0:
@@ -167,7 +183,6 @@ def field_description(width, height, mines, row, column):
         field[position] = 9
         mines_position.add(position)
     field = count_field(field)
-    sub_array = field[max(0,starting_row-1):starting_row+2, max(0,starting_column-1):starting_column+2]
     queue.append([starting_row, starting_column])
     bool_field[starting_row, starting_column] = 1
     reveal_around_zeroes(field, bool_field)

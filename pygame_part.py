@@ -27,6 +27,7 @@ additional_dh = 0
 previous_time = time.time()
 remaining_flags = 0
 reshuffle_count = 3
+hint_count = 2
 field = []
 bool_field = []
 current_it = 0
@@ -72,6 +73,22 @@ flag_surf = pygame.image.load("mines/flag.png").convert()
 seven_surf = pygame.image.load("mines/seven.png").convert()
 eight_surf = pygame.image.load("mines/eight.png").convert()
 
+reshuffle_on_surf = pygame.image.load("surfaces/reshuffle_on.png").convert()
+reshuffle_off_surf = pygame.image.load("surfaces/reshuffle_off.png").convert()
+flag_only_surf = pygame.image.load("surfaces/flag_only.png").convert_alpha()
+flag_only_surf_big = pygame.transform.scale_by(flag_only_surf, 1.5)
+save_icon_on_surf = pygame.image.load("surfaces/save_icon_on.png").convert_alpha()
+save_icon_off_surf = pygame.image.load("surfaces/save_icon_off.png").convert_alpha()
+transparent_bg_surf = pygame.image.load("surfaces/transparent_bg_80.png").convert_alpha()
+empty_save_surf = pygame.image.load("surfaces/empty_save.png").convert_alpha()
+filled_save_surf = pygame.image.load("surfaces/filled_save.png").convert_alpha()
+game_save_surfs = [pygame.image.load("surfaces/filled_save.png").convert_alpha() for _ in range(3)]
+hint_on_surf = pygame.image.load("surfaces/hint_on.png").convert()
+hint_off_surf = pygame.image.load("surfaces/hint_off.png").convert()
+scores_button_on_surf = pygame.image.load("surfaces/scores_button_on.png").convert()
+scores_button_off_surf = pygame.image.load("surfaces/scores_button_off.png").convert()
+
+
 scale_factor = 1
 def scale_surface(surface, scale):
     width, height = surface.get_size()
@@ -95,20 +112,8 @@ seven_surf_game = scale_surface(seven_surf, scale_factor)
 eight_surf_game = scale_surface(eight_surf, scale_factor)
 
 
-
 cell_size *= scale_factor
 
-
-reshuffle_on_surf = pygame.image.load("surfaces/reshuffle_on.png").convert_alpha()
-reshuffle_off_surf = pygame.image.load("surfaces/reshuffle_off.png").convert_alpha()
-flag_only_surf = pygame.image.load("surfaces/flag_only.png").convert_alpha()
-flag_only_surf_big = pygame.transform.scale_by(flag_only_surf, 1.5)
-save_icon_on_surf = pygame.image.load("surfaces/save_icon_on.png").convert_alpha()
-save_icon_off_surf = pygame.image.load("surfaces/save_icon_off.png").convert_alpha()
-transparent_bg_surf = pygame.image.load("surfaces/transparent_bg_80.png").convert_alpha()
-empty_save_surf = pygame.image.load("surfaces/empty_save.png").convert_alpha()
-filled_save_surf = pygame.image.load("surfaces/filled_save.png").convert_alpha()
-game_save_surfs = [pygame.image.load("surfaces/filled_save.png").convert_alpha() for _ in range(3)]
 
 
 # Create rectangles
@@ -125,7 +130,6 @@ hard_rect_off = hard_surf_off.get_rect(midbottom=(screen_width/2, 450))
 back_arrow_rect = back_arrow_surf_off.get_rect(topleft = (20, 20))
 back_arrow_rect_small = back_arrow_surf_off_small.get_rect(topleft = (10, 15))
 reshuffle_rect = reshuffle_on_surf.get_rect(bottomleft = (10, 20))
-flag_rect = flag_only_surf.get_rect(bottomright = (screen_width-10, screen_height-10))
 
 
 save_slot_width = empty_save_surf.get_width()
@@ -334,7 +338,7 @@ def main():
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min, difficulty = 11, 11, 17, "Easy"
+                            width, height, pocet_min, difficulty = 11, 10, 17, "Easy"
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
                             width, height, pocet_min, difficulty = 15, 12, 35, "Medium"
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
@@ -350,12 +354,13 @@ def main():
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()) or medium_rect_on.collidepoint(pygame.mouse.get_pos()) or hard_rect_on.collidepoint(pygame.mouse.get_pos()):
                             additional_dw = max(0, (260 - width*cell_size - dw*2)/2) # 260 je stejná jako o 3 řádky níže
                             additional_dh = max(0, (280 - height*cell_size - dw*2-90)/2)
-                            reshuffle_count = 3
                             mines_rect = pygame.Rect(dw + additional_dw, dh + additional_dh, width*cell_size, height*cell_size)
                             screen_width_game = max(width*cell_size + dw * 2, 260) # Zde
                             screen_height_game = max(height*cell_size + 2*dh + 10, 280)
-                            
+                            hint_on_rect = hint_on_surf.get_rect(midbottom = (screen_width_game/2, screen_height_game - 10)) 
                             screen = pygame.display.set_mode((screen_width_game, screen_height_game))
+                            reshuffle_count = 3
+                            hint_count = 2
                             new_game_menu = False
                             game = True
                             first_click = True
@@ -420,6 +425,10 @@ def main():
                         if (event.button == 1 and 15 < pygame.mouse.get_pos()[0] < 55 and screen_height_game - 50 < pygame.mouse.get_pos()[1] < screen_height_game - 10) and (reshuffle_count > 0):
                             field, bool_field = pole_funkce.reshuffle(field, bool_field)
                             reshuffle_count -= 1
+
+                        elif event.button == 1 and hint_on_rect.collidepoint(pygame.mouse.get_pos()) and hint_count > 0:
+                            bool_field = pole_funkce.hint(field, bool_field)
+                            hint_count -= 1
 
                         elif event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
@@ -609,6 +618,7 @@ def main():
             if first_click is True:
                 remaining_flags_surf = karma_sature_font_23.render(str(remaining_flags), False, "Black")
                 reshuffle_count_surf = karma_sature_font_23.render(str(reshuffle_count), False, "Black")
+                hint_count_surf = karma_sature_font_23.render(str(hint_count), False, "Black")
                 screen.fill((140, 140, 140))
                 pygame.draw.rect(screen, (195, 195, 195), (5, 5, screen_width_game-10, screen_height_game-10))
                 plot_empty_field(width, height, cell_size)
@@ -619,6 +629,14 @@ def main():
                     screen.blit(reshuffle_off_surf, (15, screen_height_game-50))
 
                 screen.blit(reshuffle_count_surf, (60, screen_height_game-40))
+                screen.blit(hint_count_surf, (screen_width_game/2+25, screen_height_game-40))
+                """if hint_on_rect.collidepoint(pygame.mouse.get_pos()):
+                    screen.blit(hint_on_surf, hint_on_rect)
+                else:
+                    screen.blit(hint_off_surf, hint_on_rect)
+                """
+                screen.blit(hint_on_surf, hint_on_rect) if hint_on_rect.collidepoint(pygame.mouse.get_pos()) else screen.blit(hint_off_surf, hint_on_rect)
+
 
                 screen.blit(flag_only_surf_big, (screen_width_game-37, screen_height_game-42))
                 screen.blit(remaining_flags_surf, (screen_width_game - 42 - remaining_flags_surf.get_width(), screen_height_game - 40))
@@ -635,6 +653,7 @@ def main():
 
             else:
                 reshuffle_count_surf = karma_sature_font_23.render(str(reshuffle_count), False, "Black")
+                hint_count_surf = karma_sature_font_23.render(str(hint_count), False, "Black")
                 if it%fps == 0:
                     game_time += 1
 
@@ -649,6 +668,8 @@ def main():
                 else:
                     screen.blit(reshuffle_off_surf, (15, screen_height_game-50))
                 screen.blit(reshuffle_count_surf, (60, screen_height_game-40))
+                screen.blit(hint_count_surf, (screen_width_game/2+25, screen_height_game-40))
+                screen.blit(hint_on_surf, hint_on_rect) if hint_on_rect.collidepoint(pygame.mouse.get_pos()) else screen.blit(hint_off_surf, hint_on_rect)
 
                 screen.blit(flag_only_surf_big, (screen_width_game-37, screen_height_game-42))
                 screen.blit(remaining_flags_surf, (screen_width_game - 42 - remaining_flags_surf.get_width(), screen_height_game - 40))
