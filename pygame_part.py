@@ -48,6 +48,8 @@ new_game_surf_off = pygame.image.load("surfaces/new_game_button_off.png").conver
 new_game_surf_on = pygame.image.load("surfaces/new_game_button_on.png").convert_alpha() 
 load_surf_off = pygame.image.load("surfaces/load_button_off.png").convert_alpha()
 load_surf_on = pygame.image.load("surfaces/load_button_on.png").convert_alpha()
+scores_surf_off = pygame.image.load("surfaces/scores_button_off.png").convert_alpha()
+scores_surf_on = pygame.image.load("surfaces/scores_button_on.png").convert_alpha()
 back_arrow_surf_on = pygame.image.load("surfaces/back_arrow_flow_on.png").convert_alpha()
 back_arrow_surf_off = pygame.image.load("surfaces/back_arrow_flow_off.png").convert_alpha()
 back_arrow_surf_on_small = pygame.transform.scale_by(back_arrow_surf_on, 0.7)
@@ -117,10 +119,12 @@ cell_size *= scale_factor
 
 
 # Create rectangles
-new_game_rect_off = new_game_surf_off.get_rect(midbottom=(screen_width/2, 400)) #rectangle of the surface. Easier to specify an exact location
-new_game_rect_on = new_game_surf_on.get_rect(midbottom=(screen_width/2, 400))
-load_rect_off = load_surf_off.get_rect(midbottom=(screen_width/2, 500)) 
-load_rect_on = load_surf_on.get_rect(midbottom=(screen_width/2, 500))
+new_game_rect_off = new_game_surf_off.get_rect(midbottom=(screen_width/2, 300)) #rectangle of the surface. Easier to specify an exact location
+new_game_rect_on = new_game_surf_on.get_rect(midbottom=(screen_width/2, 300))
+load_rect_off = load_surf_off.get_rect(midbottom=(screen_width/2, 400)) 
+load_rect_on = load_surf_on.get_rect(midbottom=(screen_width/2, 400))
+scores_rect_off = scores_surf_off.get_rect(midbottom=(screen_width/2, 500)) 
+scores_rect_on = scores_surf_on.get_rect(midbottom=(screen_width/2, 500))
 easy_rect_on = easy_surf_on.get_rect(midbottom=(screen_width/2, 250))
 easy_rect_off = easy_surf_off.get_rect(midbottom=(screen_width/2, 250))
 medium_rect_on = medium_surf_on.get_rect(midbottom=(screen_width/2, 350))
@@ -228,7 +232,7 @@ karma_font_35 = pygame.font.Font("fonts/KarmaFuture.otf", 35)
 
 # Part for loading texts
 text_miny_surf = karma_font_160.render("Miny", False, "Black")
-text_miny_rect = text_miny_surf.get_rect(midtop=(screen_width/2, 40))
+text_miny_rect = text_miny_surf.get_rect(midtop=(screen_width/2, 20))
 text_difficulty_surf = karma_font_60.render("Difficulty", False, "Black")
 text_difficulty_rect = text_difficulty_surf.get_rect(midtop=(screen_width/2, 70))
 text_save_system_surf = karma_font_60.render("Save system", False, "Black")
@@ -240,7 +244,6 @@ text_press_space_surfs = [karma_sature_font_23.render(text, False, "White") for 
 text_press_enter_surfs = [karma_sature_font_23.render(text, False, "White") for text in lose_lines]
 text_victory_surf = karma_font_35.render("You won!", False, "White")
 text_lose_surf = karma_font_35.render("You lost!", False, "White")
-text_miny_rect = text_miny_surf.get_rect(midtop=(screen_width/2, 40))
 text_submit_username_surf = karma_sature_font_21.render("Enter your Username:", False, "Black")
 
 
@@ -583,6 +586,11 @@ def main():
                 screen.blit(load_surf_on, load_rect_on)
             else:
                 screen.blit(load_surf_off, load_rect_off)
+
+            if scores_rect_on.collidepoint(pygame.mouse.get_pos()):
+                screen.blit(scores_surf_on, scores_rect_on)
+            else:
+                screen.blit(scores_surf_off, scores_rect_off)
 
             screen.blit(text_miny_surf,text_miny_rect)
 
