@@ -40,6 +40,8 @@ def current_mines_positions(field, bool_field):
 
 def hint(field, bool_field):
     current_mines = current_mines_positions(field, bool_field)
+    if len(current_mines) == 0:
+        return bool_field
     hint = rand.choice(current_mines)
     bool_field[hint[0],hint[1]] = 2
     return bool_field

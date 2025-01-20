@@ -93,6 +93,8 @@ scores_button_on_surf = pygame.image.load("surfaces/scores_button_on.png").conve
 scores_button_off_surf = pygame.image.load("surfaces/scores_button_off.png").convert()
 question_mark_surf_off = pygame.image.load("surfaces/question_mark_off_spaced.png").convert_alpha()
 question_mark_surf_on = pygame.image.load("surfaces/question_mark_on.png").convert_alpha()
+bin_on_surf = pygame.image.load("surfaces/bin_opened.png").convert_alpha()
+bin_off_surf = pygame.image.load("surfaces/bin_closed.png").convert_alpha()
 
 
 
@@ -122,6 +124,8 @@ cell_size *= scale_factor
 
 question_mark_surf_off = scale_surface(question_mark_surf_off, 1.3)
 question_mark_surf_on = scale_surface(question_mark_surf_on, 1.3)
+bin_off_surf = scale_surface(bin_off_surf, 1.4)
+bin_on_surf = scale_surface(bin_on_surf, 1.4)
 
 # Create rectangles
 new_game_rect_off = new_game_surf_off.get_rect(midbottom=(screen_width/2, 350)) #rectangle of the surface. Easier to specify an exact location
@@ -147,11 +151,15 @@ question_mark_rect = question_mark_surf_on.get_rect(topright = (screen_width - 1
 save_slot_width = empty_save_surf.get_width()
 save_slot_height = empty_save_surf.get_height()
 save_slot_rects = []
+bin_rects = []
 save_y_offset = 160
 
+
+
 for slot in range(3):
-    save_slot_rect = pygame.Rect(screen_width/2 - save_slot_width/2, save_y_offset, save_slot_width, save_slot_height)
+    save_slot_rect = pygame.Rect(screen_width/2 - save_slot_width/2 - 15, save_y_offset, save_slot_width, save_slot_height)
     save_slot_rects.append(save_slot_rect)
+    bin_rects.append(pygame.Rect(save_slot_rects[slot].x + 10 + save_slot_rects[slot].width, save_slot_rects[slot].y + 35, bin_on_surf.get_width(), bin_on_surf.get_height()))
     save_y_offset += 95
 
 
@@ -229,6 +237,23 @@ def save_game(slot, data):
         ...
         #print(f"Error saving to {filename}: {e}")
 
+def delete_game(slot):
+    if any(rect.collidepoint(pygame.mouse.get_pos()) for rect in bin_rects):
+        if bin_rects[0].collidepoint(pygame.mouse.get_pos()):
+            slot = 0
+        elif bin_rects[1].collidepoint(pygame.mouse.get_pos()):
+            slot = 1
+        elif bin_rects[2].collidepoint(pygame.mouse.get_pos()):
+            slot = 2
+        if load_game(slot) is None:
+            return False
+        
+        filename = "saves/" + save_slots[slot]
+        try:
+            os.remove(filename)
+            #print(f"{filename} has been deleted.")
+        except:
+            print("Deletion Failed")
 
 # Part for loading fonts
 karma_font_160 = pygame.font.Font("fonts/KarmaFuture.otf", 160)
@@ -319,6 +344,7 @@ GRAY = (200, 200, 200)
 
 
 def main():
+    wrong_custom_input = False
     empty_cells_to_plot = []
     it = 0
     menu = True
@@ -366,6 +392,7 @@ def main():
                         elif custom_rect_on.collidepoint(pygame.mouse.get_pos()):
                             custom_mine_field_screen = True
                             new_game_menu = False
+                            wrong_custom_input = False
                         elif back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             menu = True
@@ -379,7 +406,6 @@ def main():
                             mines_rect = pygame.Rect(dw + additional_dw, dh + additional_dh, width*cell_size, height*cell_size)
                             screen_width_game = max(width*cell_size + dw * 2, 260) # Zde
                             screen_height_game = max(height*cell_size + 2*dh + 10, 280)
-                            hint_on_rect = hint_on_surf.get_rect(midbottom = (screen_width_game/2, screen_height_game - 10)) 
                             screen = pygame.display.set_mode((screen_width_game, screen_height_game))
                             reshuffle_count = 3
                             hint_count = 2
@@ -509,7 +535,7 @@ def main():
 
             elif load_screen:
                 if event.type == pygame.MOUSEBUTTONUP:  
-                    if event.button == 1: 
+                    if event.button == 1:
                         if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             menu = True
@@ -529,6 +555,7 @@ def main():
                             width = len(field[0])
                             height = len(field)
                             reshuffle_count = data["reshuffleCount"]
+                            hint_count = data["hintCount"]
                             game_time = data["timePlayed"]
                             pocet_min = data["mineCount"]
                             difficulty = data["difficulty"]
@@ -536,11 +563,16 @@ def main():
                             first_click = False
                             load_screen = False
                             game = True
-                            additional_dw = max(0, (200 - width*cell_size - dw - 10)/2)
+                            additional_dw = max(0, (260 - width*cell_size - dw - 10)/2)
+                            additional_dh = max(0, (280 - height*cell_size - dw*2-90)/2)
                             mines_rect = pygame.Rect(dw + additional_dw, dh, width*cell_size, height*cell_size)
-                            screen_width_game = max(width*cell_size + dw * 2, 200)
-                            screen_height_game = height*cell_size + 2*dh + 10
+                            screen_width_game = max(width*cell_size + dw * 2, 260)
+                            screen_height_game = max(height*cell_size + 2*dh + 10, 280)
                             screen = pygame.display.set_mode((screen_width_game, screen_height_game))
+
+                        elif any(rect.collidepoint(pygame.mouse.get_pos()) for rect in bin_rects):
+                            delete_game(bin_rects)
+                        
             elif save_screen:
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
@@ -560,11 +592,15 @@ def main():
                                 "field": field.tolist(),
                                 "timePlayed": game_time,
                                 "reshuffleCount": reshuffle_count,
+                                "hintCount": hint_count,
                                 "mineCount": pocet_min,
                                 "difficulty": difficulty,
                                 "remainingFlags": remaining_flags
                             }
-                            save_game(slot, data_list[slot])        
+                            save_game(slot, data_list[slot])  
+
+                        elif any(rect.collidepoint(pygame.mouse.get_pos()) for rect in bin_rects):
+                            delete_game(bin_rects)     
 
             elif submit_score_screen:
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -601,6 +637,7 @@ def main():
                     # Check if the input box was clicked
                     if custom_mine_field_box.collidepoint(event.pos):
                         custom_mine_field_box_active = True
+                        wrong_custom_input = False
                     else:
                         custom_mine_field_box_active = False
 
@@ -616,8 +653,7 @@ def main():
                             additional_dh = max(0, (280 - height*cell_size - dw*2-90)/2)
                             mines_rect = pygame.Rect(dw + additional_dw, dh + additional_dh, width*cell_size, height*cell_size)
                             screen_width_game = max(width*cell_size + dw * 2, 260) # Zde
-                            screen_height_game = max(height*cell_size + 2*dh + 10, 280)
-                            hint_on_rect = hint_on_surf.get_rect(midbottom = (screen_width_game/2, screen_height_game - 10)) 
+                            screen_height_game = max(height*cell_size + 2*dh + 10, 280) 
                             screen = pygame.display.set_mode((screen_width_game, screen_height_game))
                             reshuffle_count = 3
                             hint_count = 2
@@ -628,6 +664,12 @@ def main():
                             key = str((width, height, pocet_min))
                             game_scores = all_scores[key]
                             custom_mine_field_text = ""
+                        
+                        # If an error occurs, this happens
+                        custom_mine_field_text = ""
+                        custom_mine_field_box_active = False
+                        wrong_custom_input = True
+
                     elif event.key == pygame.K_BACKSPACE:
                         custom_mine_field_text = custom_mine_field_text[:-1]
                     else:
@@ -699,6 +741,7 @@ def main():
 
         elif game:
             if first_click is True:
+                hint_on_rect = hint_on_surf.get_rect(midbottom = (screen_width_game/2, screen_height_game - 10))
                 remaining_flags_surf = karma_sature_font_23.render(str(remaining_flags), False, "Black")
                 reshuffle_count_surf = karma_sature_font_23.render(str(reshuffle_count), False, "Black")
                 hint_count_surf = karma_sature_font_23.render(str(hint_count), False, "Black")
@@ -735,6 +778,7 @@ def main():
                     screen.blit(save_icon_off_surf, (screen_width_game - 46, 10))
 
             else:
+                hint_on_rect = hint_on_surf.get_rect(midbottom = (screen_width_game/2, screen_height_game - 10))
                 reshuffle_count_surf = karma_sature_font_23.render(str(reshuffle_count), False, "Black")
                 hint_count_surf = karma_sature_font_23.render(str(hint_count), False, "Black")
                 if it%fps == 0:
@@ -794,7 +838,8 @@ def main():
                     y_offset += text_surf.get_height()
 
         elif load_screen or save_screen:
-            screen.fill((200, 200, 200))
+            
+
             update_cell(menu_bg_surface, mine_field)
             screen.blit(menu_bg_surface, (0, 0))
             pygame.draw.rect(screen, (50, 50, 50), (screen_width/2-190, 50, 380, 420))
@@ -819,6 +864,11 @@ def main():
                     game_save_surfs[slot].blit(karma_sature_font_23.render(str(data_list[slot]["remainingFlags"]), False, "Black"), (game_save_surfs[slot].get_width() - karma_sature_font_23.render(str(data_list[slot]["remainingFlags"]),  False, "Black").get_width() - flag_only_surf.get_width() - 15, 11))
                     game_save_surfs[slot].blit(karma_sature_font_23.render(str(len(data_list[slot]["field"])) + "x" + str(len(data_list[slot]["field"][0])),  False, "Black"), (10, 45))
                     game_save_surfs[slot].blit(karma_sature_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue"), (game_save_surfs[slot].get_width() - karma_sature_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue").get_width() - 10, 45))
+                    
+                    if bin_rects[slot].collidepoint(pygame.mouse.get_pos()):
+                        screen.blit(bin_on_surf, bin_rects[slot])
+                    else:
+                        screen.blit(bin_off_surf, bin_rects[slot])
                     screen.blit(game_save_surfs[slot], save_slot_rects[slot]) 
 
         elif submit_score_screen:
@@ -839,7 +889,12 @@ def main():
             pygame.draw.rect(screen, (100, 100, 100), (30, 60, 14*30, 6*30))
             pygame.draw.rect(screen, (150, 150, 150), (35, 65, 14*30 - 10, 6*30 - 10))
             screen.blit(text_custom_field_entry_surf, (screen.get_size()[0]/2 - text_custom_field_entry_surf.get_size()[0]/2, 80))
-            pygame.draw.rect(screen, GRAY if custom_mine_field_box_active else WHITE, custom_mine_field_box, 2)
+            
+            if wrong_custom_input:
+                pygame.draw.rect(screen, (176, 96, 91), custom_mine_field_box, 3) # Border goes red to indicate wrong input
+            else:
+                pygame.draw.rect(screen, GRAY if custom_mine_field_box_active else WHITE, custom_mine_field_box, 3)
+
             custom_field_input_surface = karma_sature_font_21.render(custom_mine_field_text, True, BLACK)
             screen.blit(custom_field_input_surface, (custom_mine_field_box.x + 5, custom_mine_field_box.y + 5))
             screen.blit(text_example_for_custom_field_surf, (screen.get_size()[0]/2 - text_example_for_custom_field_surf.get_size()[0]/2, 168))
