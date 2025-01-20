@@ -8,6 +8,27 @@ queue = []
 
 pg.init()
 
+def separate_string_by_commas(string):
+    string.strip()
+    string_split = string.split(",")
+    print(string_split)
+    return string_split
+
+def is_it_integer(list_of_strings):
+    for string in list_of_strings:
+        try:
+            int(string)
+        except:
+            return False
+    return True
+
+def field_creation_conditions(list_of_strings):
+    width, height, pocet_min = int(list_of_strings[0]), int(list_of_strings[1]), int(list_of_strings[2])
+    if (any((pocet_min, width, height)) <= 0) or pocet_min > width*height - 10:
+        return False
+    return True
+
+
 def current_mines_positions(field, bool_field):
     current_mines = []
     for i, row in enumerate(field):

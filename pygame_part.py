@@ -253,6 +253,9 @@ text_press_enter_surfs = [karma_sature_font_23.render(text, False, "White") for 
 text_victory_surf = karma_font_35.render("You won!", False, "White")
 text_lose_surf = karma_font_35.render("You lost!", False, "White")
 text_submit_username_surf = karma_sature_font_21.render("Enter your Username:", False, "Black")
+text_custom_field_entry_surf = karma_sature_font_21.render("Enter width, height, and number of mines:", False, "Black")
+text_example_for_custom_field_surf = karma_sature_font_21.render("example: 15, 10, 30",False, "Black")
+text_custom_field_start_game = karma_sature_font_21.render("Press Enter to start the game!", False, "Black")
 
 
 
@@ -306,6 +309,10 @@ username_box = pygame.Rect(40, 90, 220, 40)
 username_text = ""
 username_button_active = False
 
+custom_mine_field_box = pygame.Rect(120, 120, 240, 40)
+custom_mine_field_text = ""
+custom_mine_field_box_active = False
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GRAY = (200, 200, 200)
@@ -323,8 +330,9 @@ def main():
     save_screen = False
     end_screen = False
     submit_score_screen = False
+    custom_mine_field_screen = False
     global screen, screen_height_game, screen_width_game, additional_dw, additional_dh, previous_time, remaining_flags, data_list, current_it, scale_factor
-    global username_text, username_button_active
+    global username_text, username_button_active, custom_mine_field_text, custom_mine_field_box_active
     mines_rect = pygame.Rect(0, 0, 0, 0)
 
     while True: 
@@ -355,6 +363,9 @@ def main():
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
                             #width, height, pocet_min, difficulty = 28, 20, 100, "Hard"
                             width, height, pocet_min, difficulty = 50, 34, 270, "Hard"
+                        elif custom_rect_on.collidepoint(pygame.mouse.get_pos()):
+                            custom_mine_field_screen = True
+                            new_game_menu = False
                         elif back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             menu = True
@@ -576,7 +587,53 @@ def main():
                         username_text = username_text[:-1]
                     else:
                         if len(username_text) < 17:
-                            username_text += event.unicode                   
+                            username_text += event.unicode    
+
+            elif custom_mine_field_screen:
+                if event.type == pygame.MOUSEBUTTONUP:  
+                    if event.button == 1: 
+                        if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
+                            screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
+                            new_game_menu = True
+                            custom_mine_field_screen = False
+                            custom_mine_field_text = ""
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    # Check if the input box was clicked
+                    if custom_mine_field_box.collidepoint(event.pos):
+                        custom_mine_field_box_active = True
+                    else:
+                        custom_mine_field_box_active = False
+
+                elif event.type == pygame.KEYDOWN and custom_mine_field_box_active:
+                    if event.key == pygame.K_RETURN: # User pressed enter and validated his game username
+                        custom_entry = pole_funkce.separate_string_by_commas(custom_mine_field_text)
+                        if pole_funkce.is_it_integer(custom_entry) is False:
+                            pass
+                        elif len(custom_entry) == 3 and pole_funkce.field_creation_conditions(custom_entry):
+                            width, height, pocet_min = int(custom_entry[0]), int(custom_entry[1]), int(custom_entry[2])
+                            difficulty = "Custom"
+                            additional_dw = max(0, (260 - width*cell_size - dw*2)/2) # 260 je stejná jako o 3 řádky níže
+                            additional_dh = max(0, (280 - height*cell_size - dw*2-90)/2)
+                            mines_rect = pygame.Rect(dw + additional_dw, dh + additional_dh, width*cell_size, height*cell_size)
+                            screen_width_game = max(width*cell_size + dw * 2, 260) # Zde
+                            screen_height_game = max(height*cell_size + 2*dh + 10, 280)
+                            hint_on_rect = hint_on_surf.get_rect(midbottom = (screen_width_game/2, screen_height_game - 10)) 
+                            screen = pygame.display.set_mode((screen_width_game, screen_height_game))
+                            reshuffle_count = 3
+                            hint_count = 2
+                            custom_mine_field_screen = False
+                            game = True
+                            first_click = True
+                            all_scores = ScFn.update_or_add_game_data(width, height, pocet_min)
+                            key = str((width, height, pocet_min))
+                            game_scores = all_scores[key]
+                            custom_mine_field_text = ""
+                    elif event.key == pygame.K_BACKSPACE:
+                        custom_mine_field_text = custom_mine_field_text[:-1]
+                    else:
+                        if len(custom_mine_field_text) < 20:
+                            custom_mine_field_text += event.unicode 
+
 
         # This part is for drawing pictures on the screen         
         if menu:  # this is drawn, while menu is active
@@ -774,6 +831,24 @@ def main():
             pygame.draw.rect(screen, GRAY if username_button_active else WHITE, username_box, 2)
             username_input_surface = karma_sature_font_21.render(username_text, True, BLACK)
             screen.blit(username_input_surface, (username_box.x + 5, username_box.y + 5))
+
+        elif custom_mine_field_screen:
+            screen.fill((200, 200, 200))
+            update_cell(menu_bg_surface, mine_field)
+            screen.blit(menu_bg_surface, (0, 0))
+            pygame.draw.rect(screen, (100, 100, 100), (30, 60, 14*30, 6*30))
+            pygame.draw.rect(screen, (150, 150, 150), (35, 65, 14*30 - 10, 6*30 - 10))
+            screen.blit(text_custom_field_entry_surf, (screen.get_size()[0]/2 - text_custom_field_entry_surf.get_size()[0]/2, 80))
+            pygame.draw.rect(screen, GRAY if custom_mine_field_box_active else WHITE, custom_mine_field_box, 2)
+            custom_field_input_surface = karma_sature_font_21.render(custom_mine_field_text, True, BLACK)
+            screen.blit(custom_field_input_surface, (custom_mine_field_box.x + 5, custom_mine_field_box.y + 5))
+            screen.blit(text_example_for_custom_field_surf, (screen.get_size()[0]/2 - text_example_for_custom_field_surf.get_size()[0]/2, 168))
+            screen.blit(text_custom_field_start_game, (screen.get_size()[0]/2 - text_custom_field_start_game.get_size()[0]/2, 200))
+
+            if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
+                screen.blit(back_arrow_surf_on, back_arrow_rect)
+            else:
+                screen.blit(back_arrow_surf_off, back_arrow_rect)
 
         pygame.display.flip()
         clock.tick(fps) # Limits the game to 60 fps, better for slower CPU

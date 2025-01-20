@@ -322,5 +322,73 @@
                 "time": "356"
             }
         }
+    },
+    "(10, 10, 5)": {
+        "scores": {
+            "gold": {
+                "username": "gold",
+                "time": "25"
+            },
+            "silver": {
+                "username": "silver",
+                "time": "50"
+            },
+            "bronze": {
+                "username": "bronze",
+                "time": "100"
+            },
+            "MPyazO7XitYTldYFpSQu": {
+                "username": "Custom1",
+                "time": "17"
+            }
+        }
+    },
+    "(10, 10, 10)": {
+        "scores": {
+            "gold": {
+                "username": "gold",
+                "time": "50"
+            },
+            "silver": {
+                "username": "silver",
+                "time": "100"
+            },
+            "bronze": {
+                "username": "bronze",
+                "time": "200"
+            }
+        }
+    },
+    "(10, 10, 11)": {
+        "scores": {
+            "gold": {
+                "username": "gold",
+                "time": "55"
+            },
+            "silver": {
+                "username": "silver",
+                "time": "110"
+            },
+            "bronze": {
+                "username": "bronze",
+                "time": "220"
+            }
+        }
+    },
+    "(5, 10, 8)": {
+        "scores": {
+            "gold": {
+                "username": "gold",
+                "time": "28"
+            },
+            "silver": {
+                "username": "silver",
+                "time": "56"
+            },
+            "bronze": {
+                "username": "bronze",
+                "time": "113"
+            }
+        }
     }
 }
