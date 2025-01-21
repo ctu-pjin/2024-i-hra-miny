@@ -85,3 +85,11 @@ def show_data(data_dict):
 def create_str_key(list_of_int):
     str_key = "(" + str(list_of_int[0]) + ", " + str(list_of_int[1]) + ", " + str(list_of_int[2]) + ")"
     return str_key
+
+
+def check_for_difficulty(str_input):
+    diffs = ["easy", "medium", "hard"]
+    if str_input.lower() in diffs:
+        return True
+    else:
+        return False 

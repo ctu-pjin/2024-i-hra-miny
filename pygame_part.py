@@ -59,9 +59,9 @@ text_miny_surf = karma_font_160.render("Miny", False, "Black")
 text_miny_rect = text_miny_surf.get_rect(midtop=(screen_width/2, 40))
 text_difficulty_surf = karma_font_60.render("Difficulty", False, "Black")
 text_difficulty_rect = text_difficulty_surf.get_rect(midtop=(screen_width/2, 70))
-text_save_system_surf = karma_font_60.render("Save system", False, "Black")
+text_save_system_surf = karma_font_60.render("Save game", False, "Black")
 text_save_system_rect = text_save_system_surf.get_rect(midtop=(screen_width/2, 70))
-text_load_system_surf = karma_font_60.render("Load system", False, "Black")
+text_load_system_surf = karma_font_60.render("Load game", False, "Black")
 victory_lines = ["Press Space to", "return to main menu", "OR", "Press Enter to", "submit your score"]
 loss_lines = ["Press Space to", "return to main menu", "", "Good luck", "next time"]
 text_press_space_surfs = [karma_sature_font_23.render(text, False, "White") for text in victory_lines]
@@ -72,11 +72,15 @@ text_submit_username_surf = karma_sature_font_21.render("Enter your Username:", 
 text_custom_field_entry_surf = karma_sature_font_21.render("Enter width, height, and number of mines:", False, "Black")
 text_example_for_custom_field_surf = karma_sature_font_21.render("example: 15, 10, 30",False, "Black")
 text_custom_field_start_game = karma_sature_font_21.render("Press Enter to start the game!", False, "Black")
+text_easy_medium_hard = karma_sature_font_23.render("Enter: 'easy', 'medium' or 'hard'", False, "Black")
+text_enter_parameters1 = karma_sature_font_21.render("Or enter the parameters", False, "Black")
+text_enter_parameters2 = karma_sature_font_21.render("of your custom game", False, "Black")
+
 # texts for help screen
 text_welcome = karma_sature_font_23.render("Welcome!",False, "Black")
 text_mine_sweeper = karma_sature_font_16.render("This is our rendition of the classic Minesweeper", False, "Black")
 text_controls = karma_sature_font_16.render("CONTROLS:", False, "Black")
-control_lines = ["Left-click: discover a (hopefully) mineless field", "Right-click: place a flag", "Wheel-click: discover the surroundings of an fully", "controlled field"]
+control_lines = ["Left-click: discover a (hopefully) mineless field", "Right-click: place a flag", "Wheel-click: discover the surroundings of a fully", "controlled field"]
 text_control_lines = [karma_sature_font_16.render(text, False, "Black") for text in control_lines]
 text_special_features = karma_sature_font_16.render("SPECIAL FEATURES:", False, "Black")
 save_lines = ["Save system", "save all your progress by picking", "one of the three slots", "re-write an old save by clicking on it", "or delete it by clicking the garbage can"]
@@ -365,9 +369,7 @@ def plot_empty_field(width, height, cell_size = 30):
         for col in range(width):
             screen.blit(box_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
 
-
-"""Provizorni"""
-# Input Box
+# Input Boxes
 username_box = pygame.Rect(40, 90, 220, 40)
 username_text = ""
 username_button_active = False
@@ -483,6 +485,16 @@ def main():
 
                 elif event.type == pygame.KEYDOWN and scores_input_box_active:
                     if event.key == pygame.K_RETURN: # User pressed enter and validated his game username
+
+                        # Checking if the input is easy, medium or hard and changing it to its parametrs
+                        if ScFn.check_for_difficulty(scores_input_text):
+                            exception_scores = True
+                            if scores_input_text.strip().lower() == "easy":
+                                scores_input_text = "12, 10, 18"
+                            else:
+                                scores_input_text = "16, 13, 37" if scores_input_text.strip().lower() == "medium" else "29, 20, 100"
+
+                        # Checking if the input parametrs of any field exists        
                         scores_entry = pole_funkce.separate_string_by_commas(scores_input_text)
                         if pole_funkce.is_it_integer(scores_entry) is False:
                             pass
@@ -491,7 +503,6 @@ def main():
                                 key = ScFn.create_str_key(scores_entry)
                                 scores_input_text = ""
                                 game_scores = ScFn.get_data()[key]
-                                print(game_scores)
                                 score_data_to_blit = ScFn.show_data(game_scores)
                                 score_data_to_blit_bool = True
                             except:
@@ -709,13 +720,22 @@ def main():
                             game_scores = ScFn.add_user_score(width, height, pocet_min, username_text.strip(), game_time)
                             print(f"Score submitted for {username_text.strip()}.")
                             submit_score_screen = False
-                            menu = True
+                            
+                            # Shows the leaderboard of finished game
+                            scores_menu = True
+                            key_string = str(f"{width}, {height}, {pocet_min}")
+                            separated_key_string = pole_funkce.separate_string_by_commas(key_string)
+                            key = ScFn.create_str_key(separated_key_string)
+                            game_scores = ScFn.get_data()[key]
+                            score_data_to_blit = ScFn.show_data(game_scores)
+                            score_data_to_blit_bool = True                            
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             username_text = ""
+
                     elif event.key == pygame.K_BACKSPACE:
                         username_text = username_text[:-1]
                     else:
-                        if len(username_text) < 17:
+                        if len(username_text) < 19:
                             username_text += event.unicode    
 
             elif custom_mine_field_screen:
@@ -857,6 +877,7 @@ def main():
 
             scores_input_surface = karma_sature_font_21.render(scores_input_text, True, BLACK)
             screen.blit(scores_input_surface, (scores_input_box.x + 5, scores_input_box.y + 5))
+            screen.blit(text_easy_medium_hard, (screen_width/2 - text_easy_medium_hard.get_width()/2, 78))
             
 
             if score_data_to_blit_bool:
@@ -876,8 +897,9 @@ def main():
                     if position == 12:
                         break
             else:
-                screen.blit(text_example_for_custom_field_surf, (screen.get_size()[0]/2 - text_example_for_custom_field_surf.get_size()[0]/2, 168))
-                screen.blit(text_custom_field_start_game, (screen.get_size()[0]/2 - text_custom_field_start_game.get_size()[0]/2, 200))
+                screen.blit(text_example_for_custom_field_surf, (screen.get_size()[0]/2 - text_example_for_custom_field_surf.get_size()[0]/2, 232))
+                screen.blit(text_enter_parameters1, (screen.get_size()[0]/2 - text_enter_parameters1.get_size()[0]/2, 168))
+                screen.blit(text_enter_parameters2, (screen.get_size()[0]/2 - text_enter_parameters2.get_size()[0]/2, 200))
 
         elif game:
             if first_click is True:
@@ -978,8 +1000,6 @@ def main():
                     y_offset += text_surf.get_height()
 
         elif load_screen or save_screen:
-            
-
             update_cell(menu_bg_surface, mine_field)
             screen.blit(menu_bg_surface, (0, 0))
             pygame.draw.rect(screen, (50, 50, 50), (screen_width/2-190, 50, 380, 420))
