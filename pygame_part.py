@@ -43,7 +43,52 @@ screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
 menu_bg_surface = pygame.Surface((screen_width, screen_height))
 
 
+# Part for loading fonts
+
+karma_font_160 = pygame.font.Font("fonts/KarmaFuture.otf", 160)
+karma_font_60 = pygame.font.Font("fonts/KarmaFuture.otf", 60)
+karma_sature_font_23 = pygame.font.Font("fonts/KarmaSuture.otf", 23)
+karma_sature_font_21 = pygame.font.Font("fonts/KarmaSuture.otf", 21)
+karma_sature_font_16 = pygame.font.Font("fonts/KarmaSuture.otf", 16)
+karma_sature_font_30 = pygame.font.Font("fonts/KarmaSuture.otf", 30)
+karma_font_35 = pygame.font.Font("fonts/KarmaFuture.otf", 35)
+
+# Part for loading texts
+
+text_miny_surf = karma_font_160.render("Miny", False, "Black")
+text_miny_rect = text_miny_surf.get_rect(midtop=(screen_width/2, 40))
+text_difficulty_surf = karma_font_60.render("Difficulty", False, "Black")
+text_difficulty_rect = text_difficulty_surf.get_rect(midtop=(screen_width/2, 70))
+text_save_system_surf = karma_font_60.render("Save system", False, "Black")
+text_save_system_rect = text_save_system_surf.get_rect(midtop=(screen_width/2, 70))
+text_load_system_surf = karma_font_60.render("Load system", False, "Black")
+victory_lines = ["Press Space to", "return to main menu", "OR", "Press Enter to", "submit your score"]
+loss_lines = ["Press Space to", "return to main menu", "", "Good luck", "next time"]
+text_press_space_surfs = [karma_sature_font_23.render(text, False, "White") for text in victory_lines]
+text_press_enter_surfs = [karma_sature_font_23.render(text, False, "White") for text in loss_lines]
+text_victory_surf = karma_font_35.render("You won!", False, "White")
+text_lose_surf = karma_font_35.render("You lost!", False, "White")
+text_submit_username_surf = karma_sature_font_21.render("Enter your Username:", False, "Black")
+text_custom_field_entry_surf = karma_sature_font_21.render("Enter width, height, and number of mines:", False, "Black")
+text_example_for_custom_field_surf = karma_sature_font_21.render("example: 15, 10, 30",False, "Black")
+text_custom_field_start_game = karma_sature_font_21.render("Press Enter to start the game!", False, "Black")
+# texts for help screen
+text_welcome = karma_sature_font_23.render("Welcome!",False, "Black")
+text_mine_sweeper = karma_sature_font_16.render("This is our rendition of the classic Minesweeper", False, "Black")
+text_controls = karma_sature_font_16.render("CONTROLS:", False, "Black")
+control_lines = ["Left-click: discover a (hopefully) mineless field", "Right-click: place a flag", "Wheel-click: discover the surroundings of an fully", "controlled field"]
+text_control_lines = [karma_sature_font_16.render(text, False, "Black") for text in control_lines]
+text_special_features = karma_sature_font_16.render("SPECIAL FEATURES:", False, "Black")
+save_lines = ["Save system", "save all your progress by picking", "one of the three slots", "re-write an old save by clicking on it", "or delete it by clicking the garbage can"]
+text_save = [karma_sature_font_16.render(text, False, "Black") for text in save_lines]
+reshuffle_lines = ["Reshuffle", "changes the positions of undiscovered mines", "to give you another chance when you are lost"]
+text_reshuffle = [karma_sature_font_16.render(text, False, "Black") for text in reshuffle_lines]
+hint_lines = ["Hint", "reveals the position of one undiscovered mine", "by placing a flag on it"]
+text_hint = [karma_sature_font_16.render(text, False, "Black") for text in hint_lines]
+text_have_fun = karma_sature_font_23.render("Have fun!", False, "Black")
+
 # Part for loading images
+
 new_game_surf_off = pygame.image.load("surfaces/new_game_button_off.png").convert_alpha() #surfaces of the object
 new_game_surf_on = pygame.image.load("surfaces/new_game_button_on.png").convert_alpha() 
 load_surf_off = pygame.image.load("surfaces/load_button_off.png").convert_alpha()
@@ -97,6 +142,7 @@ bin_on_surf = pygame.image.load("surfaces/bin_opened.png").convert_alpha()
 bin_off_surf = pygame.image.load("surfaces/bin_closed.png").convert_alpha()
 
 
+# Creating scaled surfaces for game items
 
 scale_factor = 1
 def scale_surface(surface, scale):
@@ -275,35 +321,6 @@ def delete_game(slot):
         except:
             print("Deletion Failed")
 
-# Part for loading fonts
-karma_font_160 = pygame.font.Font("fonts/KarmaFuture.otf", 160)
-karma_font_60 = pygame.font.Font("fonts/KarmaFuture.otf", 60)
-karma_sature_font_23 = pygame.font.Font("fonts/KarmaSuture.otf", 23)
-karma_sature_font_21 = pygame.font.Font("fonts/KarmaSuture.otf", 21)
-karma_sature_font_16 = pygame.font.Font("fonts/KarmaSuture.otf", 16)
-karma_sature_font_30 = pygame.font.Font("fonts/KarmaSuture.otf", 30)
-karma_font_35 = pygame.font.Font("fonts/KarmaFuture.otf", 35)
-
-# Part for loading texts
-text_miny_surf = karma_font_160.render("Miny", False, "Black")
-text_miny_rect = text_miny_surf.get_rect(midtop=(screen_width/2, 40))
-text_difficulty_surf = karma_font_60.render("Difficulty", False, "Black")
-text_difficulty_rect = text_difficulty_surf.get_rect(midtop=(screen_width/2, 70))
-text_save_system_surf = karma_font_60.render("Save system", False, "Black")
-text_save_system_rect = text_save_system_surf.get_rect(midtop=(screen_width/2, 70))
-text_load_system_surf = karma_font_60.render("Load system", False, "Black")
-victory_lines = ["Press Space to", "return to main menu", "OR", "Press Enter to", "submit your score"]
-lose_lines = ["Press Space to", "return to main menu", "", "Good luck", "next time"]
-text_press_space_surfs = [karma_sature_font_23.render(text, False, "White") for text in victory_lines]
-text_press_enter_surfs = [karma_sature_font_23.render(text, False, "White") for text in lose_lines]
-text_victory_surf = karma_font_35.render("You won!", False, "White")
-text_lose_surf = karma_font_35.render("You lost!", False, "White")
-text_submit_username_surf = karma_sature_font_21.render("Enter your Username:", False, "Black")
-text_custom_field_entry_surf = karma_sature_font_21.render("Enter width, height, and number of mines:", False, "Black")
-text_example_for_custom_field_surf = karma_sature_font_21.render("example: 15, 10, 30",False, "Black")
-text_custom_field_start_game = karma_sature_font_21.render("Press Enter to start the game!", False, "Black")
-
-
 
 clock = pygame.time.Clock()
 mine_field = random_mine_screen_generation(screen_width, screen_height)
@@ -385,6 +402,7 @@ def main():
     end_screen = False
     submit_score_screen = False
     custom_mine_field_screen = False
+    help_screen = False
     global screen, screen_height_game, screen_width_game, additional_dw, additional_dh, previous_time, remaining_flags, data_list, current_it, scale_factor
     global username_text, username_button_active, custom_mine_field_text, custom_mine_field_box_active, scores_input_box, scores_input_box_active, scores_input_text
     mines_rect = pygame.Rect(0, 0, 0, 0)
@@ -395,11 +413,11 @@ def main():
                 pygame.quit()
                 exit()
                 
-            if menu:
+            if menu: # specifies the active screen and what can occur while its active
                 if event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1: # To check if it is a left mouse click
-                        if new_game_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            new_game_menu = True
+                        if new_game_rect_on.collidepoint(pygame.mouse.get_pos()): # specifies which of the defined buttons was clicked on
+                            new_game_menu = True # what happens when the button gets clicked, this case changes actiive screens
                             menu = False
                         elif load_rect_on.collidepoint(pygame.mouse.get_pos()):
                             menu = False
@@ -408,17 +426,19 @@ def main():
                         elif scores_rect_on.collidepoint(pygame.mouse.get_pos()):
                             menu = False
                             scores_menu = True
+                        elif question_mark_rect.collidepoint(pygame.mouse.get_pos()):
+                            help_screen = True
+                            menu = False
 
             elif new_game_menu:  
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min, difficulty = 11, 10, 17, "Easy"
+                            width, height, pocet_min, difficulty = 12, 10, 18, "Easy"
                         elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            width, height, pocet_min, difficulty = 15, 12, 35, "Medium"
+                            width, height, pocet_min, difficulty = 16, 13, 37, "Medium"
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            #width, height, pocet_min, difficulty = 28, 20, 100, "Hard"
-                            width, height, pocet_min, difficulty = 50, 34, 270, "Hard"
+                            width, height, pocet_min, difficulty = 29, 20, 100, "Hard"
                         elif custom_rect_on.collidepoint(pygame.mouse.get_pos()):
                             custom_mine_field_screen = True
                             new_game_menu = False
@@ -702,7 +722,6 @@ def main():
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
                         if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
-                            screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             new_game_menu = True
                             custom_mine_field_screen = False
                             custom_mine_field_text = ""
@@ -750,14 +769,22 @@ def main():
                             custom_mine_field_text += event.unicode 
 
 
+            elif help_screen:
+                if event.type == pygame.MOUSEBUTTONUP:  
+                    if event.button == 1: 
+                        if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
+                            menu = True
+                            help_screen = False
+
+
         # This part is for drawing pictures on the screen         
         if menu:  # this is drawn, while menu is active
             screen.fill((255, 255, 255))  # Creates a white screen (to erase the previos iteration)
             #pygame.draw.rect(screen, (255, 0, 0), (0, 0, 80, 80))  # Draw a red rectangle
-            update_cell(menu_bg_surface, mine_field)
+            update_cell(menu_bg_surface, mine_field) # shifting cells in the background of the menus
             screen.blit(menu_bg_surface, (0, 0))
 
-            if new_game_rect_on.collidepoint(pygame.mouse.get_pos()):
+            if new_game_rect_on.collidepoint(pygame.mouse.get_pos()): # buttons change appearance if you click on them
                 screen.blit(new_game_surf_on, new_game_rect_on)
             else:
                 screen.blit(new_game_surf_off, new_game_rect_off)
@@ -1017,6 +1044,44 @@ def main():
                 screen.blit(back_arrow_surf_on, back_arrow_rect)
             else:
                 screen.blit(back_arrow_surf_off, back_arrow_rect)
+
+
+        elif help_screen:
+            screen.fill((200, 200, 200))
+            update_cell(menu_bg_surface, mine_field)
+            screen.blit(menu_bg_surface, (0, 0))
+            pygame.draw.rect(screen, (130, 130, 130), (30, 60, screen_width-60, screen_height-90))
+            pygame.draw.rect(screen, (200, 200, 200), (35, 65, screen_width-70, screen_height-100))
+            screen.blit(text_welcome, (screen_width/2 - text_welcome.get_size()[0]/2, 75))
+            screen.blit(text_mine_sweeper, (screen_width/2 - text_mine_sweeper.get_size()[0]/2,100))
+            screen.blit(text_controls, (40, 130))
+            y_offset = 150
+            for text in text_control_lines:
+                screen.blit(text, (45, y_offset))
+                y_offset += 20
+            screen.blit(text_special_features, (40, y_offset + 10))
+            screen.blit(save_icon_off_surf, (45, y_offset + 30))
+            y_offset += 30
+            for text in text_save:
+                screen.blit(text, (90, y_offset))
+                y_offset += 20
+            y_offset += 10
+            screen.blit(reshuffle_off_surf, (45, y_offset))
+            for text in text_reshuffle:
+                screen.blit(text, (90, y_offset))
+                y_offset += 20
+            y_offset += 10
+            screen.blit(hint_off_surf, (45, y_offset))
+            for text in text_hint:
+                screen.blit(text, (90, y_offset))
+                y_offset += 20
+            screen.blit(text_have_fun, (screen_width/2 - text_have_fun.get_size()[0]/2, y_offset + 10))
+
+            if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
+                screen.blit(back_arrow_surf_on, back_arrow_rect)
+            else:
+                screen.blit(back_arrow_surf_off, back_arrow_rect)
+            
 
         pygame.display.flip()
         clock.tick(fps) # Limits the game to 60 fps, better for slower CPU

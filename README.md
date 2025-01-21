@@ -13,3 +13,16 @@ Seznam členů:
 * Adam Králič
 * Barbora Matějková
 * Adéla Pohanková
+
+Hra nabízí tři předpřipravené úrovně
+    Easy - pole 12x10, 18 min
+    Medium - pole 16x13, 37 min
+    Hard - pole 29, 20, 100 min
+a možnost vytvoření svého "custom" pole.
+Vložit řešený čas do lokální databáze i zobrazit si nejlepší řešitele pole daného rozměru.
+V rámci hry je dostupný ukládací systém se třemi save sloty, které lze přeuložit i smazat, hru lze opětovně načíst z hlavního menu. Uloženy budou veškeré parametry (tj. i počet použití funkcí reshuffle a hint).
+Při řešení je možné použít dvě nové funkce - reshuffle, který mění polohu nenajitých min, a nápověda, která označí jednu nenalezenou minu. Obě mají omezený počet užití a jiné strategické výhody.
+V hlavním menu je proklik na "help", kde je popsán průběh hry a jednotlivé funkce.
+
+
+Detailnější popis speciálních funkcí:
