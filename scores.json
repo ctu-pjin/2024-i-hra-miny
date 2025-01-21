@@ -1,622 +1,170 @@
 {
-    "(4, 10, 4)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "12"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "25"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "50"
-            }
-        }
-    },
-    "(8, 10, 12)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "53"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "107"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "214"
-            },
-            "EnRDkB77KKV9O2EmaJNH": {
-                "username": "ban\u00e1n",
-                "time": "38"
-            },
-            "IfKiVworm5EQ02o0ggBL": {
-                "username": "ban\u00e1n",
-                "time": "24"
-            },
-            "UBkU7rDYJT53PKPOHIJm": {
-                "username": "ban\u00e1n",
-                "time": "22"
-            }
-        }
-    },
     "(15, 12, 35)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "234"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "469"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "939"
-            },
-            "wnqeidjON9zXeSryNvvH": {
-                "username": "Brick",
-                "time": "489"
-            },
-            "gNG4sJ1usiytgSSA8mHI": {
-                "username": "Sir Meowsington",
-                "time": "130"
-            },
-            "mWd2Q4G3SF1twfcKfXRQ": {
-                "username": "Blahblahblah",
-                "time": "152"
-            }
-        }
-    },
-    "(8, 5, 5)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "15"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "31"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "63"
-            },
-            "ZBYUIqvxmKnjbpUOMqzZ": {
-                "username": "ban\u00e1n",
-                "time": "6"
-            }
-        }
-    },
-    "(8, 2, 1)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "2"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "4"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "8"
-            },
-            "dVtdqNiLUuodXcTIqhUP": {
-                "username": "ban\u00e1n",
-                "time": "2"
-            }
-        }
-    },
-    "(2, 7, 1)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "1"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "3"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "7"
-            },
-            "PLbqaEgvAorVA5qmdChW": {
-                "username": "ban\u00e1n",
-                "time": "1"
-            },
-            "qtDSiajzVsOJETmKmEan": {
-                "username": "ban\u00e1n",
-                "time": "0"
-            },
-            "gLDbs4PzaVKeo4y3RK9c": {
-                "username": "ban\u00e1n",
-                "time": "2"
-            },
-            "tkIGCKOeK2TEvq0MIPYX": {
-                "username": "ban\u00e1n",
-                "time": "1"
-            },
-            "RiyyD9wmnGxY97zfUA40": {
-                "username": "ban\u00e1n",
-                "time": "1"
-            }
-        }
-    },
-    "(50, 34, 270)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "5566"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "11132"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "22264"
-            }
-        }
-    },
-    "(7, 2, 1)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "1"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "3"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "7"
-            },
-            "WWM1o0hh64LSaEILljtK": {
-                "username": "ban\u00e1n",
-                "time": "0"
-            }
-        }
-    },
-    "(5, 2, 1)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "1"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "3"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "6"
-            }
-        }
-    },
-    "(5, 4, 1)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "2"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "4"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "8"
-            },
-            "c4dziCVLpgTCV358upPL": {
-                "username": "ban\u00e1n",
-                "time": "1"
-            },
-            "uzH9QDXGz3hPDTmCg6VX": {
-                "username": "ban\u00e1n",
-                "time": "0"
-            }
-        }
-    },
-    "(5, 4, 3)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "6"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "13"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "26"
-            },
-            "MWA6H4BsLR1GiymXLcgt": {
-                "username": "Boat 79",
-                "time": "4"
-            }
-        }
-    },
-    "(8, 8, 7)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "28"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "56"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "112"
-            },
-            "gqrMntSJ4s6nRaY8phmL": {
-                "username": "Schmit",
-                "time": "7"
-            },
-            "DKootY0l96Y8oQYO83S7": {
-                "username": "Holy_moly",
-                "time": "24"
-            },
-            "W2An5BL81eBxgn0JtFpk": {
-                "username": "Jook",
-                "time": "14"
-            }
-        }
-    },
-    "(11, 11, 17)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "93"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "187"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "374"
-            },
-            "o1tqs9zhOKou8uCVdNM9": {
-                "username": "sir meowsington",
-                "time": "60"
-            }
-        }
-    },
-    "(1, 11, 5)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "8"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "16"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "33"
-            }
+        "gold": {
+            "username": "gold",
+            "time": "234"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "469"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "939"
         }
     },
     "(11, 10, 17)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "89"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "178"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "356"
-            },
-            "j3o1wzoB279eeb5Hu2SL": {
-                "username": "seed",
-                "time": "30"
-            },
-            "N11h2YLaqPQH1HUJRTRS": {
-                "username": "GEEEZ",
-                "time": "34"
-            }
+        "gold": {
+            "username": "gold",
+            "time": "89"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "178"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "356"
+        },
+        "15pgBdSbEg2MvX7ftA38": {
+            "username": "Schmidt",
+            "time": "41"
+        },
+        "K7nTXRxnl43pIZwfHYwY": {
+            "username": "\u0160plouch",
+            "time": "35"
+        },
+        "dKLuoJsSPlYVLvlq2OoY": {
+            "username": "Bugul\u00edn",
+            "time": "37"
+        },
+        "K2Ef0IVl14KLNOyI9wxc": {
+            "username": "Pokus hokus fukus",
+            "time": "42"
+        },
+        "uT8NQSuJiR74VjfRlafm": {
+            "username": "U\u017e nev\u00edm jak\u00fd jm\u00e9",
+            "time": "35"
+        },
+        "uT8NQSu4374VjfRlafm": {
+            "username": "U\u017e nev\u00edm jak\u00fd jm\u00e9",
+            "time": "12435"
+        },
+        "uT8NQ23SuJiR74VjfRlafm": {
+            "username": "U\u017e nev\u00edm jak\u00fd jm\u00e9",
+            "time": "3645"
+        },
+        "uT8NQSuJiR74Vjf34afm": {
+            "username": "U\u017e nev\u00edm jak\u00fd jm\u00e9",
+            "time": "3125"
+        },
+        "uT12uJiR74VjfRlafm": {
+            "username": "U\u017e nev\u00edm jak\u00fd jm\u00e9",
+            "time": "3535"
+        },
+        "uT8NQS24R74VjfRlafm": {
+            "username": "U\u017e nev\u00edm jak\u00fd jm\u00e9",
+            "time": "356345"
+        },
+        "uT8NQSuJiR74Vjf5Gafm": {
+            "username": "U\u017e nev\u00edm jak\u00fd jm\u00e9",
+            "time": "104"
+        },
+        "uT8NQSu2374VjfRlafm": {
+            "username": "U\u017e nev\u00edm jak\u00fd jm\u00e9",
+            "time": "67"
+        },
+        "SQqJNDkr8MDuGq7h7LRP": {
+            "username": "Whoopsie",
+            "time": "46"
         }
     },
-    "(10, 10, 5)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "25"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "50"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "100"
-            },
-            "MPyazO7XitYTldYFpSQu": {
-                "username": "Custom1",
-                "time": "17"
-            }
+    "(15, 10, 11)": {
+        "gold": {
+            "username": "gold",
+            "time": "67"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "134"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "269"
+        },
+        "hxOGhxGSLu9rTCstUNA5": {
+            "username": "Vesimir",
+            "time": "14"
         }
     },
-    "(10, 10, 10)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "50"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "100"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "200"
-            }
+    "(50, 34, 270)": {
+        "gold": {
+            "username": "gold",
+            "time": "5566"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "11132"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "22264"
         }
     },
-    "(10, 10, 11)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "55"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "110"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "220"
-            }
+    "(20, 20, 20)": {
+        "gold": {
+            "username": "gold",
+            "time": "200"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "400"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "800"
         }
     },
-    "(5, 10, 8)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "28"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "56"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "113"
-            }
+    "(70, 40, 150)": {
+        "gold": {
+            "username": "gold",
+            "time": "3968"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "7937"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "15874"
         }
     },
-    "(20, 30, 80)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "979"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "1959"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "3919"
-            }
+    "(100, 50, 300)": {
+        "gold": {
+            "username": "gold",
+            "time": "10606"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "21213"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "42426"
         }
     },
-    "(40, 4, 25)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "158"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "316"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "632"
-            },
-            "jNhqC3n8ju1A1eskqoUx": {
-                "username": "Brumb\u00e1l",
-                "time": "70"
-            }
-        }
-    },
-    "(30, 3, 20)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "94"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "189"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "379"
-            }
-        }
-    },
-    "(10, 8, 9)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "40"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "80"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "160"
-            }
-        }
-    },
-    "(30, 2, 10)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "38"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "77"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "154"
-            }
-        }
-    },
-    "(10, 3, 5)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "13"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "27"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "54"
-            }
-        }
-    },
-    "(3, 14, 4)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "12"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "25"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "51"
-            },
-            "PmnoCSllxxHfrrtac5BL": {
-                "username": "Sumatra",
-                "time": "9"
-            }
-        }
-    },
-    "(15, 10, 18)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "110"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "220"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "440"
-            },
-            "1DW6pfjyAbpZg13gkDuE": {
-                "username": "SMIP",
-                "time": "33"
-            }
-        }
-    },
-    "(20, 18, 40)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "379"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "758"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "1517"
-            }
-        }
-    },
-    "(30, 10, 10)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "86"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "173"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "346"
-            }
-        }
-    },
-    "(40, 20, 10)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "141"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "282"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "565"
-            }
-        }
-    },
-    "(40, 20, 20)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "282"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "565"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "1131"
-            }
-        }
-    },
-    "(5, 5, 5)": {
-        "scores": {
-            "gold": {
-                "username": "gold",
-                "time": "12"
-            },
-            "silver": {
-                "username": "silver",
-                "time": "25"
-            },
-            "bronze": {
-                "username": "bronze",
-                "time": "50"
-            }
+    "(100, 50, 600)": {
+        "gold": {
+            "username": "gold",
+            "time": "21213"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "42426"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "84852"
         }
     }
 }

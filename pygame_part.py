@@ -209,6 +209,26 @@ def update_cell(buffer_surface, mine_field, cell_size=30):
 save_slots = ["save1.json", "save2.json", "save3.json"]
 
 
+def create_rect_surf(id, name, time, color = (180, 180, 180), width = 380, height = 28):
+    surf = pygame.Surface((width, height))
+    surf.fill((160, 160, 160))  # Fill the surface with the background color
+
+    # Create the text to display
+    text_left = f"{id}. {name}"
+    text_right = f"{time}s"
+
+    # Render the text
+    text_left_surface = karma_sature_font_21.render(text_left, True, BLACK)
+    text_right_surface = karma_sature_font_21.render(text_right, True, BLACK)
+
+    # Blit the text onto the surface¨
+    pygame.draw.rect(surf, color, (2, 2, width-4, height-4))
+    surf.blit(text_left_surface, (5, 2))
+    surf.blit(text_right_surface, (surf.get_width()-text_right_surface.get_width()-5, 2))
+
+    return surf
+
+
 def load_game(slot):
     filename = "saves/" + save_slots[slot]
     if os.path.exists(filename):
@@ -260,6 +280,7 @@ karma_font_160 = pygame.font.Font("fonts/KarmaFuture.otf", 160)
 karma_font_60 = pygame.font.Font("fonts/KarmaFuture.otf", 60)
 karma_sature_font_23 = pygame.font.Font("fonts/KarmaSuture.otf", 23)
 karma_sature_font_21 = pygame.font.Font("fonts/KarmaSuture.otf", 21)
+karma_sature_font_16 = pygame.font.Font("fonts/KarmaSuture.otf", 16)
 karma_sature_font_30 = pygame.font.Font("fonts/KarmaSuture.otf", 30)
 karma_font_35 = pygame.font.Font("fonts/KarmaFuture.otf", 35)
 
@@ -338,6 +359,10 @@ custom_mine_field_box = pygame.Rect(120, 120, 240, 40)
 custom_mine_field_text = ""
 custom_mine_field_box_active = False
 
+scores_input_box = pygame.Rect(50, 115, screen_width-100, 40)
+scores_input_text = ""
+scores_input_box_active = False
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GRAY = (200, 200, 200)
@@ -345,7 +370,9 @@ GRAY = (200, 200, 200)
 
 def main():
     wrong_custom_input = False
+    score_data_to_blit_bool = False
     empty_cells_to_plot = []
+    score_data_to_blit = dict()
     it = 0
     menu = True
     first_click = False
@@ -354,11 +381,12 @@ def main():
     game = False
     load_screen = False
     save_screen = False
+    scores_menu = False
     end_screen = False
     submit_score_screen = False
     custom_mine_field_screen = False
     global screen, screen_height_game, screen_width_game, additional_dw, additional_dh, previous_time, remaining_flags, data_list, current_it, scale_factor
-    global username_text, username_button_active, custom_mine_field_text, custom_mine_field_box_active
+    global username_text, username_button_active, custom_mine_field_text, custom_mine_field_box_active, scores_input_box, scores_input_box_active, scores_input_text
     mines_rect = pygame.Rect(0, 0, 0, 0)
 
     while True: 
@@ -371,13 +399,15 @@ def main():
                 if event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1: # To check if it is a left mouse click
                         if new_game_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             new_game_menu = True
                             menu = False
                         elif load_rect_on.collidepoint(pygame.mouse.get_pos()):
                             menu = False
                             load_screen = True
                             data_list = [load_game(slot) or {} for slot in range(3)]
+                        elif scores_rect_on.collidepoint(pygame.mouse.get_pos()):
+                            menu = False
+                            scores_menu = True
 
             elif new_game_menu:  
                 if event.type == pygame.MOUSEBUTTONUP:  
@@ -394,7 +424,6 @@ def main():
                             new_game_menu = False
                             wrong_custom_input = False
                         elif back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
-                            screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             menu = True
                             new_game_menu = False
                             continue  # Skip the rest of this loop iteration if going back to menu
@@ -415,7 +444,52 @@ def main():
                             all_scores = ScFn.update_or_add_game_data(width, height, pocet_min)
                             key = str((width, height, pocet_min))
                             game_scores = all_scores[key]
-               
+
+            elif scores_menu:
+                if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                    if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
+                        menu = True
+                        scores_menu = False
+                        scores_input_text = ""
+                        score_data_to_blit = dict()
+                        score_data_to_blit_bool = False
+
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    # Check if the input box was clicked
+                    if scores_input_box.collidepoint(event.pos):
+                        scores_input_box_active = True
+                    else:
+                        scores_input_box_active = False
+
+                elif event.type == pygame.KEYDOWN and scores_input_box_active:
+                    if event.key == pygame.K_RETURN: # User pressed enter and validated his game username
+                        scores_entry = pole_funkce.separate_string_by_commas(scores_input_text)
+                        if pole_funkce.is_it_integer(scores_entry) is False:
+                            pass
+                        elif len(scores_entry) == 3:
+                            try:
+                                key = ScFn.create_str_key(scores_entry)
+                                scores_input_text = ""
+                                game_scores = ScFn.get_data()[key]
+                                print(game_scores)
+                                score_data_to_blit = ScFn.show_data(game_scores)
+                                score_data_to_blit_bool = True
+                            except:
+                                print("Zadané neexistující parametry")
+                        else:
+                            score_data_to_blit = dict()
+                            score_data_to_blit_bool = False
+                        # If an error occurs, this happens
+                        scores_input_text = ""
+                        scores_input_box_active = False
+                        
+
+                    elif event.key == pygame.K_BACKSPACE:
+                        scores_input_text = scores_input_text[:-1]
+                    else:
+                        if len(scores_input_text) < 20:
+                            scores_input_text += event.unicode 
+
             elif game:
                 if first_click is True:
                     remaining_flags = pocet_min
@@ -537,7 +611,6 @@ def main():
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1:
                         if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
-                            screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
                             menu = True
                             load_screen = False
                         elif any(rect.collidepoint(pygame.mouse.get_pos()) for rect in save_slot_rects):
@@ -577,9 +650,9 @@ def main():
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
                         if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
-                            screen = pygame.display.set_mode((screen_width_game, screen_height_game))
                             game = True
                             save_screen = False
+                            screen = pygame.display.set_mode((screen_width_game, screen_height_game))
                         elif any(rect.collidepoint(pygame.mouse.get_pos()) for rect in save_slot_rects):
                             if save_slot_rects[0].collidepoint(pygame.mouse.get_pos()):
                                 slot = 0
@@ -738,6 +811,46 @@ def main():
                 screen.blit(back_arrow_surf_on, back_arrow_rect)
             else:
                 screen.blit(back_arrow_surf_off, back_arrow_rect)
+
+        elif scores_menu:
+            screen.fill((200, 200, 200))
+            update_cell(menu_bg_surface, mine_field)
+            screen.blit(menu_bg_surface, (0, 0))
+            pygame.draw.rect(screen, (50, 50, 50), (30, 60, screen_width-60, screen_height-90))
+            pygame.draw.rect(screen, (130, 130, 130), (35, 65, screen_width-70, screen_height-100))
+            pygame.draw.rect(screen, (190, 190, 190), (42, 162, screen_width-84, screen_height-204))
+            pygame.draw.rect(screen, (220, 220, 220), (45, 165, screen_width-90, screen_height-210))
+
+            if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
+                screen.blit(back_arrow_surf_on, back_arrow_rect)
+            else:
+                screen.blit(back_arrow_surf_off, back_arrow_rect)
+
+            pygame.draw.rect(screen, GRAY if scores_input_box_active else WHITE, scores_input_box, 3)
+
+            scores_input_surface = karma_sature_font_21.render(scores_input_text, True, BLACK)
+            screen.blit(scores_input_surface, (scores_input_box.x + 5, scores_input_box.y + 5))
+            
+
+            if score_data_to_blit_bool:
+                y_offset = 0
+                for user, _ in enumerate(score_data_to_blit):
+                    position = user + 1
+                    if position < 4:
+                        if position == 1:
+                            color_i = (239, 191, 4)
+                        else:
+                            color_i = (202, 202, 215) if position == 2 else (205, 127, 50)
+                        surf_to_blit = create_rect_surf(str(position), score_data_to_blit[user]["username"], score_data_to_blit[user]["time"], color = color_i)
+                    else:
+                        surf_to_blit = create_rect_surf(str(position), score_data_to_blit[user]["username"], score_data_to_blit[user]["time"])
+                    screen.blit(surf_to_blit, (50, 170 + y_offset))
+                    y_offset += 31
+                    if position == 12:
+                        break
+            else:
+                screen.blit(text_example_for_custom_field_surf, (screen.get_size()[0]/2 - text_example_for_custom_field_surf.get_size()[0]/2, 168))
+                screen.blit(text_custom_field_start_game, (screen.get_size()[0]/2 - text_custom_field_start_game.get_size()[0]/2, 200))
 
         elif game:
             if first_click is True:

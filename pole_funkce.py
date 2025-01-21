@@ -9,9 +9,8 @@ queue = []
 pg.init()
 
 def separate_string_by_commas(string):
-    string.strip()
-    string_split = string.split(",")
-    print(string_split)
+    string = string.strip()  # Strip leading and trailing spaces
+    string_split = [s.strip() for s in string.split(",")]
     return string_split
 
 def is_it_integer(list_of_strings):

@@ -43,9 +43,8 @@ def update_or_add_game_data(width, height, num_mines):
             "silver": {"username": "silver", "time": str(int(math.sqrt(width * height) * num_mines))},
             "bronze": {"username": "bronze", "time": str(int(math.sqrt(width * height) * num_mines * 2))}
         }
-        data[key] = {
-            "scores": medal_times 
-        }
+        data[key] = medal_times 
+        
         save_data(data) 
 
     return data
@@ -61,14 +60,28 @@ def add_user_score(width, height, num_mines, username, time):
 
     user_id = create_id(20)  # Generate a unique ID for the user
 
-    # Avoid overwriting user scores by checking existing IDs
-    if "scores" not in data[key]:
-        data[key]["scores"] = {}
-
-    data[key]["scores"][user_id] = {
+    data[key][user_id] = {
         "username": username,
         "time": str(round(time, 1))
     }
 
     save_data(data)  
     return data[key]  
+
+
+def show_data(data_dict):
+    # Shows the game leaderboard
+    print("\n------LEADERBOARD------")
+    try:
+        # Sort the participants by their 'time' field
+        sorted_scores = sorted(data_dict.values(), key=lambda x: float(x["time"]))
+    except (TypeError, KeyError) as e:
+        print("Error: Invalid data structure or missing keys. Please check the input data.")
+        print(f"Details: {e}")
+    print()
+    return sorted_scores
+
+
+def create_str_key(list_of_int):
+    str_key = "(" + str(list_of_int[0]) + ", " + str(list_of_int[1]) + ", " + str(list_of_int[2]) + ")"
+    return str_key
