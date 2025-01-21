@@ -72,7 +72,7 @@ text_submit_username_surf = karma_sature_font_21.render("Enter your Username:", 
 text_custom_field_entry_surf = karma_sature_font_21.render("Enter width, height, and number of mines:", False, "Black")
 text_example_for_custom_field_surf = karma_sature_font_21.render("example: 15, 10, 30",False, "Black")
 text_custom_field_start_game = karma_sature_font_21.render("Press Enter to start the game!", False, "Black")
-text_easy_medium_hard = karma_sature_font_23.render("Enter: 'easy', 'medium' or 'hard'", False, "Black")
+text_easy_medium_hard = karma_sature_font_23.render("Enter: easy, medium or hard", False, "Black")
 text_enter_parameters1 = karma_sature_font_21.render("Or enter the parameters", False, "Black")
 text_enter_parameters2 = karma_sature_font_21.render("of your custom game", False, "Black")
 
@@ -405,6 +405,10 @@ def main():
     submit_score_screen = False
     custom_mine_field_screen = False
     help_screen = False
+    if os.path.exists('saves'): # save system needs this directory, and if there were no saves in it, github would delete it, so this checks if it exists
+        pass
+    else:
+        os.mkdir('saves') # or creates it if needed 
     global screen, screen_height_game, screen_width_game, additional_dw, additional_dh, previous_time, remaining_flags, data_list, current_it, scale_factor
     global username_text, username_button_active, custom_mine_field_text, custom_mine_field_box_active, scores_input_box, scores_input_box_active, scores_input_text
     mines_rect = pygame.Rect(0, 0, 0, 0)

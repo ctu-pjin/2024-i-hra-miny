@@ -296,5 +296,23 @@
             "username": "Speed",
             "time": "5"
         }
+    },
+    "(30, 30, 200)": {
+        "gold": {
+            "username": "gold",
+            "time": "3000"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "6000"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "12000"
+        },
+        "523GuMFxUKQ4mQxMODdg": {
+            "username": "Sir Meowsington",
+            "time": "1337"
+        }
     }
 }
