@@ -1,6 +1,6 @@
 # Hra: Miny
 
-Požadavky: python 3.10+, modules: pygame, json, numpy, random, sys, os
+Požadavky: python 3.10+, modules: pygame 2.6+, numpy 2.1+, json, random, sys, os
 Pouštět přes pygame_part.py
 
 Surfaces a veškeré grafické výstupy hry byly vytvořeny touto skupinou v pixel art prograpu Aseprite. Použitý font je Karma Suture a Karma Future, oba z open licence. 

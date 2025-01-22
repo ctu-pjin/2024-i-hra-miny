@@ -33,17 +33,17 @@ def get_data():
 
 
 def update_or_add_game_data(width, height, num_mines):
-    key = str((width, height, num_mines)) 
+    game_parameters = str((width, height, num_mines)) 
     data = get_data() 
 
     # Creates basic times if the field of the definied parameters does not exist
-    if key not in data:
+    if game_parameters not in data:
         medal_times = {
-        "gold": {"username": "gold", "time": str(int(math.sqrt(width * height) * num_mines /2))},
-            "silver": {"username": "silver", "time": str(int(math.sqrt(width * height) * num_mines))},
-            "bronze": {"username": "bronze", "time": str(int(math.sqrt(width * height) * num_mines * 2))}
+        "gold": {"username": "gold", "time": str(int((width * height) * math.tan(math.pi/2*num_mines/(width * height))))},
+            "silver": {"username": "silver", "time": str(int(1.8*(width * height) * math.tan(math.pi/2*num_mines/(width * height))))},
+            "bronze": {"username": "bronze", "time": str(int(3*(width * height) * math.tan(math.pi/2*num_mines/(width * height))))}
         }
-        data[key] = medal_times 
+        data[game_parameters] = medal_times 
         
         save_data(data) 
 
@@ -51,27 +51,24 @@ def update_or_add_game_data(width, height, num_mines):
 
 
 def add_user_score(width, height, num_mines, username, time):
-    key = str((width, height, num_mines))  
+    game_parameters = str((width, height, num_mines))  # KEY = Game parameters
     data = get_data()  
 
-    if key not in data:
-        print("Game parameters not found. Initializing new game data.")
+    if game_parameters not in data: # If the key does not exist, it will create a new data for that key
         data = update_or_add_game_data(width, height, num_mines)
 
     user_id = create_id(20)  # Generate a unique ID for the user
 
-    data[key][user_id] = {
+    data[game_parameters][user_id] = {
         "username": username,
         "time": str(round(time, 1))
     }
-
     save_data(data)  
-    return data[key]  
+    return data[game_parameters]  
 
 
 def show_data(data_dict):
     # Shows the game leaderboard
-    print("\n------LEADERBOARD------")
     try:
         # Sort the participants by their 'time' field
         sorted_scores = sorted(data_dict.values(), key=lambda x: float(x["time"]))
@@ -82,12 +79,12 @@ def show_data(data_dict):
     return sorted_scores
 
 
-def create_str_key(list_of_int):
+def create_str_key(list_of_int): # This creates a str from game parameters. Use: dictionary key
     str_key = "(" + str(list_of_int[0]) + ", " + str(list_of_int[1]) + ", " + str(list_of_int[2]) + ")"
     return str_key
 
 
-def check_for_difficulty(str_input):
+def check_for_difficulty(str_input): # Checks if the input is one of the difficulties
     diffs = ["easy", "medium", "hard"]
     if str_input.lower() in diffs:
         return True
