@@ -23,7 +23,7 @@ def is_it_integer(list_of_strings):
 
 def field_creation_conditions(list_of_strings):
     width, height, pocet_min = int(list_of_strings[0]), int(list_of_strings[1]), int(list_of_strings[2])
-    if (any((pocet_min, width, height)) <= 0) or pocet_min > width*height - 10:
+    if pocet_min <= 0 or width <= 0 or height <= 0 or pocet_min > width*height - 15:
         return False
     return True
 

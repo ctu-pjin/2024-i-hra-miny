@@ -247,6 +247,10 @@
         "dfT5M1W4jNAVCv7cvk7b": {
             "username": "sPEEd2",
             "time": "93"
+        },
+        "SmNskxZoLWSWdYCiqCAE": {
+            "username": "Meowsington",
+            "time": "41"
         }
     },
     "(16, 13, 37)": {
@@ -313,6 +317,70 @@
         "523GuMFxUKQ4mQxMODdg": {
             "username": "Sir Meowsington",
             "time": "1337"
+        }
+    },
+    "(5, 5, 15)": {
+        "gold": {
+            "username": "gold",
+            "time": "37"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "75"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "150"
+        }
+    },
+    "(5, 5, 10)": {
+        "gold": {
+            "username": "gold",
+            "time": "25"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "50"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "100"
+        },
+        "38TLQYoTsDqoLGGsEVFU": {
+            "username": "pala\u010dinka",
+            "time": "12"
+        }
+    },
+    "(20, 20, 385)": {
+        "gold": {
+            "username": "gold",
+            "time": "3850"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "7700"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "15400"
+        }
+    },
+    "(5, 5, 2)": {
+        "gold": {
+            "username": "gold",
+            "time": "5"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "10"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "20"
+        },
+        "gQ1cT8Ri0Jzl3eltjq4k": {
+            "username": "pala\u010dinka",
+            "time": "3"
         }
     }
 }

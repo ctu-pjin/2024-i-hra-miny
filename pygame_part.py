@@ -69,12 +69,14 @@ text_press_enter_surfs = [karma_sature_font_23.render(text, False, "White") for 
 text_victory_surf = karma_font_35.render("You won!", False, "White")
 text_lose_surf = karma_font_35.render("You lost!", False, "White")
 text_submit_username_surf = karma_sature_font_21.render("Enter your Username:", False, "Black")
-text_custom_field_entry_surf = karma_sature_font_21.render("Enter width, height, and number of mines:", False, "Black")
+text_custom_field_entry_surf = karma_sature_font_21.render("enter width, height, and number of mines:", False, "Black")
 text_example_for_custom_field_surf = karma_sature_font_21.render("example: 15, 10, 30",False, "Black")
 text_custom_field_start_game = karma_sature_font_21.render("Press Enter to start the game!", False, "Black")
 text_easy_medium_hard = karma_sature_font_23.render("Enter: easy, medium or hard", False, "Black")
 text_enter_parameters1 = karma_sature_font_21.render("Or enter the parameters", False, "Black")
 text_enter_parameters2 = karma_sature_font_21.render("of your custom game", False, "Black")
+text_this_is_custom_game = karma_sature_font_23.render("Create your custom game field", False, "Black")
+text_leaderboards = karma_sature_font_30.render("Leaderboards", False, "Black")
 
 # texts for help screen
 text_welcome = karma_sature_font_23.render("Welcome!",False, "Black")
@@ -369,12 +371,29 @@ def plot_empty_field(width, height, cell_size = 30):
         for col in range(width):
             screen.blit(box_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
 
+
+def leave_game():
+    global game, menu, first_click, screen
+    game = False
+    menu = True
+    first_click = True
+    screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
+
+
+def back_to_menu_from_scores(menu, scores_menu, scores_input_text, score_data_to_blit, score_data_to_blit_bool):
+    menu = True
+    scores_menu = False
+    scores_input_text = ""
+    score_data_to_blit = dict()
+    score_data_to_blit_bool = False
+    return menu, scores_menu, scores_input_text, score_data_to_blit, score_data_to_blit_bool
+
 # Input Boxes
 username_box = pygame.Rect(40, 90, 220, 40)
 username_text = ""
 username_button_active = False
 
-custom_mine_field_box = pygame.Rect(120, 120, 240, 40)
+custom_mine_field_box = pygame.Rect(120, 155, 240, 40)
 custom_mine_field_text = ""
 custom_mine_field_box_active = False
 
@@ -388,6 +407,7 @@ GRAY = (200, 200, 200)
 
 
 def main():
+    global menu, game, first_click
     wrong_custom_input = False
     score_data_to_blit_bool = False
     empty_cells_to_plot = []
@@ -411,6 +431,7 @@ def main():
         os.mkdir('saves') # or creates it if needed 
     global screen, screen_height_game, screen_width_game, additional_dw, additional_dh, previous_time, remaining_flags, data_list, current_it, scale_factor
     global username_text, username_button_active, custom_mine_field_text, custom_mine_field_box_active, scores_input_box, scores_input_box_active, scores_input_text
+
     mines_rect = pygame.Rect(0, 0, 0, 0)
 
     while True: 
@@ -432,6 +453,7 @@ def main():
                         elif scores_rect_on.collidepoint(pygame.mouse.get_pos()):
                             menu = False
                             scores_menu = True
+                            scores_input_box_active = True
                         elif question_mark_rect.collidepoint(pygame.mouse.get_pos()):
                             help_screen = True
                             menu = False
@@ -446,6 +468,7 @@ def main():
                         elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
                             width, height, pocet_min, difficulty = 29, 20, 100, "Hard"
                         elif custom_rect_on.collidepoint(pygame.mouse.get_pos()):
+                            custom_mine_field_box_active = True
                             custom_mine_field_screen = True
                             new_game_menu = False
                             wrong_custom_input = False
@@ -470,15 +493,16 @@ def main():
                             all_scores = ScFn.update_or_add_game_data(width, height, pocet_min)
                             key = str((width, height, pocet_min))
                             game_scores = all_scores[key]
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        menu = True
+                        new_game_menu = False
+                        continue  # Skip the rest of this loop iteration if going back to menu
 
             elif scores_menu:
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                     if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
-                        menu = True
-                        scores_menu = False
-                        scores_input_text = ""
-                        score_data_to_blit = dict()
-                        score_data_to_blit_bool = False
+                        menu, scores_menu, scores_input_text, score_data_to_blit, score_data_to_blit_bool = back_to_menu_from_scores(menu, scores_menu, scores_input_text, score_data_to_blit, score_data_to_blit_bool)
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     # Check if the input box was clicked
@@ -486,54 +510,56 @@ def main():
                         scores_input_box_active = True
                     else:
                         scores_input_box_active = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        menu, scores_menu, scores_input_text, score_data_to_blit, score_data_to_blit_bool = back_to_menu_from_scores(menu, scores_menu, scores_input_text, score_data_to_blit, score_data_to_blit_bool)
+                    elif scores_input_box_active:
+                        if event.key == pygame.K_RETURN: # User pressed enter and validated his game username
 
-                elif event.type == pygame.KEYDOWN and scores_input_box_active:
-                    if event.key == pygame.K_RETURN: # User pressed enter and validated his game username
+                            # Checking if the input is easy, medium or hard and changing it to its parametrs
+                            if ScFn.check_for_difficulty(scores_input_text):
+                                exception_scores = True
+                                if scores_input_text.strip().lower() == "easy":
+                                    scores_input_text = "12, 10, 18"
+                                else:
+                                    scores_input_text = "16, 13, 37" if scores_input_text.strip().lower() == "medium" else "29, 20, 100"
 
-                        # Checking if the input is easy, medium or hard and changing it to its parametrs
-                        if ScFn.check_for_difficulty(scores_input_text):
-                            exception_scores = True
-                            if scores_input_text.strip().lower() == "easy":
-                                scores_input_text = "12, 10, 18"
+                            # Checking if the input parametrs of any field exists        
+                            scores_entry = pole_funkce.separate_string_by_commas(scores_input_text)
+                            if pole_funkce.is_it_integer(scores_entry) is False:
+                                pass
+                            elif len(scores_entry) == 3:
+                                try:
+                                    key = ScFn.create_str_key(scores_entry)
+                                    scores_input_text = ""
+                                    game_scores = ScFn.get_data()[key]
+                                    score_data_to_blit = ScFn.show_data(game_scores)
+                                    score_data_to_blit_bool = True
+                                except:
+                                    print("Zadané neexistující parametry")
                             else:
-                                scores_input_text = "16, 13, 37" if scores_input_text.strip().lower() == "medium" else "29, 20, 100"
+                                score_data_to_blit = dict()
+                                score_data_to_blit_bool = False
+                            # If an error occurs, this happens
+                            scores_input_text = ""
+                            scores_input_box_active = False
+                            
 
-                        # Checking if the input parametrs of any field exists        
-                        scores_entry = pole_funkce.separate_string_by_commas(scores_input_text)
-                        if pole_funkce.is_it_integer(scores_entry) is False:
-                            pass
-                        elif len(scores_entry) == 3:
-                            try:
-                                key = ScFn.create_str_key(scores_entry)
-                                scores_input_text = ""
-                                game_scores = ScFn.get_data()[key]
-                                score_data_to_blit = ScFn.show_data(game_scores)
-                                score_data_to_blit_bool = True
-                            except:
-                                print("Zadané neexistující parametry")
+                        elif event.key == pygame.K_BACKSPACE:
+                            scores_input_text = scores_input_text[:-1]
                         else:
-                            score_data_to_blit = dict()
-                            score_data_to_blit_bool = False
-                        # If an error occurs, this happens
-                        scores_input_text = ""
-                        scores_input_box_active = False
-                        
-
-                    elif event.key == pygame.K_BACKSPACE:
-                        scores_input_text = scores_input_text[:-1]
-                    else:
-                        if len(scores_input_text) < 20:
-                            scores_input_text += event.unicode 
+                            if len(scores_input_text) < 20:
+                                scores_input_text += event.unicode 
 
             elif game:
                 if first_click is True:
                     remaining_flags = pocet_min
                     if event.type == pygame.MOUSEBUTTONUP:
                         if event.button == 1 and back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
-                            game = False
-                            menu = True
-                            first_click = True
-                            screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
+                            leave_game()
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            leave_game()
 
                     elif event.type == pygame.MOUSEBUTTONDOWN:  
                         if event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
@@ -621,6 +647,9 @@ def main():
                                 bool_field[row][column] = 2
                             elif bool_field[row][column] == 2:
                                 bool_field[row][column] = 0
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            leave_game()
 
             elif win_screen:
                 if event.type == pygame.KEYDOWN:
@@ -630,7 +659,8 @@ def main():
                         if event.key == pygame.K_SPACE:
                             menu = True
                             screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
-                        else:      
+                        else:   
+                            username_button_active = True   
                             submit_score_screen = True
                             screen = pygame.display.set_mode((10*30, 8*30))
             
@@ -680,7 +710,11 @@ def main():
 
                         elif any(rect.collidepoint(pygame.mouse.get_pos()) for rect in bin_rects):
                             delete_game(bin_rects)
-                        
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        load_screen = False
+                        menu = True
+
             elif save_screen:
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
@@ -757,46 +791,55 @@ def main():
                     else:
                         custom_mine_field_box_active = False
 
-                elif event.type == pygame.KEYDOWN and custom_mine_field_box_active:
-                    if event.key == pygame.K_RETURN: # User pressed enter and validated his game username
-                        custom_entry = pole_funkce.separate_string_by_commas(custom_mine_field_text)
-                        if pole_funkce.is_it_integer(custom_entry) is False:
-                            pass
-                        elif len(custom_entry) == 3 and pole_funkce.field_creation_conditions(custom_entry):
-                            width, height, pocet_min = int(custom_entry[0]), int(custom_entry[1]), int(custom_entry[2])
-                            difficulty = "Custom"
-                            additional_dw = max(0, (260 - width*cell_size - dw*2)/2) # 260 je stejná jako o 3 řádky níže
-                            additional_dh = max(0, (280 - height*cell_size - dw*2-90)/2)
-                            mines_rect = pygame.Rect(dw + additional_dw, dh + additional_dh, width*cell_size, height*cell_size)
-                            screen_width_game = max(width*cell_size + dw * 2, 260) # Zde
-                            screen_height_game = max(height*cell_size + 2*dh + 10, 280) 
-                            screen = pygame.display.set_mode((screen_width_game, screen_height_game))
-                            reshuffle_count = 3
-                            hint_count = 2
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                            new_game_menu = True
                             custom_mine_field_screen = False
-                            game = True
-                            first_click = True
-                            all_scores = ScFn.update_or_add_game_data(width, height, pocet_min)
-                            key = str((width, height, pocet_min))
-                            game_scores = all_scores[key]
                             custom_mine_field_text = ""
-                        
-                        # If an error occurs, this happens
-                        custom_mine_field_text = ""
-                        custom_mine_field_box_active = False
-                        wrong_custom_input = True
+                    elif custom_mine_field_box_active:
+                        if event.key == pygame.K_RETURN: # User pressed enter and validated his game username
+                            custom_entry = pole_funkce.separate_string_by_commas(custom_mine_field_text)
+                            if pole_funkce.is_it_integer(custom_entry) is False:
+                                pass
+                            elif len(custom_entry) == 3 and pole_funkce.field_creation_conditions(custom_entry):
+                                width, height, pocet_min = int(custom_entry[0]), int(custom_entry[1]), int(custom_entry[2])
+                                difficulty = "Custom"
+                                additional_dw = max(0, (260 - width*cell_size - dw*2)/2) # 260 je stejná jako o 3 řádky níže
+                                additional_dh = max(0, (280 - height*cell_size - dw*2-90)/2)
+                                mines_rect = pygame.Rect(dw + additional_dw, dh + additional_dh, width*cell_size, height*cell_size)
+                                screen_width_game = max(width*cell_size + dw * 2, 260) # Zde
+                                screen_height_game = max(height*cell_size + 2*dh + 10, 280) 
+                                screen = pygame.display.set_mode((screen_width_game, screen_height_game))
+                                reshuffle_count = 3
+                                hint_count = 2
+                                custom_mine_field_screen = False
+                                game = True
+                                first_click = True
+                                all_scores = ScFn.update_or_add_game_data(width, height, pocet_min)
+                                key = str((width, height, pocet_min))
+                                game_scores = all_scores[key]
+                                custom_mine_field_text = ""
+                            
+                            # If an error occurs, this happens
+                            custom_mine_field_text = ""
+                            custom_mine_field_box_active = False
+                            wrong_custom_input = True
 
-                    elif event.key == pygame.K_BACKSPACE:
-                        custom_mine_field_text = custom_mine_field_text[:-1]
-                    else:
-                        if len(custom_mine_field_text) < 20:
-                            custom_mine_field_text += event.unicode 
+                        elif event.key == pygame.K_BACKSPACE:
+                            custom_mine_field_text = custom_mine_field_text[:-1]
+                        else:
+                            if len(custom_mine_field_text) < 20:
+                                custom_mine_field_text += event.unicode 
 
 
             elif help_screen:
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
                         if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
+                            menu = True
+                            help_screen = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
                             menu = True
                             help_screen = False
 
@@ -881,7 +924,7 @@ def main():
 
             scores_input_surface = karma_sature_font_21.render(scores_input_text, True, BLACK)
             screen.blit(scores_input_surface, (scores_input_box.x + 5, scores_input_box.y + 5))
-            screen.blit(text_easy_medium_hard, (screen_width/2 - text_easy_medium_hard.get_width()/2, 78))
+            screen.blit(text_leaderboards, (screen_width/2 - text_leaderboards.get_width()/2, 72))
             
 
             if score_data_to_blit_bool:
@@ -901,9 +944,10 @@ def main():
                     if position == 12:
                         break
             else:
-                screen.blit(text_example_for_custom_field_surf, (screen.get_size()[0]/2 - text_example_for_custom_field_surf.get_size()[0]/2, 232))
-                screen.blit(text_enter_parameters1, (screen.get_size()[0]/2 - text_enter_parameters1.get_size()[0]/2, 168))
-                screen.blit(text_enter_parameters2, (screen.get_size()[0]/2 - text_enter_parameters2.get_size()[0]/2, 200))
+                screen.blit(text_easy_medium_hard, (screen.get_size()[0]/2 - text_easy_medium_hard.get_size()[0]/2, 168))
+                screen.blit(text_enter_parameters1, (screen.get_size()[0]/2 - text_enter_parameters1.get_size()[0]/2, 200))
+                screen.blit(text_enter_parameters2, (screen.get_size()[0]/2 - text_enter_parameters2.get_size()[0]/2, 232))
+                screen.blit(text_example_for_custom_field_surf, (screen.get_size()[0]/2 - text_example_for_custom_field_surf.get_size()[0]/2, 264))
 
         elif game:
             if first_click is True:
@@ -1050,9 +1094,10 @@ def main():
             screen.fill((200, 200, 200))
             update_cell(menu_bg_surface, mine_field)
             screen.blit(menu_bg_surface, (0, 0))
-            pygame.draw.rect(screen, (100, 100, 100), (30, 60, 14*30, 6*30))
-            pygame.draw.rect(screen, (150, 150, 150), (35, 65, 14*30 - 10, 6*30 - 10))
-            screen.blit(text_custom_field_entry_surf, (screen.get_size()[0]/2 - text_custom_field_entry_surf.get_size()[0]/2, 80))
+            pygame.draw.rect(screen, (100, 100, 100), (30, 60, 14*30, 8*30))
+            pygame.draw.rect(screen, (150, 150, 150), (35, 65, 14*30 - 10, 8*30 - 10))
+            screen.blit(text_this_is_custom_game, (screen.get_size()[0]/2 - text_this_is_custom_game.get_size()[0]/2, 80))
+            screen.blit(text_custom_field_entry_surf, (screen.get_size()[0]/2 - text_custom_field_entry_surf.get_size()[0]/2, 115))
             
             if wrong_custom_input:
                 pygame.draw.rect(screen, (176, 96, 91), custom_mine_field_box, 3) # Border goes red to indicate wrong input
@@ -1061,8 +1106,8 @@ def main():
 
             custom_field_input_surface = karma_sature_font_21.render(custom_mine_field_text, True, BLACK)
             screen.blit(custom_field_input_surface, (custom_mine_field_box.x + 5, custom_mine_field_box.y + 5))
-            screen.blit(text_example_for_custom_field_surf, (screen.get_size()[0]/2 - text_example_for_custom_field_surf.get_size()[0]/2, 168))
-            screen.blit(text_custom_field_start_game, (screen.get_size()[0]/2 - text_custom_field_start_game.get_size()[0]/2, 200))
+            screen.blit(text_example_for_custom_field_surf, (screen.get_size()[0]/2 - text_example_for_custom_field_surf.get_size()[0]/2, 203))
+            screen.blit(text_custom_field_start_game, (screen.get_size()[0]/2 - text_custom_field_start_game.get_size()[0]/2, 235))
 
             if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                 screen.blit(back_arrow_surf_on, back_arrow_rect)
