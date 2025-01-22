@@ -22,7 +22,6 @@ def is_it_integer(list_of_strings): # tests if input is an integer
     return True
 
 def is_it_float(list_of_floats):
-    print(list_of_floats)
     for string in list_of_floats:
         try:
             float(string)

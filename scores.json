@@ -44,5 +44,93 @@
             "username": "bronze",
             "time": "483"
         }
+    },
+    "(30, 30, 300)": {
+        "gold": {
+            "username": "gold",
+            "time": "519"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "935"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "1558"
+        }
+    },
+    "(10, 10, 20)": {
+        "gold": {
+            "username": "gold",
+            "time": "32"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "58"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "97"
+        }
+    },
+    "(10, 10, 5)": {
+        "gold": {
+            "username": "gold",
+            "time": "7"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "14"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "23"
+        }
+    },
+    "(10, 10, 10)": {
+        "gold": {
+            "username": "gold",
+            "time": "15"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "28"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "47"
+        }
+    },
+    "(30, 30, 200)": {
+        "gold": {
+            "username": "gold",
+            "time": "327"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "589"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "982"
+        }
+    },
+    "(10, 10, 30)": {
+        "gold": {
+            "username": "gold",
+            "time": "50"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "91"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "152"
+        },
+        "rGDHAedJYz2EYQQlm0FS": {
+            "username": "Sir Meowsington IV",
+            "time": "190"
+        }
     }
 }

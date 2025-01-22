@@ -367,12 +367,13 @@ def back_to_menu_from_scores(menu, scores_menu, scores_input_text, score_data_to
     score_data_to_blit_bool = False
     return menu, scores_menu, scores_input_text, score_data_to_blit, score_data_to_blit_bool
 
-def game_over(bool_field, field, cell_size_gl, screen, transparent_bg_surf, end_screen, game, first_click, scale_factor):
-    for radek in range((len(bool_field))):
+def game_over(row, column, bool_field, field, cell_size_gl, screen, transparent_bg_surf, end_screen, game, first_click, scale_factor):
+    for radek in range((len(bool_field))): 
         for sloupec in range((len(bool_field[0]))):
-            if field[radek][sloupec] == 9:
+            if field[radek][sloupec] == 9: # marks all mines as revealed if game was lost
                 bool_field[radek][sloupec] = 1
     plot_bool_field(bool_field, field, cell_size_gl)
+    screen.blit(mine_explode_surf_game, (column*cell_size_gl+dw+additional_dw, row*cell_size_gl+dh+additional_dh)) # culprit of loss is red
     pygame.display.flip()
     time.sleep(1.5)
     screen.blit(transparent_bg_surf, (0, 0))
@@ -588,14 +589,14 @@ def main():
                     elif scores_input_box_active:
                         if event.key == pygame.K_RETURN: # User pressed enter and validated his game username
 
-                            # Checking if the input is easy, medium or hard and changing it to its parametrs
+                            # Checking if the input is easy, medium or hard and changing it to its parameters
                             if ScFn.check_for_difficulty(scores_input_text):
                                 if scores_input_text.strip().lower() == "easy":
                                     scores_input_text = "12, 10, 18"
                                 else:
                                     scores_input_text = "16, 13, 37" if scores_input_text.strip().lower() == "medium" else "29, 20, 100"
 
-                            # Checking if the input parametrs of any field exists        
+                            # Checking if the input parameters of any field exists        
                             scores_entry = pole_funkce.separate_string_by_commas(scores_input_text)
                             if pole_funkce.is_it_integer(scores_entry) is False:
                                 wrong_score_input = True
@@ -605,17 +606,19 @@ def main():
                                     scores_input_text = ""
                                     game_scores = ScFn.get_data()[key]
                                     score_data_to_blit = ScFn.show_data(game_scores)
+                                    print(score_data_to_blit)
                                     score_data_to_blit_bool = True
                                 except:
-                                    pass # If an error would happend, this would catch it
+                                    wrong_score_input = True
                                     
                             else:
+                                wrong_score_input = True
                                 score_data_to_blit = dict()
                                 score_data_to_blit_bool = False
                             # If an error occurs, this happens
                             scores_input_text = ""
                             scores_input_box_active = False
-                            wrong_score_input = True
+
 
                         elif event.key == pygame.K_BACKSPACE:
                             scores_input_text = scores_input_text[:-1]
@@ -666,7 +669,8 @@ def main():
                                 field, bool_field = pole_funkce.cluster_reveal(field, bool_field, up_row, up_column)
                                 for i in empty_cells_to_plot:
                                     if field[i[1]][i[0]] == 9: #End the game if the mine was revealed
-                                        end_screen, game, first_click, cell_size_gl, scale_factor = game_over(bool_field, field, cell_size_gl, screen, transparent_bg_surf, end_screen, game, first_click, scale_factor)           
+                                        end_screen, game, first_click, cell_size_gl, scale_factor = game_over(i[1], i[0], bool_field, field, cell_size_gl, screen, transparent_bg_surf, end_screen, game, first_click, scale_factor)
+                                        break         
                             empty_cells_to_plot.clear()
                         
                         elif event.button == 1 and (screen_width_game - 46 < pygame.mouse.get_pos()[0] < screen_width_game - 10 and 10 < pygame.mouse.get_pos()[1] < 46):
@@ -690,7 +694,7 @@ def main():
                             if bool_field[row][column] == 2 or bool_field[row][column] == 3:
                                 continue
                             if field[row][column] == 9: #Ends the game if the mine was revealed
-                                end_screen, game, first_click, cell_size_gl, scale_factor = game_over(bool_field, field, cell_size_gl, screen, transparent_bg_surf, end_screen, game, first_click, scale_factor)
+                                end_screen, game, first_click, cell_size_gl, scale_factor = game_over(row, column, bool_field, field, cell_size_gl, screen, transparent_bg_surf, end_screen, game, first_click, scale_factor)
                             field, bool_field = pole_funkce.update_field(field, bool_field, row, column)
 
                         elif event.button == 2 and mines_rect.collidepoint(pygame.mouse.get_pos()):
