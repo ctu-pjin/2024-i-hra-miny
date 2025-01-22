@@ -548,5 +548,19 @@
             "username": "bronze",
             "time": "44899"
         }
+    },
+    "(40, 40, 40)": {
+        "gold": {
+            "username": "gold",
+            "time": "800"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "1600"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "3200"
+        }
     }
 }

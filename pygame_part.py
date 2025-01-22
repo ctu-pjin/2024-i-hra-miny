@@ -411,6 +411,16 @@ def back_to_menu_from_scores(menu, scores_menu, scores_input_text, score_data_to
     score_data_to_blit_bool = False
     return menu, scores_menu, scores_input_text, score_data_to_blit, score_data_to_blit_bool
 
+def draw_surf_on_off(surf_on, surf_off, rect_on, rect_off): # draw an object differently mouse hovers over it
+    if rect_on.collidepoint(pygame.mouse.get_pos()):
+        screen.blit(surf_on, rect_on)
+    else:
+        screen.blit(surf_off, rect_off)
+
+def x_center(screen, surf): # center drawn object
+    x = screen.get_size()[0]/2 - surf.get_size()[0]/2
+    return x
+
 # Input Boxes
 username_box = pygame.Rect(40, 90, 220, 40)
 username_text = ""
@@ -835,33 +845,34 @@ def main():
                             custom_entry = pole_funkce.separate_string_by_commas(custom_mine_field_text)
                             if len(custom_entry) == 3:
                                 custom_entry.append("1.0")
-                            if pole_funkce.is_it_integer(custom_entry[0:3]) is False or pole_funkce.is_it_float([custom_entry[3]]) is False:
-                                print("První if zle")
-                                pass
-                            elif (len(custom_entry) == 3 or len(custom_entry) == 4) and pole_funkce.field_creation_conditions(custom_entry[0:3]):
-                                print("Podmínka splněna")
-                                if len(custom_entry) == 3:
-                                    width, height, pocet_min = int(custom_entry[0]), int(custom_entry[1]), int(custom_entry[2])
-                                else:
-                                    print("Jsme zde")
-                                    width, height, pocet_min, scale_factor = int(custom_entry[0]), int(custom_entry[1]), int(custom_entry[2]), float(custom_entry[3])
-                                    scale_game_field(scale_factor)
-                                difficulty = "Custom"
-                                additional_dw = max(0, (260 - width*cell_size_gl - dw*2)/2) # 260 je stejná jako o 3 řádky níže
-                                additional_dh = max(0, (280 - height*cell_size_gl - dw*2-90)/2)
-                                mines_rect = pygame.Rect(dw + additional_dw, dh + additional_dh, width*cell_size_gl, height*cell_size_gl)
-                                screen_width_game = max(width*cell_size_gl + dw * 2, 260) # Zde
-                                screen_height_game = max(height*cell_size_gl + 2*dh + 10, 280) 
-                                screen = pygame.display.set_mode((screen_width_game, screen_height_game))
-                                reshuffle_count = 3
-                                hint_count = 2
-                                custom_mine_field_screen = False
-                                game = True
-                                first_click = True
-                                all_scores = ScFn.update_or_add_game_data(width, height, pocet_min)
-                                key = str((width, height, pocet_min))
-                                game_scores = all_scores[key]
-                                custom_mine_field_text = ""
+                            if len(custom_entry) == 4:
+                                if pole_funkce.is_it_integer(custom_entry[0:3]) is False or pole_funkce.is_it_float([custom_entry[3]]) is False:
+                                    print("První if zle")
+                                    pass
+                                elif len(custom_entry) == 4 and pole_funkce.field_creation_conditions(custom_entry[0:3]):
+                                    print("Podmínka splněna")
+                                    if len(custom_entry) == 3:
+                                        width, height, pocet_min = int(custom_entry[0]), int(custom_entry[1]), int(custom_entry[2])
+                                    else:
+                                        print("Jsme zde")
+                                        width, height, pocet_min, scale_factor = int(custom_entry[0]), int(custom_entry[1]), int(custom_entry[2]), float(custom_entry[3])
+                                        scale_game_field(scale_factor)
+                                    difficulty = "Custom"
+                                    additional_dw = max(0, (260 - width*cell_size_gl - dw*2)/2) # 260 je stejná jako o 3 řádky níže
+                                    additional_dh = max(0, (280 - height*cell_size_gl - dw*2-90)/2)
+                                    mines_rect = pygame.Rect(dw + additional_dw, dh + additional_dh, width*cell_size_gl, height*cell_size_gl)
+                                    screen_width_game = max(width*cell_size_gl + dw * 2, 260) # Zde
+                                    screen_height_game = max(height*cell_size_gl + 2*dh + 10, 280) 
+                                    screen = pygame.display.set_mode((screen_width_game, screen_height_game))
+                                    reshuffle_count = 3
+                                    hint_count = 2
+                                    custom_mine_field_screen = False
+                                    game = True
+                                    first_click = True
+                                    all_scores = ScFn.update_or_add_game_data(width, height, pocet_min)
+                                    key = str((width, height, pocet_min))
+                                    game_scores = all_scores[key]
+                                    custom_mine_field_text = ""
                             
                             # If an error occurs, this happens
                             custom_mine_field_text = ""
@@ -893,27 +904,12 @@ def main():
             #pygame.draw.rect(screen, (255, 0, 0), (0, 0, 80, 80))  # Draw a red rectangle
             update_cell(menu_bg_surface, mine_field) # shifting cells in the background of the menus
             screen.blit(menu_bg_surface, (0, 0))
-
-            if new_game_rect_on.collidepoint(pygame.mouse.get_pos()): # buttons change appearance if you click on them
-                screen.blit(new_game_surf_on, new_game_rect_on)
-            else:
-                screen.blit(new_game_surf_off, new_game_rect_off)
-
-            if load_rect_on.collidepoint(pygame.mouse.get_pos()):
-                screen.blit(load_surf_on, load_rect_on)
-            else:
-                screen.blit(load_surf_off, load_rect_off)
-
-            if scores_rect_on.collidepoint(pygame.mouse.get_pos()):
-                screen.blit(scores_surf_on, scores_rect_on)
-            else:
-                screen.blit(scores_surf_off, scores_rect_off)
-
-            if question_mark_rect.collidepoint(pygame.mouse.get_pos()):
-                screen.blit(question_mark_surf_on, question_mark_rect)
-            else:
-                screen.blit(question_mark_surf_off, question_mark_rect)
-
+            # draw buttons that change appearance with mouse over them
+            draw_surf_on_off(new_game_surf_on, new_game_surf_off, new_game_rect_on, new_game_rect_off)
+            draw_surf_on_off(load_surf_on, load_surf_off, load_rect_on, load_rect_off)
+            draw_surf_on_off(scores_surf_on, scores_surf_off, scores_rect_on, scores_rect_off)
+            draw_surf_on_off(question_mark_surf_on, question_mark_surf_off, question_mark_rect, question_mark_rect)
+            # draw text
             screen.blit(text_miny_surf,text_miny_rect)
 
         elif new_game_menu: # this is drawn, while new game menu is active
@@ -924,30 +920,12 @@ def main():
             pygame.draw.rect(screen, (130, 130, 130), (screen_width/2-155, 55, 310, 510))
             screen.blit(text_difficulty_surf, text_difficulty_rect)
 
-            if easy_rect_on.collidepoint(pygame.mouse.get_pos()):
-                screen.blit(easy_surf_on, easy_rect_on)
-            else:
-                screen.blit(easy_surf_off, easy_rect_off)
-
-            if medium_rect_on.collidepoint(pygame.mouse.get_pos()):
-                screen.blit(medium_surf_on, medium_rect_on)
-            else:
-                screen.blit(medium_surf_off, medium_rect_off)
-
-            if hard_rect_on.collidepoint(pygame.mouse.get_pos()):
-                screen.blit(hard_surf_on, hard_rect_on)
-            else:
-                screen.blit(hard_surf_off, hard_rect_off)
-
-            if custom_rect_on.collidepoint(pygame.mouse.get_pos()):
-                screen.blit(custom_surf_on, custom_rect_on)
-            else:
-                screen.blit(custom_surf_off, custom_rect_off)    
-
-            if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
-                screen.blit(back_arrow_surf_on, back_arrow_rect)
-            else:
-                screen.blit(back_arrow_surf_off, back_arrow_rect)
+            # draw buttons
+            draw_surf_on_off(easy_surf_on, easy_surf_off, easy_rect_on, easy_rect_off)
+            draw_surf_on_off(medium_surf_on, medium_surf_off, medium_rect_on, medium_rect_off)
+            draw_surf_on_off(hard_surf_on, hard_surf_off, hard_rect_on, hard_rect_off)
+            draw_surf_on_off(custom_surf_on, custom_surf_off, custom_rect_on, custom_rect_off)
+            draw_surf_on_off(back_arrow_surf_on, back_arrow_surf_off, back_arrow_rect, back_arrow_rect)
 
         elif scores_menu:
             screen.fill((200, 200, 200))
@@ -958,10 +936,7 @@ def main():
             pygame.draw.rect(screen, (190, 190, 190), (42, 162, screen_width-84, screen_height-204))
             pygame.draw.rect(screen, (220, 220, 220), (45, 165, screen_width-90, screen_height-210))
 
-            if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
-                screen.blit(back_arrow_surf_on, back_arrow_rect)
-            else:
-                screen.blit(back_arrow_surf_off, back_arrow_rect)
+            draw_surf_on_off(back_arrow_surf_on, back_arrow_surf_off, back_arrow_rect, back_arrow_rect)
 
             pygame.draw.rect(screen, GRAY if scores_input_box_active else WHITE, scores_input_box, 3)
             if wrong_score_input:
@@ -991,10 +966,10 @@ def main():
                     if position == 12:
                         break
             else:
-                screen.blit(text_easy_medium_hard, (screen.get_size()[0]/2 - text_easy_medium_hard.get_size()[0]/2, 168))
-                screen.blit(text_enter_parameters1, (screen.get_size()[0]/2 - text_enter_parameters1.get_size()[0]/2, 200))
-                screen.blit(text_enter_parameters2, (screen.get_size()[0]/2 - text_enter_parameters2.get_size()[0]/2, 232))
-                screen.blit(text_example_for_leaderboards, (screen.get_size()[0]/2 - text_example_for_leaderboards.get_size()[0]/2, 264))
+                screen.blit(text_easy_medium_hard, (x_center(screen, text_easy_medium_hard), 168))
+                screen.blit(text_enter_parameters1, (x_center(screen, text_enter_parameters1), 200))
+                screen.blit(text_enter_parameters2, (x_center(screen, text_enter_parameters2), 232))
+                screen.blit(text_example_for_leaderboards, (x_center(screen, text_example_for_leaderboards), 264))
 
         elif game:
             if first_click is True:
@@ -1013,21 +988,13 @@ def main():
 
                 screen.blit(reshuffle_count_surf, (60, screen_height_game-40))
                 screen.blit(hint_count_surf, (screen_width_game/2+25, screen_height_game-40))
-                """if hint_on_rect.collidepoint(pygame.mouse.get_pos()):
-                    screen.blit(hint_on_surf, hint_on_rect)
-                else:
-                    screen.blit(hint_off_surf, hint_on_rect)
-                """
-                screen.blit(hint_on_surf, hint_on_rect) if hint_on_rect.collidepoint(pygame.mouse.get_pos()) else screen.blit(hint_off_surf, hint_on_rect)
 
+                draw_surf_on_off(hint_on_surf, hint_off_surf, hint_on_rect, hint_on_rect)
 
                 screen.blit(flag_only_surf_big, (screen_width_game-37, screen_height_game-42))
                 screen.blit(remaining_flags_surf, (screen_width_game - 42 - remaining_flags_surf.get_width(), screen_height_game - 40))
 
-                if back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
-                    screen.blit(back_arrow_surf_on_small, back_arrow_rect_small)
-                else:
-                    screen.blit(back_arrow_surf_off_small, back_arrow_rect_small)
+                draw_surf_on_off(back_arrow_surf_on_small, back_arrow_surf_off_small, back_arrow_rect_small, back_arrow_rect_small)
 
                 if screen_width_game - 46 < pygame.mouse.get_pos()[0] < screen_width_game - 10 and 10 < pygame.mouse.get_pos()[1] < 46:
                     screen.blit(save_icon_on_surf, (screen_width_game - 46, 10))
@@ -1053,21 +1020,19 @@ def main():
                     screen.blit(reshuffle_off_surf, (15, screen_height_game-50))
                 screen.blit(reshuffle_count_surf, (60, screen_height_game-40))
                 screen.blit(hint_count_surf, (screen_width_game/2+25, screen_height_game-40))
-                screen.blit(hint_on_surf, hint_on_rect) if hint_on_rect.collidepoint(pygame.mouse.get_pos()) else screen.blit(hint_off_surf, hint_on_rect)
+                draw_surf_on_off(hint_on_surf, hint_off_surf, hint_on_rect, hint_on_rect)
 
                 screen.blit(flag_only_surf_big, (screen_width_game-37, screen_height_game-42))
                 screen.blit(remaining_flags_surf, (screen_width_game - 42 - remaining_flags_surf.get_width(), screen_height_game - 40))
 
-                if back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
-                    screen.blit(back_arrow_surf_on_small, back_arrow_rect_small)
-                else:
-                    screen.blit(back_arrow_surf_off_small, back_arrow_rect_small)
+                draw_surf_on_off(back_arrow_surf_on_small, back_arrow_surf_off_small, back_arrow_rect_small, back_arrow_rect_small)
+
                 if screen_width_game - 46 < pygame.mouse.get_pos()[0] < screen_width_game - 10 and 10 < pygame.mouse.get_pos()[1] < 46:
                     screen.blit(save_icon_on_surf, (screen_width_game - 46, 10))
                 else:
                     screen.blit(save_icon_off_surf, (screen_width_game - 46, 10))
 
-                screen.blit(game_time_surf, (screen_width_game/2 - game_time_surf.get_width()/2, 10))
+                screen.blit(game_time_surf, (x_center(screen, game_time_surf), 10))
 
                 if len(empty_cells_to_plot) > 0:
                     for i in empty_cells_to_plot:
@@ -1084,14 +1049,14 @@ def main():
             y_offset = 52
             add_y_offset = max(0, (screen_height_game - (2*dh+35)-additional_dh*2)/2)
             if win_screen:
-                screen.blit(text_victory_surf, (screen_width_game/2-text_victory_surf.get_width()/2, 5 + add_y_offset))
+                screen.blit(text_victory_surf, (x_center(screen, text_victory_surf), 5 + add_y_offset))
                 for text_surf in text_press_space_surfs:   
-                    screen.blit(text_surf, (screen_width_game/2-text_surf.get_width()/2, y_offset + add_y_offset))
+                    screen.blit(text_surf, (x_center(screen, text_surf), y_offset + add_y_offset))
                     y_offset += text_surf.get_height()
             else:
-                screen.blit(text_lose_surf, (screen_width_game/2-text_lose_surf.get_width()/2, 5 + add_y_offset))
+                screen.blit(text_lose_surf, (x_center(screen, text_lose_surf), 5 + add_y_offset))
                 for text_surf in text_press_enter_surfs:   
-                    screen.blit(text_surf, (screen_width_game/2-text_surf.get_width()/2, y_offset + add_y_offset))
+                    screen.blit(text_surf, (x_center(screen, text_surf), y_offset + add_y_offset))
                     y_offset += text_surf.get_height()
 
         elif load_screen or save_screen:
@@ -1104,10 +1069,7 @@ def main():
             else:
                 screen.blit(text_save_system_surf, text_save_system_rect)
 
-            if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
-                screen.blit(back_arrow_surf_on, back_arrow_rect)
-            else:
-                screen.blit(back_arrow_surf_off, back_arrow_rect)
+            draw_surf_on_off(back_arrow_surf_on, back_arrow_surf_off, back_arrow_rect, back_arrow_rect)
 
             for slot in range(3):
                 if load_game(slot) is None:
@@ -1132,7 +1094,7 @@ def main():
             screen.blit(menu_bg_surface, (0, 0))
             pygame.draw.rect(screen, (100, 100, 100), (30, 30, 8*30, 6*30))
             pygame.draw.rect(screen, (150, 150, 150), (35, 35, 8*30 - 10, 6*30 - 10))
-            screen.blit(text_submit_username_surf, (screen.get_size()[0]/2 - text_submit_username_surf.get_size()[0]/2, 50))
+            screen.blit(text_submit_username_surf, (x_center(screen, text_submit_username_surf), 50))
             pygame.draw.rect(screen, GRAY if username_button_active else WHITE, username_box, 2)
             username_input_surface = karma_sature_font_21.render(username_text, True, BLACK)
             screen.blit(username_input_surface, (username_box.x + 5, username_box.y + 5))
@@ -1143,9 +1105,9 @@ def main():
             screen.blit(menu_bg_surface, (0, 0))
             pygame.draw.rect(screen, (100, 100, 100), (30, 60, 14*30, 15*30))
             pygame.draw.rect(screen, (150, 150, 150), (35, 65, 14*30 - 10, 15*30 - 10))
-            screen.blit(text_this_is_custom_game, (screen.get_size()[0]/2 - text_this_is_custom_game.get_size()[0]/2, 80))
-            screen.blit(text_custom_field_entry_surf, (screen.get_size()[0]/2 - text_custom_field_entry_surf.get_size()[0]/2, 109))
-            screen.blit(text_optional_scaling_factor, (screen.get_size()[0]/2 - text_optional_scaling_factor.get_size()[0]/2, 135))
+            screen.blit(text_this_is_custom_game, (x_center(screen, text_this_is_custom_game), 80))
+            screen.blit(text_custom_field_entry_surf, (x_center(screen, text_custom_field_entry_surf), 109))
+            screen.blit(text_optional_scaling_factor, (x_center(screen, text_optional_scaling_factor), 135))
             
             if wrong_custom_input:
                 pygame.draw.rect(screen, (176, 96, 91), custom_mine_field_box, 3) # Border goes red to indicate wrong input
@@ -1154,17 +1116,14 @@ def main():
 
             custom_field_input_surface = karma_sature_font_21.render(custom_mine_field_text, True, BLACK)
             screen.blit(custom_field_input_surface, (custom_mine_field_box.x + 5, custom_mine_field_box.y + 5))
-            screen.blit(text_example_for_custom_field_surf, (screen.get_size()[0]/2 - text_example_for_custom_field_surf.get_size()[0]/2, 218))
+            screen.blit(text_example_for_custom_field_surf, (x_center(screen, text_example_for_custom_field_surf), 218))
             y_offset = 243
             for text in text_scaling_factor_explained:
-                screen.blit(text, (screen.get_size()[0]/2-text.get_size()[0]/2, y_offset))
+                screen.blit(text, (x_center(screen, text), y_offset))
                 y_offset += 20
-            screen.blit(text_custom_field_start_game, (screen.get_size()[0]/2 - text_custom_field_start_game.get_size()[0]/2, y_offset+5))
+            screen.blit(text_custom_field_start_game, (x_center(screen, text_custom_field_start_game), y_offset+5))
 
-            if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
-                screen.blit(back_arrow_surf_on, back_arrow_rect)
-            else:
-                screen.blit(back_arrow_surf_off, back_arrow_rect)
+            draw_surf_on_off(back_arrow_surf_on, back_arrow_surf_off, back_arrow_rect, back_arrow_rect)
 
 
         elif help_screen:
@@ -1173,8 +1132,8 @@ def main():
             screen.blit(menu_bg_surface, (0, 0))
             pygame.draw.rect(screen, (130, 130, 130), (30, 60, screen_width-60, screen_height-90))
             pygame.draw.rect(screen, (200, 200, 200), (35, 65, screen_width-70, screen_height-100))
-            screen.blit(text_welcome, (screen_width/2 - text_welcome.get_size()[0]/2, 75))
-            screen.blit(text_mine_sweeper, (screen_width/2 - text_mine_sweeper.get_size()[0]/2,100))
+            screen.blit(text_welcome, (x_center(screen, text_welcome), 75))
+            screen.blit(text_mine_sweeper, (x_center(screen, text_mine_sweeper),100))
             screen.blit(text_controls, (40, 130))
             y_offset = 150
             for text in text_control_lines:
@@ -1196,13 +1155,9 @@ def main():
             for text in text_hint:
                 screen.blit(text, (90, y_offset))
                 y_offset += 20
-            screen.blit(text_have_fun, (screen_width/2 - text_have_fun.get_size()[0]/2, y_offset + 10))
+            screen.blit(text_have_fun, (x_center(screen, text_have_fun), y_offset + 10))
+            draw_surf_on_off(back_arrow_surf_on, back_arrow_surf_off, back_arrow_rect, back_arrow_rect)
 
-            if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
-                screen.blit(back_arrow_surf_on, back_arrow_rect)
-            else:
-                screen.blit(back_arrow_surf_off, back_arrow_rect)
-            
 
         pygame.display.flip()
         clock.tick(fps) # Limits the game to 60 fps, better for slower CPU
