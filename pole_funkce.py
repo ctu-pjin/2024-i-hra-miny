@@ -21,6 +21,16 @@ def is_it_integer(list_of_strings):
             return False
     return True
 
+def is_it_float(list_of_floats):
+    print(list_of_floats)
+    for string in list_of_floats:
+        try:
+            float(string)
+        except:
+            print("Float se nezdařil")
+            return False
+    return True
+
 def field_creation_conditions(list_of_strings):
     width, height, pocet_min = int(list_of_strings[0]), int(list_of_strings[1]), int(list_of_strings[2])
     if pocet_min <= 0 or width <= 0 or height <= 0 or pocet_min > width*height - 15:

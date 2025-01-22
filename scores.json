@@ -382,5 +382,115 @@
             "username": "pala\u010dinka",
             "time": "3"
         }
+    },
+    "(15, 15, 15)": {
+        "gold": {
+            "username": "gold",
+            "time": "112"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "225"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "450"
+        },
+        "2EzbbzGmUuEDn96K0kQB": {
+            "username": "Schmidt",
+            "time": "21"
+        }
+    },
+    "(125, 100, 1000)": {
+        "gold": {
+            "username": "gold",
+            "time": "55901"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "111803"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "223606"
+        }
+    },
+    "(15, 5, 5)": {
+        "gold": {
+            "username": "gold",
+            "time": "21"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "43"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "86"
+        }
+    },
+    "(50, 30, 50)": {
+        "gold": {
+            "username": "gold",
+            "time": "968"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "1936"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "3872"
+        }
+    },
+    "(50, 30, 60)": {
+        "gold": {
+            "username": "gold",
+            "time": "1161"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "2323"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "4647"
+        }
+    },
+    "(100, 60, 100)": {
+        "gold": {
+            "username": "gold",
+            "time": "3872"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "7745"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "15491"
+        },
+        "lca2h0ZDmEDlu2J4qE4e": {
+            "username": "Hodn\u011b speedy",
+            "time": "53"
+        },
+        "u6ODpmwEg1z5U0xG3Bzn": {
+            "username": "holy moly",
+            "time": "41"
+        }
+    },
+    "(5, 5, 3)": {
+        "gold": {
+            "username": "gold",
+            "time": "7"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "15"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "30"
+        }
     }
 }

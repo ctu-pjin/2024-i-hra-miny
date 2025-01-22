@@ -31,7 +31,7 @@ hint_count = 2
 field = []
 bool_field = []
 current_it = 0
-cell_size = 30
+cell_size_gl = 30
 difficulty = str()
 data_list = []
 
@@ -148,8 +148,6 @@ bin_on_surf = pygame.image.load("surfaces/bin_opened.png").convert_alpha()
 bin_off_surf = pygame.image.load("surfaces/bin_closed.png").convert_alpha()
 
 
-# Creating scaled surfaces for game items
-
 scale_factor = 1
 def scale_surface(surface, scale):
     width, height = surface.get_size()
@@ -172,7 +170,26 @@ flag_surf_game = scale_surface(flag_surf, scale_factor)
 seven_surf_game = scale_surface(seven_surf, scale_factor)
 eight_surf_game = scale_surface(eight_surf, scale_factor)
 
-cell_size *= scale_factor
+
+def scale_game_field(scale_factor):
+    global one_surf_game, box_surf_game, two_surf_game, three_surf_game, four_surf_game, five_surf_game, six_surf_game, seven_surf_game, eight_surf_game, null_surf_game, mine_surf_game, mine_explode_surf_game, flag_surf_game, cell_size_gl
+    one_surf_game = scale_surface(one_surf, scale_factor)
+    box_surf_game = scale_surface(box_surf, scale_factor)
+    two_surf_game = scale_surface(two_surf, scale_factor)
+    three_surf_game = scale_surface(three_surf, scale_factor)
+    four_surf_game = scale_surface(four_surf, scale_factor)
+    five_surf_game = scale_surface(five_surf, scale_factor)
+    six_surf_game = scale_surface(six_surf, scale_factor)
+    null_surf_game = scale_surface(null_surf, scale_factor)
+    mine_surf_game = scale_surface(mine_surf, scale_factor)
+    mine_explode_surf_game = scale_surface(mine_explode_surf, scale_factor)
+    flag_surf_game = scale_surface(flag_surf, scale_factor)
+    seven_surf_game = scale_surface(seven_surf, scale_factor)
+    eight_surf_game = scale_surface(eight_surf, scale_factor)
+    cell_size_gl *= scale_factor
+# Creating scaled surfaces for game items
+
+cell_size_gl *= scale_factor
 
 question_mark_surf_off = scale_surface(question_mark_surf_off, 1.3)
 question_mark_surf_on = scale_surface(question_mark_surf_on, 1.3)
@@ -224,11 +241,11 @@ def random_mine_surf(scale = True):
 
 
 def random_mine_screen_plot(w, h, mine_field):
-    random_h, random_w = randint(0, int(h/cell_size)-1), randint(0, int(w/cell_size)-1)
+    random_h, random_w = randint(0, int(h/cell_size_gl)-1), randint(0, int(w/cell_size_gl)-1)
     mine_field[random_h][random_w] = random_mine_surf()
-    for hh in range(0, h, cell_size):
-            for ww in range(0, w, cell_size):
-                screen.blit(mine_field[int(hh/cell_size)][int(ww/cell_size)], (ww, hh))
+    for hh in range(0, h, cell_size_gl):
+            for ww in range(0, w, cell_size_gl):
+                screen.blit(mine_field[int(hh/cell_size_gl)][int(ww/cell_size_gl)], (ww, hh))
                 
 
 def draw_to_menu_bg(buffer_surface, mine_field, cell_size=30):
@@ -407,12 +424,13 @@ GRAY = (200, 200, 200)
 
 
 def main():
-    global menu, game, first_click
+    global menu, game, first_click, cell_size_gl, scale_factor
     wrong_custom_input = False
     score_data_to_blit_bool = False
     empty_cells_to_plot = []
     score_data_to_blit = dict()
     it = 0
+    cell_size_gl = 30
     menu = True
     first_click = False
     new_game_menu = False
@@ -479,15 +497,18 @@ def main():
 
                         # Set up the game if a difficulty button was clicked
                         if easy_rect_on.collidepoint(pygame.mouse.get_pos()) or medium_rect_on.collidepoint(pygame.mouse.get_pos()) or hard_rect_on.collidepoint(pygame.mouse.get_pos()):
-                            additional_dw = max(0, (260 - width*cell_size - dw*2)/2) # 260 je stejná jako o 3 řádky níže
-                            additional_dh = max(0, (280 - height*cell_size - dw*2-90)/2)
-                            mines_rect = pygame.Rect(dw + additional_dw, dh + additional_dh, width*cell_size, height*cell_size)
-                            screen_width_game = max(width*cell_size + dw * 2, 260) # Zde
-                            screen_height_game = max(height*cell_size + 2*dh + 10, 280)
+                            cell_size_gl = 30
+                            additional_dw = max(0, (260 - width*cell_size_gl - dw*2)/2) # 260 je stejná jako o 3 řádky níže
+                            additional_dh = max(0, (280 - height*cell_size_gl - dw*2-90)/2)
+                            mines_rect = pygame.Rect(dw + additional_dw, dh + additional_dh, width*cell_size_gl, height*cell_size_gl)
+                            screen_width_game = max(width*cell_size_gl + dw * 2, 260) # Zde
+                            screen_height_game = max(height*cell_size_gl + 2*dh + 10, 280)
                             screen = pygame.display.set_mode((screen_width_game, screen_height_game))
                             reshuffle_count = 3
                             hint_count = 2
                             new_game_menu = False
+                            scale_factor = 1.0
+                            scale_game_field(scale_factor)
                             game = True
                             first_click = True
                             all_scores = ScFn.update_or_add_game_data(width, height, pocet_min)
@@ -556,15 +577,20 @@ def main():
                     remaining_flags = pocet_min
                     if event.type == pygame.MOUSEBUTTONUP:
                         if event.button == 1 and back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
+                            cell_size_gl = 30
+                            scale_factor = 1.0
                             leave_game()
+
                     elif event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
+                            cell_size_gl = 30
+                            scale_factor = 1.0
                             leave_game()
 
                     elif event.type == pygame.MOUSEBUTTONDOWN:  
                         if event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
-                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, additional_dh, cell_size)
+                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, additional_dh, cell_size_gl)
                             first_click = False
                             game_time = 0
                             field, bool_field = pole_funkce.field_description(width, height, pocet_min, row, column)
@@ -574,14 +600,13 @@ def main():
                     remaining_flags = pocet_min - flag_count
                     if event.type == pygame.MOUSEBUTTONUP:
                         if event.button == 1 and back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
-                            game = False
-                            menu = True
-                            first_click = True
-                            screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
+                            cell_size_gl = 30
+                            scale_factor = 1.0
+                            leave_game()
 
                         elif event.button == 2 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
-                            up_row, up_column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, additional_dh, cell_size)
+                            up_row, up_column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, additional_dh, cell_size_gl)
                             if bool_field[up_row][up_column] == 1 and pole_funkce.verify_amount_of_flags(field, bool_field, up_row, up_column) and up_row == down_row and up_column == down_column:
                                 field, bool_field = pole_funkce.cluster_reveal(field, bool_field, up_row, up_column)
                                 for i in empty_cells_to_plot:
@@ -590,13 +615,15 @@ def main():
                                             for sloupec in range((len(bool_field[0]))):
                                                 if field[radek][sloupec] == 9:
                                                     bool_field[radek][sloupec] = 1
-                                        plot_bool_field(bool_field, field, cell_size)
+                                        plot_bool_field(bool_field, field, cell_size_gl)
                                         pygame.display.flip()
                                         time.sleep(1.5)
                                         screen.blit(transparent_bg_surf, (0, 0))
                                         end_screen = True
                                         game = False
                                         first_click = True
+                                        cell_size_gl = 30
+                                        scale_factor = 1.0
                             empty_cells_to_plot.clear()
                         
                         elif event.button == 1 and (screen_width_game - 46 < pygame.mouse.get_pos()[0] < screen_width_game - 10 and 10 < pygame.mouse.get_pos()[1] < 46):
@@ -615,7 +642,7 @@ def main():
 
                         elif event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
-                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, additional_dh, cell_size)
+                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, additional_dh, cell_size_gl)
                             # pole_funkce.update_field(row, collumn)
                             if bool_field[row][column] == 2:
                                 continue
@@ -624,31 +651,35 @@ def main():
                                     for sloupec in range((len(bool_field[0]))):
                                         if field[radek][sloupec] == 9:
                                             bool_field[radek][sloupec] = 1
-                                plot_bool_field(bool_field, field, cell_size)
-                                screen.blit(mine_explode_surf_game, (column*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+                                plot_bool_field(bool_field, field, cell_size_gl)
+                                screen.blit(mine_explode_surf_game, (column*cell_size_gl+dw+additional_dw, row*cell_size_gl+dh+additional_dh))
                                 pygame.display.flip()
                                 time.sleep(1.5)
                                 screen.blit(transparent_bg_surf, (0, 0))
                                 end_screen = True
                                 game = False
                                 first_click = True
-                            
+                                cell_size_gl = 30
+                                scale_factor = 1.0
+
                             field, bool_field = pole_funkce.update_field(field, bool_field, row, column)
 
                         elif event.button == 2 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
-                            down_row, down_column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, additional_dh, cell_size)
+                            down_row, down_column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, additional_dh, cell_size_gl)
                             empty_cells_to_plot = pole_funkce.neighbouring_cells_without_turning(down_row, down_column, bool_field)
 
                         elif event.button == 3 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
-                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, additional_dh, cell_size)
+                            row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, additional_dh, cell_size_gl)
                             if bool_field[row][column] == 0  and remaining_flags > 0:
                                 bool_field[row][column] = 2
                             elif bool_field[row][column] == 2:
                                 bool_field[row][column] = 0
                     elif event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
+                            cell_size_gl = 30
+                            scale_factor = 1.0
                             leave_game()
 
             elif win_screen:
@@ -698,14 +729,16 @@ def main():
                             pocet_min = data["mineCount"]
                             difficulty = data["difficulty"]
                             remaining_flags = data["remainingFlags"]
+                            scale_factor = data["scaleFactor"]
+                            scale_game_field(scale_factor)
                             first_click = False
                             load_screen = False
                             game = True
-                            additional_dw = max(0, (260 - width*cell_size - dw - 10)/2)
-                            additional_dh = max(0, (280 - height*cell_size - dw*2-90)/2)
-                            mines_rect = pygame.Rect(dw + additional_dw, dh, width*cell_size, height*cell_size)
-                            screen_width_game = max(width*cell_size + dw * 2, 260)
-                            screen_height_game = max(height*cell_size + 2*dh + 10, 280)
+                            additional_dw = max(0, (260 - width*cell_size_gl - dw - 10)/2)
+                            additional_dh = max(0, (280 - height*cell_size_gl - dw*2-90)/2)
+                            mines_rect = pygame.Rect(dw + additional_dw, dh, width*cell_size_gl, height*cell_size_gl)
+                            screen_width_game = max(width*cell_size_gl + dw * 2, 260)
+                            screen_height_game = max(height*cell_size_gl + 2*dh + 10, 280)
                             screen = pygame.display.set_mode((screen_width_game, screen_height_game))
 
                         elif any(rect.collidepoint(pygame.mouse.get_pos()) for rect in bin_rects):
@@ -737,7 +770,8 @@ def main():
                                 "hintCount": hint_count,
                                 "mineCount": pocet_min,
                                 "difficulty": difficulty,
-                                "remainingFlags": remaining_flags
+                                "remainingFlags": remaining_flags,
+                                "scaleFactor": scale_factor
                             }
                             save_game(slot, data_list[slot])  
 
@@ -799,16 +833,25 @@ def main():
                     elif custom_mine_field_box_active:
                         if event.key == pygame.K_RETURN: # User pressed enter and validated his game username
                             custom_entry = pole_funkce.separate_string_by_commas(custom_mine_field_text)
-                            if pole_funkce.is_it_integer(custom_entry) is False:
+                            if len(custom_entry) == 3:
+                                custom_entry.append("1.0")
+                            if pole_funkce.is_it_integer(custom_entry[0:3]) is False or pole_funkce.is_it_float([custom_entry[3]]) is False:
+                                print("První if zle")
                                 pass
-                            elif len(custom_entry) == 3 and pole_funkce.field_creation_conditions(custom_entry):
-                                width, height, pocet_min = int(custom_entry[0]), int(custom_entry[1]), int(custom_entry[2])
+                            elif (len(custom_entry) == 3 or len(custom_entry) == 4) and pole_funkce.field_creation_conditions(custom_entry[0:3]):
+                                print("Podmínka splněna")
+                                if len(custom_entry) == 3:
+                                    width, height, pocet_min = int(custom_entry[0]), int(custom_entry[1]), int(custom_entry[2])
+                                else:
+                                    print("Jsme zde")
+                                    width, height, pocet_min, scale_factor = int(custom_entry[0]), int(custom_entry[1]), int(custom_entry[2]), float(custom_entry[3])
+                                    scale_game_field(scale_factor)
                                 difficulty = "Custom"
-                                additional_dw = max(0, (260 - width*cell_size - dw*2)/2) # 260 je stejná jako o 3 řádky níže
-                                additional_dh = max(0, (280 - height*cell_size - dw*2-90)/2)
-                                mines_rect = pygame.Rect(dw + additional_dw, dh + additional_dh, width*cell_size, height*cell_size)
-                                screen_width_game = max(width*cell_size + dw * 2, 260) # Zde
-                                screen_height_game = max(height*cell_size + 2*dh + 10, 280) 
+                                additional_dw = max(0, (260 - width*cell_size_gl - dw*2)/2) # 260 je stejná jako o 3 řádky níže
+                                additional_dh = max(0, (280 - height*cell_size_gl - dw*2-90)/2)
+                                mines_rect = pygame.Rect(dw + additional_dw, dh + additional_dh, width*cell_size_gl, height*cell_size_gl)
+                                screen_width_game = max(width*cell_size_gl + dw * 2, 260) # Zde
+                                screen_height_game = max(height*cell_size_gl + 2*dh + 10, 280) 
                                 screen = pygame.display.set_mode((screen_width_game, screen_height_game))
                                 reshuffle_count = 3
                                 hint_count = 2
@@ -957,7 +1000,7 @@ def main():
                 hint_count_surf = karma_sature_font_23.render(str(hint_count), False, "Black")
                 screen.fill((140, 140, 140))
                 pygame.draw.rect(screen, (195, 195, 195), (5, 5, screen_width_game-10, screen_height_game-10))
-                plot_empty_field(width, height, cell_size)
+                plot_empty_field(width, height, cell_size_gl)
 
                 if (15 < pygame.mouse.get_pos()[0] < 55 and screen_height_game - 50 < pygame.mouse.get_pos()[1] < screen_height_game - 10) or (reshuffle_count == 0):
                     screen.blit(reshuffle_on_surf, (15, screen_height_game-50))
@@ -998,7 +1041,7 @@ def main():
                 remaining_flags_surf = karma_sature_font_23.render(str(remaining_flags), False, "Black")
                 screen.fill((140, 140, 140))
                 pygame.draw.rect(screen, (195, 195, 195), (5, 5, screen_width_game-10, screen_height_game-10))
-                plot_bool_field(bool_field, field, cell_size)
+                plot_bool_field(bool_field, field, cell_size_gl)
 
                 if (15 < pygame.mouse.get_pos()[0] < 55 and screen_height_game - 50 < pygame.mouse.get_pos()[1] < screen_height_game - 10) or (reshuffle_count == 0):
                     screen.blit(reshuffle_on_surf, (15, screen_height_game-50))
@@ -1024,13 +1067,13 @@ def main():
 
                 if len(empty_cells_to_plot) > 0:
                     for i in empty_cells_to_plot:
-                        screen.blit(null_surf_game, (i[0]*cell_size+dw+additional_dw, i[1]*cell_size+dh+additional_dh))
+                        screen.blit(null_surf_game, (i[0]*cell_size_gl+dw+additional_dw, i[1]*cell_size_gl+dh+additional_dh))
 
                 if np.count_nonzero(bool_field == 1) >= width * height - pocet_min:
                     win_screen = True
                     game = False
                     first_click = True
-                    plot_bool_field(bool_field, field, cell_size)
+                    plot_bool_field(bool_field, field, cell_size_gl)
                     screen.blit(transparent_bg_surf, (0, 0))
                 
         elif win_screen or end_screen:
