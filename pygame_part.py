@@ -93,7 +93,7 @@ save_lines = ["Save system", "save all your progress by picking", "one of the th
 text_save = [karma_sature_font_16.render(text, False, "Black") for text in save_lines]
 reshuffle_lines = ["Reshuffle", "changes the positions of undiscovered mines", "to give you another chance when you are lost"]
 text_reshuffle = [karma_sature_font_16.render(text, False, "Black") for text in reshuffle_lines]
-hint_lines = ["Hint", "reveals the position of one undiscovered mine", "by placing a flag on it"]
+hint_lines = ["Hint", "reveals the position of one undiscovered mine", "by placing a blue undiscovered flag on it"]
 text_hint = [karma_sature_font_16.render(text, False, "Black") for text in hint_lines]
 text_have_fun = karma_sature_font_23.render("Have fun!", False, "Black")
 
@@ -118,19 +118,20 @@ hard_surf_off  = pygame.image.load("surfaces/hard_button_off.png").convert_alpha
 custom_surf_on = pygame.image.load("surfaces/custom_button_on.png").convert_alpha()
 custom_surf_off = pygame.image.load("surfaces/custom_button_off.png").convert_alpha()
 box_surf = pygame.image.load("mines/box.png").convert()
+null_surf = pygame.image.load("mines/empty.png").convert()
 one_surf = pygame.image.load("mines/one.png").convert()
 two_surf = pygame.image.load("mines/two.png").convert()
 three_surf = pygame.image.load("mines/three.png").convert()
 four_surf = pygame.image.load("mines/four.png").convert()
 five_surf = pygame.image.load("mines/five.png").convert()
 six_surf = pygame.image.load("mines/six.png").convert()
-null_surf = pygame.image.load("mines/empty.png").convert()
+seven_surf = pygame.image.load("mines/seven.png").convert()
+eight_surf = pygame.image.load("mines/eight.png").convert()
 mine_surf = pygame.image.load("mines/mine.png").convert()
 mine_purple_surf = pygame.image.load("mines/mine_purple.png").convert()
 mine_explode_surf = pygame.image.load("mines/mine_explode.png").convert()
 flag_surf = pygame.image.load("mines/flag.png").convert()
-seven_surf = pygame.image.load("mines/seven.png").convert()
-eight_surf = pygame.image.load("mines/eight.png").convert()
+blue_flag_surf = pygame.image.load("surfaces/flag_blue.png").convert()
 
 reshuffle_on_surf = pygame.image.load("surfaces/reshuffle_on.png").convert()
 reshuffle_off_surf = pygame.image.load("surfaces/reshuffle_off.png").convert()
@@ -160,23 +161,9 @@ def scale_surface(surface, scale):
     else:
         return pygame.transform.smoothscale(surface, (int(width * scale), int(height * scale)))
 
-one_surf_game = scale_surface(one_surf, scale_factor)
-box_surf_game = scale_surface(box_surf, scale_factor)
-two_surf_game = scale_surface(two_surf, scale_factor)
-three_surf_game = scale_surface(three_surf, scale_factor)
-four_surf_game = scale_surface(four_surf, scale_factor)
-five_surf_game = scale_surface(five_surf, scale_factor)
-six_surf_game = scale_surface(six_surf, scale_factor)
-null_surf_game = scale_surface(null_surf, scale_factor)
-mine_surf_game = scale_surface(mine_surf, scale_factor)
-mine_explode_surf_game = scale_surface(mine_explode_surf, scale_factor)
-flag_surf_game = scale_surface(flag_surf, scale_factor)
-seven_surf_game = scale_surface(seven_surf, scale_factor)
-eight_surf_game = scale_surface(eight_surf, scale_factor)
-
 
 def scale_game_field(scale_factor):
-    global one_surf_game, box_surf_game, two_surf_game, three_surf_game, four_surf_game, five_surf_game, six_surf_game, seven_surf_game, eight_surf_game, null_surf_game, mine_surf_game, mine_explode_surf_game, flag_surf_game, cell_size_gl
+    global one_surf_game, box_surf_game, two_surf_game, three_surf_game, four_surf_game, five_surf_game, six_surf_game, seven_surf_game, eight_surf_game, null_surf_game, mine_surf_game, mine_explode_surf_game, flag_surf_game, cell_size_gl, blue_flag_surf_game
     one_surf_game = scale_surface(one_surf, scale_factor)
     box_surf_game = scale_surface(box_surf, scale_factor)
     two_surf_game = scale_surface(two_surf, scale_factor)
@@ -190,6 +177,7 @@ def scale_game_field(scale_factor):
     flag_surf_game = scale_surface(flag_surf, scale_factor)
     seven_surf_game = scale_surface(seven_surf, scale_factor)
     eight_surf_game = scale_surface(eight_surf, scale_factor)
+    blue_flag_surf_game = scale_surface(blue_flag_surf, scale_factor)
     cell_size_gl *= scale_factor
 # Creating scaled surfaces for game items
 
@@ -385,6 +373,8 @@ def plot_bool_field(bool_field, field, cell_size = 30): # minefield plotting
                             screen.blit(mine_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                 case 2:
                     screen.blit(flag_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+                case 3:
+                    screen.blit(blue_flag_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
 
 
 def plot_empty_field(width, height, cell_size = 30):
@@ -610,7 +600,7 @@ def main():
                             field, bool_field = pole_funkce.field_description(width, height, pocet_min, row, column)
 
                 else:
-                    flag_count = np.count_nonzero(bool_field == 2)
+                    flag_count = np.count_nonzero(bool_field == 2) + np.count_nonzero(bool_field == 3)
                     remaining_flags = pocet_min - flag_count
                     if event.type == pygame.MOUSEBUTTONUP:
                         if event.button == 1 and back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
@@ -656,7 +646,7 @@ def main():
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1] 
                             row, column = pole_funkce.click(x_click, y_click, dw, dh, additional_dw, additional_dh, cell_size_gl)
                             # pole_funkce.update_field(row, collumn)
-                            if bool_field[row][column] == 2:
+                            if bool_field[row][column] == 2 or bool_field[row][column] == 3:
                                 continue
                             if field[row][column] == 9:
                                 for radek in range((len(bool_field))):

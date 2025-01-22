@@ -52,7 +52,7 @@ def hint(field, bool_field): # hint functions that picks a random undiscoverd mi
     if len(current_mines) == 0:
         return bool_field
     hint = rand.choice(current_mines)
-    bool_field[hint[0],hint[1]] = 2
+    bool_field[hint[0],hint[1]] = 3
     return bool_field
 
 
@@ -74,7 +74,7 @@ def neighbouring_cells_without_turning(row, column, bool_field):
 
 def verify_amount_of_flags(field, bool_field, row, column):
     sub_array = bool_field[max(0, row-1):row+2, max(0, column-1):column+2]
-    if np.count_nonzero(sub_array == 2) == field[row][column]:
+    if (np.count_nonzero(sub_array == 2) + np.count_nonzero(sub_array == 3)) == field[row][column]:
         return True
     else:
         return False
@@ -91,7 +91,7 @@ def uncaged_mines(field, bool_field):
     total_mines = np.count_nonzero(field == 9)
     for i, row in enumerate(field):
         for j, item in enumerate(row):
-            if item == 9 and bool_field[i,j] == 2:
+            if item == 9 and (bool_field[i,j] == 2 or bool_field[i,j] == 3):
                 caged_mines += 1
             elif item == 9:
                 field[i,j] = -1
@@ -152,7 +152,7 @@ def reveal(row, column, bool_field):
             continue
         elif cc < 0 or cc >= len(bool_field[0]): # šířka
             continue
-        elif bool_field[rr, cc] == 2:
+        elif bool_field[rr, cc] == 2 or bool_field[rr,cc] == 3:
             continue
         bool_field[rr, cc] = 1
 
