@@ -132,5 +132,19 @@
             "username": "Sir Meowsington IV",
             "time": "190"
         }
+    },
+    "(50, 50, 50)": {
+        "gold": {
+            "username": "gold",
+            "time": "78"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "141"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "235"
+        }
     }
 }

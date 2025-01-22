@@ -127,6 +127,8 @@ eight_surf = pygame.image.load("mines/eight.png").convert()
 mine_surf = pygame.image.load("mines/mine.png").convert()
 mine_purple_surf = pygame.image.load("mines/mine_purple.png").convert()
 mine_explode_surf = pygame.image.load("mines/mine_explode.png").convert()
+mine_explode_only_surf = pygame.image.load("mines/mine_explode_only.png").convert_alpha()
+pygame.display.set_icon(mine_explode_only_surf)
 flag_surf = pygame.image.load("mines/flag.png").convert()
 blue_flag_surf = pygame.image.load("surfaces/flag_blue.png").convert()
 
