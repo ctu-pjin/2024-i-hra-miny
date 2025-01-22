@@ -19,7 +19,7 @@ Hra nabízí tři předpřipravené úrovně
     Easy - pole 12x10, 18 min
     Medium - pole 16x13, 37 min
     Hard - pole 29, 20, 100 min
-a možnost vytvoření svého "custom" pole.
+a možnost vytvoření svého "custom" pole. U volitelného pole je možnost změnit velikost buněk. Aby bylo pole vygenerovatelné, je ošetřeno podmínkou, že počet min musí být o 15 menší než počet polí.
 Vložit řešený čas do lokální databáze i zobrazit si nejlepších 12 řešitelů pole daného rozměru, po vložení času do databáze se opět zobrazí nejlepší řešitelé.
 V rámci hry je dostupný ukládací systém se třemi save sloty, které lze přeuložit i smazat, hru lze opětovně načíst z hlavního menu. Uloženy budou veškeré parametry (tj. i počet použití funkcí reshuffle a hint).
 Při řešení je možné použít dvě nové funkce - reshuffle, který mění polohu nenajitých min, a nápověda, která označí jednu nenalezenou minu. Obě mají omezený počet užití a jiné strategické výhody.

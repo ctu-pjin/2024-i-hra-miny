@@ -13,7 +13,7 @@ def separate_string_by_commas(string):
     string_split = [s.strip() for s in string.split(",")]
     return string_split
 
-def is_it_integer(list_of_strings):
+def is_it_integer(list_of_strings): # tests if input is an integer
     for string in list_of_strings:
         try:
             int(string)
@@ -31,14 +31,14 @@ def is_it_float(list_of_floats):
             return False
     return True
 
-def field_creation_conditions(list_of_strings):
+def field_creation_conditions(list_of_strings): # checks if it's possible to create a field from custom input, used for custom fields
     width, height, pocet_min = int(list_of_strings[0]), int(list_of_strings[1]), int(list_of_strings[2])
     if pocet_min <= 0 or width <= 0 or height <= 0 or pocet_min > width*height - 15:
         return False
     return True
 
 
-def current_mines_positions(field, bool_field):
+def current_mines_positions(field, bool_field): # returns positions of undiscovered mines, used in hint
     current_mines = []
     for i, row in enumerate(field):
         for j, item in enumerate(row):
@@ -47,7 +47,7 @@ def current_mines_positions(field, bool_field):
     return current_mines
 
 
-def hint(field, bool_field):
+def hint(field, bool_field): # hint functions that picks a random undiscoverd mine and places a flag on it
     current_mines = current_mines_positions(field, bool_field)
     if len(current_mines) == 0:
         return bool_field
@@ -56,7 +56,7 @@ def hint(field, bool_field):
     return bool_field
 
 
-def neighbouring_cells_without_turning(row, column, bool_field):
+def neighbouring_cells_without_turning(row, column, bool_field): 
     empty_cells_to_plot = []
     if bool_field[row, column] == 0:
         empty_cells_to_plot.append([column, row])

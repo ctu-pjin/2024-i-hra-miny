@@ -69,20 +69,24 @@ text_press_enter_surfs = [karma_sature_font_23.render(text, False, "White") for 
 text_victory_surf = karma_font_35.render("You won!", False, "White")
 text_lose_surf = karma_font_35.render("You lost!", False, "White")
 text_submit_username_surf = karma_sature_font_21.render("Enter your Username:", False, "Black")
-text_custom_field_entry_surf = karma_sature_font_21.render("enter width, height, and number of mines:", False, "Black")
-text_example_for_custom_field_surf = karma_sature_font_21.render("example: 15, 10, 30",False, "Black")
+text_this_is_custom_game = karma_sature_font_23.render("Create your custom game field", False, "Black")
+text_custom_field_entry_surf = karma_sature_font_21.render("enter width, height, number of mines,", False, "Black")
+text_optional_scaling_factor = karma_sature_font_21.render("and optionally the scaling factor", False, "Black")
+text_example_for_custom_field_surf = karma_sature_font_21.render("example: 15, 10, 30, 0.7",False, "Black")
+lines_scaling_factor_explained = ["if you want to create a larger field, consider adding", "the scaling factor, which makes the cells smaller", "(or potentially larger should you chose so)", "to fit your needs or computer screen better", "if anything goes awry, don't forget", "you can return to menu by pressing the escape button"]
+text_scaling_factor_explained = [karma_sature_font_16.render(text, False, "Black") for text in lines_scaling_factor_explained]
 text_custom_field_start_game = karma_sature_font_21.render("Press Enter to start the game!", False, "Black")
 text_easy_medium_hard = karma_sature_font_23.render("Enter: easy, medium or hard", False, "Black")
 text_enter_parameters1 = karma_sature_font_21.render("Or enter the parameters", False, "Black")
 text_enter_parameters2 = karma_sature_font_21.render("of your custom game", False, "Black")
-text_this_is_custom_game = karma_sature_font_23.render("Create your custom game field", False, "Black")
 text_leaderboards = karma_sature_font_30.render("Leaderboards", False, "Black")
+text_example_for_leaderboards = karma_sature_font_21.render("example: 15, 10, 30",False, "Black")
 
 # texts for help screen
 text_welcome = karma_sature_font_23.render("Welcome!",False, "Black")
 text_mine_sweeper = karma_sature_font_16.render("This is our rendition of the classic Minesweeper", False, "Black")
 text_controls = karma_sature_font_16.render("CONTROLS:", False, "Black")
-control_lines = ["Left-click: discover a (hopefully) mineless field", "Right-click: place a flag", "Wheel-click: discover the surroundings of a fully", "controlled field"]
+control_lines = ["Left-click: discover a (hopefully) mineless field", "Right-click: place a flag", "Wheel-click: discover the surroundings of a fully", "controlled field", "Esc: return to menu"]
 text_control_lines = [karma_sature_font_16.render(text, False, "Black") for text in control_lines]
 text_special_features = karma_sature_font_16.render("SPECIAL FEATURES:", False, "Black")
 save_lines = ["Save system", "save all your progress by picking", "one of the three slots", "re-write an old save by clicking on it", "or delete it by clicking the garbage can"]
@@ -389,12 +393,14 @@ def plot_empty_field(width, height, cell_size = 30):
             screen.blit(box_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
 
 
-def leave_game():
-    global game, menu, first_click, screen
+def leave_game(game, menu, first_click, screen, cell_size_gl, scale_factor):
     game = False
     menu = True
     first_click = True
     screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
+    cell_size_gl = 30
+    scale_factor = 1.0
+    return game, menu, first_click, screen, cell_size_gl, scale_factor
 
 
 def back_to_menu_from_scores(menu, scores_menu, scores_input_text, score_data_to_blit, score_data_to_blit_bool):
@@ -410,7 +416,7 @@ username_box = pygame.Rect(40, 90, 220, 40)
 username_text = ""
 username_button_active = False
 
-custom_mine_field_box = pygame.Rect(120, 155, 240, 40)
+custom_mine_field_box = pygame.Rect(120, 170, 240, 40)
 custom_mine_field_text = ""
 custom_mine_field_box_active = False
 
@@ -424,8 +430,9 @@ GRAY = (200, 200, 200)
 
 
 def main():
-    global menu, game, first_click, cell_size_gl, scale_factor
+    global cell_size_gl, scale_factor
     wrong_custom_input = False
+    wrong_score_input = False
     score_data_to_blit_bool = False
     empty_cells_to_plot = []
     score_data_to_blit = dict()
@@ -529,6 +536,7 @@ def main():
                     # Check if the input box was clicked
                     if scores_input_box.collidepoint(event.pos):
                         scores_input_box_active = True
+                        wrong_score_input = False
                     else:
                         scores_input_box_active = False
                 elif event.type == pygame.KEYDOWN:
@@ -548,7 +556,7 @@ def main():
                             # Checking if the input parametrs of any field exists        
                             scores_entry = pole_funkce.separate_string_by_commas(scores_input_text)
                             if pole_funkce.is_it_integer(scores_entry) is False:
-                                pass
+                                wrong_score_input = True
                             elif len(scores_entry) == 3:
                                 try:
                                     key = ScFn.create_str_key(scores_entry)
@@ -577,15 +585,11 @@ def main():
                     remaining_flags = pocet_min
                     if event.type == pygame.MOUSEBUTTONUP:
                         if event.button == 1 and back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
-                            cell_size_gl = 30
-                            scale_factor = 1.0
-                            leave_game()
+                            game, menu, first_click, screen, cell_size_gl, scale_factor = leave_game(game, menu, first_click, screen, cell_size_gl, scale_factor)
 
                     elif event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
-                            cell_size_gl = 30
-                            scale_factor = 1.0
-                            leave_game()
+                            game, menu, first_click, screen,cell_size_gl, scale_factor = leave_game(game, menu, first_click, screen, cell_size_gl, scale_factor)
 
                     elif event.type == pygame.MOUSEBUTTONDOWN:  
                         if event.button == 1 and mines_rect.collidepoint(pygame.mouse.get_pos()):
@@ -600,9 +604,7 @@ def main():
                     remaining_flags = pocet_min - flag_count
                     if event.type == pygame.MOUSEBUTTONUP:
                         if event.button == 1 and back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
-                            cell_size_gl = 30
-                            scale_factor = 1.0
-                            leave_game()
+                            game, menu, first_click, screen, cell_size_gl, scale_factor = leave_game(game, menu, first_click, screen, cell_size_gl, scale_factor)
 
                         elif event.button == 2 and mines_rect.collidepoint(pygame.mouse.get_pos()):
                             x_click, y_click = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
@@ -678,9 +680,7 @@ def main():
                                 bool_field[row][column] = 0
                     elif event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
-                            cell_size_gl = 30
-                            scale_factor = 1.0
-                            leave_game()
+                            game, menu, first_click, screen, cell_size_gl, scale_factor = leave_game(game, menu, first_click, screen, cell_size_gl, scale_factor)
 
             elif win_screen:
                 if event.type == pygame.KEYDOWN:
@@ -964,6 +964,10 @@ def main():
                 screen.blit(back_arrow_surf_off, back_arrow_rect)
 
             pygame.draw.rect(screen, GRAY if scores_input_box_active else WHITE, scores_input_box, 3)
+            if wrong_score_input:
+                pygame.draw.rect(screen, (176, 96, 91), scores_input_box, 3) # Border goes red to indicate wrong input
+            else:
+                pygame.draw.rect(screen, GRAY if scores_input_box_active else WHITE, scores_input_box, 3)
 
             scores_input_surface = karma_sature_font_21.render(scores_input_text, True, BLACK)
             screen.blit(scores_input_surface, (scores_input_box.x + 5, scores_input_box.y + 5))
@@ -990,7 +994,7 @@ def main():
                 screen.blit(text_easy_medium_hard, (screen.get_size()[0]/2 - text_easy_medium_hard.get_size()[0]/2, 168))
                 screen.blit(text_enter_parameters1, (screen.get_size()[0]/2 - text_enter_parameters1.get_size()[0]/2, 200))
                 screen.blit(text_enter_parameters2, (screen.get_size()[0]/2 - text_enter_parameters2.get_size()[0]/2, 232))
-                screen.blit(text_example_for_custom_field_surf, (screen.get_size()[0]/2 - text_example_for_custom_field_surf.get_size()[0]/2, 264))
+                screen.blit(text_example_for_leaderboards, (screen.get_size()[0]/2 - text_example_for_leaderboards.get_size()[0]/2, 264))
 
         elif game:
             if first_click is True:
@@ -1137,10 +1141,11 @@ def main():
             screen.fill((200, 200, 200))
             update_cell(menu_bg_surface, mine_field)
             screen.blit(menu_bg_surface, (0, 0))
-            pygame.draw.rect(screen, (100, 100, 100), (30, 60, 14*30, 8*30))
-            pygame.draw.rect(screen, (150, 150, 150), (35, 65, 14*30 - 10, 8*30 - 10))
+            pygame.draw.rect(screen, (100, 100, 100), (30, 60, 14*30, 15*30))
+            pygame.draw.rect(screen, (150, 150, 150), (35, 65, 14*30 - 10, 15*30 - 10))
             screen.blit(text_this_is_custom_game, (screen.get_size()[0]/2 - text_this_is_custom_game.get_size()[0]/2, 80))
-            screen.blit(text_custom_field_entry_surf, (screen.get_size()[0]/2 - text_custom_field_entry_surf.get_size()[0]/2, 115))
+            screen.blit(text_custom_field_entry_surf, (screen.get_size()[0]/2 - text_custom_field_entry_surf.get_size()[0]/2, 109))
+            screen.blit(text_optional_scaling_factor, (screen.get_size()[0]/2 - text_optional_scaling_factor.get_size()[0]/2, 135))
             
             if wrong_custom_input:
                 pygame.draw.rect(screen, (176, 96, 91), custom_mine_field_box, 3) # Border goes red to indicate wrong input
@@ -1149,8 +1154,12 @@ def main():
 
             custom_field_input_surface = karma_sature_font_21.render(custom_mine_field_text, True, BLACK)
             screen.blit(custom_field_input_surface, (custom_mine_field_box.x + 5, custom_mine_field_box.y + 5))
-            screen.blit(text_example_for_custom_field_surf, (screen.get_size()[0]/2 - text_example_for_custom_field_surf.get_size()[0]/2, 203))
-            screen.blit(text_custom_field_start_game, (screen.get_size()[0]/2 - text_custom_field_start_game.get_size()[0]/2, 235))
+            screen.blit(text_example_for_custom_field_surf, (screen.get_size()[0]/2 - text_example_for_custom_field_surf.get_size()[0]/2, 218))
+            y_offset = 243
+            for text in text_scaling_factor_explained:
+                screen.blit(text, (screen.get_size()[0]/2-text.get_size()[0]/2, y_offset))
+                y_offset += 20
+            screen.blit(text_custom_field_start_game, (screen.get_size()[0]/2 - text_custom_field_start_game.get_size()[0]/2, y_offset+5))
 
             if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
                 screen.blit(back_arrow_surf_on, back_arrow_rect)

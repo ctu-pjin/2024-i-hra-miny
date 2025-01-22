@@ -492,5 +492,61 @@
             "username": "bronze",
             "time": "30"
         }
+    },
+    "(50, 40, 350)": {
+        "gold": {
+            "username": "gold",
+            "time": "7826"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "15652"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "31304"
+        }
+    },
+    "(10, 20, 30)": {
+        "gold": {
+            "username": "gold",
+            "time": "212"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "424"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "848"
+        }
+    },
+    "(70, 50, 400)": {
+        "gold": {
+            "username": "gold",
+            "time": "11832"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "23664"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "47328"
+        }
+    },
+    "(70, 45, 400)": {
+        "gold": {
+            "username": "gold",
+            "time": "11224"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "22449"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "44899"
+        }
     }
 }
