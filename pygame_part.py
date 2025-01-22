@@ -47,10 +47,10 @@ menu_bg_surface = pygame.Surface((screen_width, screen_height))
 
 karma_font_160 = pygame.font.Font("fonts/KarmaFuture.otf", 160)
 karma_font_60 = pygame.font.Font("fonts/KarmaFuture.otf", 60)
-karma_sature_font_23 = pygame.font.Font("fonts/KarmaSuture.otf", 23)
-karma_sature_font_21 = pygame.font.Font("fonts/KarmaSuture.otf", 21)
-karma_sature_font_16 = pygame.font.Font("fonts/KarmaSuture.otf", 16)
-karma_sature_font_30 = pygame.font.Font("fonts/KarmaSuture.otf", 30)
+karma_suture_font_23 = pygame.font.Font("fonts/KarmaSuture.otf", 23)
+karma_suture_font_21 = pygame.font.Font("fonts/KarmaSuture.otf", 21)
+karma_suture_font_16 = pygame.font.Font("fonts/KarmaSuture.otf", 16)
+karma_suture_font_30 = pygame.font.Font("fonts/KarmaSuture.otf", 30)
 karma_font_35 = pygame.font.Font("fonts/KarmaFuture.otf", 35)
 
 # Part for loading texts
@@ -64,38 +64,38 @@ text_save_system_rect = text_save_system_surf.get_rect(midtop=(screen_width/2, 7
 text_load_system_surf = karma_font_60.render("Load game", False, "Black")
 victory_lines = ["Press Space to", "return to main menu", "OR", "Press Enter to", "submit your score"]
 loss_lines = ["Press Space to", "return to main menu", "", "Good luck", "next time"]
-text_press_space_surfs = [karma_sature_font_23.render(text, False, "White") for text in victory_lines]
-text_press_enter_surfs = [karma_sature_font_23.render(text, False, "White") for text in loss_lines]
+text_press_space_surfs = [karma_suture_font_23.render(text, False, "White") for text in victory_lines]
+text_press_enter_surfs = [karma_suture_font_23.render(text, False, "White") for text in loss_lines]
 text_victory_surf = karma_font_35.render("You won!", False, "White")
 text_lose_surf = karma_font_35.render("You lost!", False, "White")
-text_submit_username_surf = karma_sature_font_21.render("Enter your Username:", False, "Black")
-text_this_is_custom_game = karma_sature_font_23.render("Create your custom game field", False, "Black")
-text_custom_field_entry_surf = karma_sature_font_21.render("enter width, height, number of mines,", False, "Black")
-text_optional_scaling_factor = karma_sature_font_21.render("and optionally the scaling factor", False, "Black")
-text_example_for_custom_field_surf = karma_sature_font_21.render("example: 15, 10, 30, 0.7",False, "Black")
+text_submit_username_surf = karma_suture_font_21.render("Enter your Username:", False, "Black")
+text_this_is_custom_game = karma_suture_font_23.render("Create your custom game field", False, "Black")
+text_custom_field_entry_surf = karma_suture_font_21.render("enter width, height, number of mines,", False, "Black")
+text_optional_scaling_factor = karma_suture_font_21.render("and optionally the scaling factor", False, "Black")
+text_example_for_custom_field_surf = karma_suture_font_21.render("example: 15, 10, 30, 0.7",False, "Black")
 lines_scaling_factor_explained = ["if you want to create a larger field, consider adding", "the scaling factor, which makes the cells smaller", "(or potentially larger should you chose so)", "to fit your needs or computer screen better", "if anything goes awry, don't forget", "you can return to menu by pressing the escape button"]
-text_scaling_factor_explained = [karma_sature_font_16.render(text, False, "Black") for text in lines_scaling_factor_explained]
-text_custom_field_start_game = karma_sature_font_21.render("Press Enter to start the game!", False, "Black")
-text_easy_medium_hard = karma_sature_font_23.render("Enter: easy, medium or hard", False, "Black")
-text_enter_parameters1 = karma_sature_font_21.render("Or enter the parameters", False, "Black")
-text_enter_parameters2 = karma_sature_font_21.render("of your custom game", False, "Black")
-text_leaderboards = karma_sature_font_30.render("Leaderboards", False, "Black")
-text_example_for_leaderboards = karma_sature_font_21.render("example: 15, 10, 30",False, "Black")
+text_scaling_factor_explained = [karma_suture_font_16.render(text, False, "Black") for text in lines_scaling_factor_explained]
+text_custom_field_start_game = karma_suture_font_21.render("Press Enter to start the game!", False, "Black")
+text_easy_medium_hard = karma_suture_font_23.render("Enter: easy, medium or hard", False, "Black")
+text_enter_parameters1 = karma_suture_font_21.render("Or enter the parameters", False, "Black")
+text_enter_parameters2 = karma_suture_font_21.render("of your custom game", False, "Black")
+text_leaderboards = karma_suture_font_30.render("Leaderboards", False, "Black")
+text_example_for_leaderboards = karma_suture_font_21.render("example: 15, 10, 30",False, "Black")
 
 # texts for help screen
-text_welcome = karma_sature_font_23.render("Welcome!",False, "Black")
-text_mine_sweeper = karma_sature_font_16.render("This is our rendition of the classic Minesweeper", False, "Black")
-text_controls = karma_sature_font_16.render("CONTROLS:", False, "Black")
+text_welcome = karma_suture_font_23.render("Welcome!",False, "Black")
+text_mine_sweeper = karma_suture_font_16.render("This is our rendition of the classic Minesweeper", False, "Black")
+text_controls = karma_suture_font_16.render("CONTROLS:", False, "Black")
 control_lines = ["Left-click: discover a (hopefully) mineless field", "Right-click: place a flag", "Wheel-click: discover the surroundings of a fully", "controlled field", "Esc: return to menu"]
-text_control_lines = [karma_sature_font_16.render(text, False, "Black") for text in control_lines]
-text_special_features = karma_sature_font_16.render("SPECIAL FEATURES:", False, "Black")
+text_control_lines = [karma_suture_font_16.render(text, False, "Black") for text in control_lines]
+text_special_features = karma_suture_font_16.render("SPECIAL FEATURES:", False, "Black")
 save_lines = ["Save system", "save all your progress by picking", "one of the three slots", "re-write an old save by clicking on it", "or delete it by clicking the garbage can"]
-text_save = [karma_sature_font_16.render(text, False, "Black") for text in save_lines]
+text_save = [karma_suture_font_16.render(text, False, "Black") for text in save_lines]
 reshuffle_lines = ["Reshuffle", "changes the positions of undiscovered mines", "to give you another chance when you are lost"]
-text_reshuffle = [karma_sature_font_16.render(text, False, "Black") for text in reshuffle_lines]
+text_reshuffle = [karma_suture_font_16.render(text, False, "Black") for text in reshuffle_lines]
 hint_lines = ["Hint", "reveals the position of one undiscovered mine", "by placing a blue undiscovered flag on it"]
-text_hint = [karma_sature_font_16.render(text, False, "Black") for text in hint_lines]
-text_have_fun = karma_sature_font_23.render("Have fun!", False, "Black")
+text_hint = [karma_suture_font_16.render(text, False, "Black") for text in hint_lines]
+text_have_fun = karma_suture_font_23.render("Have fun!", False, "Black")
 
 # Part for loading images
 
@@ -279,8 +279,8 @@ def create_rect_surf(id, name, time, color = (180, 180, 180), width = 380, heigh
     text_right = f"{time}s"
 
     # Render the text
-    text_left_surface = karma_sature_font_21.render(text_left, True, BLACK)
-    text_right_surface = karma_sature_font_21.render(text_right, True, BLACK)
+    text_left_surface = karma_suture_font_21.render(text_left, True, BLACK)
+    text_right_surface = karma_suture_font_21.render(text_right, True, BLACK)
 
     # Blit the text onto the surface¨
     pygame.draw.rect(surf, color, (2, 2, width-4, height-4))
@@ -401,7 +401,7 @@ def back_to_menu_from_scores(menu, scores_menu, scores_input_text, score_data_to
     score_data_to_blit_bool = False
     return menu, scores_menu, scores_input_text, score_data_to_blit, score_data_to_blit_bool
 
-def draw_surf_on_off(surf_on, surf_off, rect_on, rect_off): # draw an object differently mouse hovers over it
+def draw_surf_on_off(surf_on, surf_off, rect_on, rect_off): # draw an object differently when mouse hovers over it
     if rect_on.collidepoint(pygame.mouse.get_pos()):
         screen.blit(surf_on, rect_on)
     else:
@@ -410,6 +410,12 @@ def draw_surf_on_off(surf_on, surf_off, rect_on, rect_off): # draw an object dif
 def x_center(screen, surf): # center drawn object
     x = screen.get_size()[0]/2 - surf.get_size()[0]/2
     return x
+
+def wrong_input_to_box_red(screen, box, box_active, wrong_input): # Border of an input box goes red to indicate wrong input
+    if wrong_input:
+        pygame.draw.rect(screen, (176, 96, 91), box, 3) 
+    else:
+        pygame.draw.rect(screen, GRAY if box_active else WHITE, box, 3)
 
 # Input Boxes
 username_box = pygame.Rect(40, 90, 220, 40)
@@ -929,12 +935,9 @@ def main():
             draw_surf_on_off(back_arrow_surf_on, back_arrow_surf_off, back_arrow_rect, back_arrow_rect)
 
             pygame.draw.rect(screen, GRAY if scores_input_box_active else WHITE, scores_input_box, 3)
-            if wrong_score_input:
-                pygame.draw.rect(screen, (176, 96, 91), scores_input_box, 3) # Border goes red to indicate wrong input
-            else:
-                pygame.draw.rect(screen, GRAY if scores_input_box_active else WHITE, scores_input_box, 3)
+            wrong_input_to_box_red(screen, scores_input_box, scores_input_box_active, wrong_score_input)
 
-            scores_input_surface = karma_sature_font_21.render(scores_input_text, True, BLACK)
+            scores_input_surface = karma_suture_font_21.render(scores_input_text, True, BLACK)
             screen.blit(scores_input_surface, (scores_input_box.x + 5, scores_input_box.y + 5))
             screen.blit(text_leaderboards, (screen_width/2 - text_leaderboards.get_width()/2, 72))
             
@@ -964,9 +967,9 @@ def main():
         elif game:
             if first_click is True:
                 hint_on_rect = hint_on_surf.get_rect(midbottom = (screen_width_game/2, screen_height_game - 10))
-                remaining_flags_surf = karma_sature_font_23.render(str(remaining_flags), False, "Black")
-                reshuffle_count_surf = karma_sature_font_23.render(str(reshuffle_count), False, "Black")
-                hint_count_surf = karma_sature_font_23.render(str(hint_count), False, "Black")
+                remaining_flags_surf = karma_suture_font_23.render(str(remaining_flags), False, "Black")
+                reshuffle_count_surf = karma_suture_font_23.render(str(reshuffle_count), False, "Black")
+                hint_count_surf = karma_suture_font_23.render(str(hint_count), False, "Black")
                 screen.fill((140, 140, 140))
                 pygame.draw.rect(screen, (195, 195, 195), (5, 5, screen_width_game-10, screen_height_game-10))
                 plot_empty_field(width, height, cell_size_gl)
@@ -993,13 +996,13 @@ def main():
 
             else:
                 hint_on_rect = hint_on_surf.get_rect(midbottom = (screen_width_game/2, screen_height_game - 10))
-                reshuffle_count_surf = karma_sature_font_23.render(str(reshuffle_count), False, "Black")
-                hint_count_surf = karma_sature_font_23.render(str(hint_count), False, "Black")
+                reshuffle_count_surf = karma_suture_font_23.render(str(reshuffle_count), False, "Black")
+                hint_count_surf = karma_suture_font_23.render(str(hint_count), False, "Black")
                 if it%fps == 0:
                     game_time += 1
 
-                game_time_surf = karma_sature_font_23.render(str(game_time), False, "Black")
-                remaining_flags_surf = karma_sature_font_23.render(str(remaining_flags), False, "Black")
+                game_time_surf = karma_suture_font_23.render(str(game_time), False, "Black")
+                remaining_flags_surf = karma_suture_font_23.render(str(remaining_flags), False, "Black")
                 screen.fill((140, 140, 140))
                 pygame.draw.rect(screen, (195, 195, 195), (5, 5, screen_width_game-10, screen_height_game-10))
                 plot_bool_field(bool_field, field, cell_size_gl)
@@ -1066,11 +1069,11 @@ def main():
                     screen.blit(empty_save_surf, save_slot_rects[slot])
                 else:
                     game_save_surfs[slot].blit(pygame.image.load("surfaces/filled_save.png").convert_alpha(), (0, 0))
-                    game_save_surfs[slot].blit(karma_sature_font_30.render(data_list[slot]["difficulty"], False, "Black"), (10, 10))
+                    game_save_surfs[slot].blit(karma_suture_font_30.render(data_list[slot]["difficulty"], False, "Black"), (10, 10))
                     game_save_surfs[slot].blit(flag_only_surf, (game_save_surfs[slot].get_width() - flag_only_surf.get_width() - 10, 15))
-                    game_save_surfs[slot].blit(karma_sature_font_23.render(str(data_list[slot]["remainingFlags"]), False, "Black"), (game_save_surfs[slot].get_width() - karma_sature_font_23.render(str(data_list[slot]["remainingFlags"]),  False, "Black").get_width() - flag_only_surf.get_width() - 15, 11))
-                    game_save_surfs[slot].blit(karma_sature_font_23.render(str(len(data_list[slot]["field"])) + "x" + str(len(data_list[slot]["field"][0])),  False, "Black"), (10, 45))
-                    game_save_surfs[slot].blit(karma_sature_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue"), (game_save_surfs[slot].get_width() - karma_sature_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue").get_width() - 10, 45))
+                    game_save_surfs[slot].blit(karma_suture_font_23.render(str(data_list[slot]["remainingFlags"]), False, "Black"), (game_save_surfs[slot].get_width() - karma_suture_font_23.render(str(data_list[slot]["remainingFlags"]),  False, "Black").get_width() - flag_only_surf.get_width() - 15, 11))
+                    game_save_surfs[slot].blit(karma_suture_font_23.render(str(len(data_list[slot]["field"])) + "x" + str(len(data_list[slot]["field"][0])),  False, "Black"), (10, 45))
+                    game_save_surfs[slot].blit(karma_suture_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue"), (game_save_surfs[slot].get_width() - karma_suture_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue").get_width() - 10, 45))
                     
                     if bin_rects[slot].collidepoint(pygame.mouse.get_pos()):
                         screen.blit(bin_on_surf, bin_rects[slot])
@@ -1086,7 +1089,7 @@ def main():
             pygame.draw.rect(screen, (150, 150, 150), (35, 35, 8*30 - 10, 6*30 - 10))
             screen.blit(text_submit_username_surf, (x_center(screen, text_submit_username_surf), 50))
             pygame.draw.rect(screen, GRAY if username_button_active else WHITE, username_box, 2)
-            username_input_surface = karma_sature_font_21.render(username_text, True, BLACK)
+            username_input_surface = karma_suture_font_21.render(username_text, True, BLACK)
             screen.blit(username_input_surface, (username_box.x + 5, username_box.y + 5))
 
         elif custom_mine_field_screen:
@@ -1099,12 +1102,9 @@ def main():
             screen.blit(text_custom_field_entry_surf, (x_center(screen, text_custom_field_entry_surf), 109))
             screen.blit(text_optional_scaling_factor, (x_center(screen, text_optional_scaling_factor), 135))
             
-            if wrong_custom_input:
-                pygame.draw.rect(screen, (176, 96, 91), custom_mine_field_box, 3) # Border goes red to indicate wrong input
-            else:
-                pygame.draw.rect(screen, GRAY if custom_mine_field_box_active else WHITE, custom_mine_field_box, 3)
+            wrong_input_to_box_red(screen, custom_mine_field_box, custom_mine_field_box_active, wrong_custom_input)
 
-            custom_field_input_surface = karma_sature_font_21.render(custom_mine_field_text, True, BLACK)
+            custom_field_input_surface = karma_suture_font_21.render(custom_mine_field_text, True, BLACK)
             screen.blit(custom_field_input_surface, (custom_mine_field_box.x + 5, custom_mine_field_box.y + 5))
             screen.blit(text_example_for_custom_field_surf, (x_center(screen, text_example_for_custom_field_surf), 218))
             y_offset = 243
