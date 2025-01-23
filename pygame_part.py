@@ -841,7 +841,7 @@ def main():
                     elif event.key == pygame.K_BACKSPACE:
                         username_text = username_text[:-1]
                     else:
-                        if len(username_text) < 19:
+                        if len(username_text) < 17:
                             username_text += event.unicode    
 
 
