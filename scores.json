@@ -99,6 +99,26 @@
         "bronze": {
             "username": "bronze",
             "time": "47"
+        },
+        "4WgtYsw5YiJPoiahsmNh": {
+            "username": "Leprichon",
+            "time": "20"
+        },
+        "mSOYGGopj0ItALDNv58u": {
+            "username": "a sakra, bug",
+            "time": "17"
+        },
+        "gRRA5whz2KbVCWlYbY71": {
+            "username": "ted to nastane",
+            "time": "18"
+        },
+        "AF9NACxRH7oldChvQSBX": {
+            "username": "tak jak",
+            "time": "18"
+        },
+        "cIuW7kJcMAM7537h3omf": {
+            "username": "english or spanish",
+            "time": "23"
         }
     },
     "(30, 30, 200)": {
@@ -145,6 +165,34 @@
         "bronze": {
             "username": "bronze",
             "time": "235"
+        }
+    },
+    "(10, 10, 85)": {
+        "gold": {
+            "username": "gold",
+            "time": "416"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "749"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "1249"
+        }
+    },
+    "(10, 12, 13)": {
+        "gold": {
+            "username": "gold",
+            "time": "20"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "37"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "61"
         }
     }
 }
