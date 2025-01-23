@@ -957,12 +957,12 @@ def main():
                         screen.blit(null_surf_game, (i[0]*cell_size_gl+dw+additional_dw, i[1]*cell_size_gl+dh+additional_dh))
 
                 if np.count_nonzero(bool_field == 1) >= width * height - pocet_min:
-                    cell_size_gl = 30
                     win_screen = True
                     game = False
                     first_click = True
                     plot_bool_field(bool_field, field, cell_size_gl)
                     screen.blit(transparent_bg_surf, (0, 0))
+                    cell_size_gl = 30
 
                 if it%fps == 0:  # Calculates the game time
                     game_time += 1
