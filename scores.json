@@ -27,6 +27,10 @@
         "aYh56ZnqcmJp3lU3PkY1": {
             "username": "Krokod\u00fdl",
             "time": "29"
+        },
+        "EuoHhYYxIuGwkgAVfa0O": {
+            "username": "Rychl\u00fd \u010das 3.0",
+            "time": "26"
         }
     },
     "(16, 13, 37)": {
@@ -317,6 +321,24 @@
         "C333Rcq9gEwjvalBcxqh": {
             "username": "WWWWWWWWWWWWWWWWW",
             "time": "4"
+        }
+    },
+    "(15, 10, 30)": {
+        "gold": {
+            "username": "gold",
+            "time": "48"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "87"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "146"
+        },
+        "X0mauv5wfvTX8Bz9AreA": {
+            "username": "Example field",
+            "time": "81"
         }
     }
 }
