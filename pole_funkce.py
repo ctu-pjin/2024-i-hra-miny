@@ -25,9 +25,12 @@ def is_it_float(list_of_floats):
     for string in list_of_floats:
         try:
             float(string)
+            if float(string) <= 0:
+                return False
         except:
             print("Float se nezdařil")
             return False
+    
     return True
 
 def field_creation_conditions(list_of_strings): # checks if it's possible to create a field from custom input, used for custom fields
