@@ -100,3 +100,16 @@ class Rect:
             self.save_slots.append(save_slot_rect)
             self.bins.append(pygame.Rect(self.save_slots[slot].x + 10 + self.save_slots[slot].width, self.save_slots[slot].y + 35, Surf.bin_on.get_width(), Surf.bin_on.get_height()))
             save_y_offset += 95
+
+
+class Font:
+    def  __init__(self):
+        self.script_dir = os.path.abspath(os.path.dirname("variables.py"))
+        self.karma_160 = pygame.font.Font(self.script_dir + "/fonts/KarmaFuture.otf", 160)
+        self.karma_60 = pygame.font.Font(self.script_dir + "/fonts/KarmaFuture.otf", 60)
+        self.karma_suture_23 = pygame.font.Font(self.script_dir + "/fonts/KarmaSuture.otf", 23)
+        self.karma_suture_21 = pygame.font.Font(self.script_dir + "/fonts/KarmaSuture.otf", 21)
+        self.karma_suture_16 = pygame.font.Font(self.script_dir + "/fonts/KarmaSuture.otf", 16)
+        self.karma_suture_30 = pygame.font.Font(self.script_dir + "/fonts/KarmaSuture.otf", 30)
+        self.karma_35 = pygame.font.Font(self.script_dir + "/fonts/KarmaFuture.otf", 35)
+        
