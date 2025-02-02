@@ -9,13 +9,15 @@ import numpy as np
 import time
 import variables
 
-Surf = variables.Surf()
-Rect = variables.Rect(Surf)
+
 # Initialize Pygame
 os.environ['SDL_VIDEO_CENTERED'] = '1' # Centers the screen on the display
 os.environ['SDL_RENDER_SCALE_QUALITY'] = '2' # '0' is the worst quality | '2' is the best quality | '1' is in the middle
                                         # May reduce later
 pygame.init()
+
+Surf = variables.Surf()
+Rect = variables.Rect(Surf)
 
 from screeninfo import get_monitors
 for m in get_monitors():
@@ -107,51 +109,6 @@ text_have_fun = karma_suture_font_23.render("Have fun!", False, "Black")
 
 # Part for loading images
 
-Surf.easy_on  = pygame.image.load("surfaces/easy_button_on.png").convert_alpha()
-Surf.easy_off  = pygame.image.load("surfaces/easy_button_off.png").convert_alpha()
-Surf.medium_on  = pygame.image.load("surfaces/medium_button_on.png").convert_alpha()
-Surf.medium_off  = pygame.image.load("surfaces/medium_button_off.png").convert_alpha()
-Surf.hard_on  = pygame.image.load("surfaces/hard_button_on.png").convert_alpha()
-Surf.hard_off  = pygame.image.load("surfaces/hard_button_off.png").convert_alpha()
-Surf.custom_on = pygame.image.load("surfaces/custom_button_on.png").convert_alpha()
-Surf.custom_off = pygame.image.load("surfaces/custom_button_off.png").convert_alpha()
-box_surf = pygame.image.load("mines/box.png").convert()
-null_surf = pygame.image.load("mines/empty.png").convert()
-one_surf = pygame.image.load("mines/one.png").convert()
-two_surf = pygame.image.load("mines/two.png").convert()
-three_surf = pygame.image.load("mines/three.png").convert()
-four_surf = pygame.image.load("mines/four.png").convert()
-five_surf = pygame.image.load("mines/five.png").convert()
-six_surf = pygame.image.load("mines/six.png").convert()
-seven_surf = pygame.image.load("mines/seven.png").convert()
-eight_surf = pygame.image.load("mines/eight.png").convert()
-mine_surf = pygame.image.load("mines/mine.png").convert()
-mine_purple_surf = pygame.image.load("mines/mine_purple.png").convert()
-mine_explode_surf = pygame.image.load("mines/mine_explode.png").convert()
-mine_explode_only_surf = pygame.image.load("mines/mine_explode_only.png").convert_alpha()
-pygame.display.set_icon(mine_explode_only_surf)
-flag_surf = pygame.image.load("mines/flag.png").convert()
-blue_flag_surf = pygame.image.load("surfaces/flag_blue.png").convert()
-
-reshuffle_on_surf = pygame.image.load("surfaces/reshuffle_on.png").convert()
-reshuffle_off_surf = pygame.image.load("surfaces/reshuffle_off.png").convert()
-flag_only_surf = pygame.image.load("surfaces/flag_only.png").convert_alpha()
-flag_only_surf_big = pygame.transform.scale_by(flag_only_surf, 1.5)
-save_icon_on_surf = pygame.image.load("surfaces/save_icon_on.png").convert_alpha()
-save_icon_off_surf = pygame.image.load("surfaces/save_icon_off.png").convert_alpha()
-transparent_bg_surf = pygame.image.load("surfaces/transparent_bg_80.png").convert_alpha()
-empty_save_surf = pygame.image.load("surfaces/empty_save.png").convert_alpha()
-filled_save_surf = pygame.image.load("surfaces/filled_save.png").convert_alpha()
-game_save_surfs = [pygame.image.load("surfaces/filled_save.png").convert_alpha() for _ in range(3)]
-hint_on_surf = pygame.image.load("surfaces/hint_on.png").convert()
-hint_off_surf = pygame.image.load("surfaces/hint_off.png").convert()
-scores_button_on_surf = pygame.image.load("surfaces/scores_button_on.png").convert()
-scores_button_off_surf = pygame.image.load("surfaces/scores_button_off.png").convert()
-question_mark_surf_off = pygame.image.load("surfaces/question_mark_off_spaced.png").convert_alpha()
-question_mark_surf_on = pygame.image.load("surfaces/question_mark_on.png").convert_alpha()
-bin_on_surf = pygame.image.load("surfaces/bin_opened.png").convert_alpha()
-bin_off_surf = pygame.image.load("surfaces/bin_closed.png").convert_alpha()
-
 pygame.display.set_icon(Surf.mine_explode_only)
 
 scale_factor = 1
@@ -164,65 +121,30 @@ def scale_surface(surface, scale):
 
 # Creating scaled surfaces for game items
 def scale_game_field(scale_factor):
-    global one_surf_game, box_surf_game, two_surf_game, three_surf_game, four_surf_game, five_surf_game, six_surf_game, seven_surf_game, eight_surf_game, null_surf_game, mine_surf_game, mine_explode_surf_game, flag_surf_game, cell_size_gl, blue_flag_surf_game
-    one_surf_game = scale_surface(Surf.one, scale_factor)
-    box_surf_game = scale_surface(Surf.box, scale_factor)
-    two_surf_game = scale_surface(Surf.two, scale_factor)
-    three_surf_game = scale_surface(Surf.three, scale_factor)
-    four_surf_game = scale_surface(Surf.four, scale_factor)
-    five_surf_game = scale_surface(Surf.five, scale_factor)
-    six_surf_game = scale_surface(Surf.six, scale_factor)
-    null_surf_game = scale_surface(Surf.null, scale_factor)
-    mine_surf_game = scale_surface(Surf.mine, scale_factor)
-    mine_explode_surf_game = scale_surface(Surf.mine_explode, scale_factor)
-    flag_surf_game = scale_surface(Surf.flag, scale_factor)
-    seven_surf_game = scale_surface(Surf.seven, scale_factor)
-    eight_surf_game = scale_surface(Surf.eight, scale_factor)
-    blue_flag_surf_game = scale_surface(Surf.blue_flag, scale_factor)
+    global cell_size_gl, box_game_surf, one_game_surf, two_game_surf, three_game_surf, four_game_surf, five_game_surf, six_game_surf, seven_game_surf, eight_game_surf, null_game_surf, mine_game_surf, mine_explode_game_surf, flag_game_surf, blue_flag_game_surf
+    box_game_surf = scale_surface(Surf.box, scale_factor)
+    one_game_surf = scale_surface(Surf.one, scale_factor)
+    two_game_surf = scale_surface(Surf.two, scale_factor)
+    three_game_surf = scale_surface(Surf.three, scale_factor)
+    four_game_surf = scale_surface(Surf.four, scale_factor)
+    five_game_surf = scale_surface(Surf.five, scale_factor)
+    six_game_surf = scale_surface(Surf.six, scale_factor)
+    null_game_surf = scale_surface(Surf.null, scale_factor)
+    mine_game_surf = scale_surface(Surf.mine, scale_factor)
+    mine_explode_game_surf = scale_surface(Surf.mine_explode, scale_factor)
+    flag_game_surf = scale_surface(Surf.flag, scale_factor)
+    seven_game_surf = scale_surface(Surf.seven, scale_factor)
+    eight_game_surf = scale_surface(Surf.eight, scale_factor)
+    blue_flag_game_surf = scale_surface(Surf.blue_flag, scale_factor)
     cell_size_gl *= scale_factor
-
-question_mark_surf_off = scale_surface(Surf.question_mark_off, 1.3)
-question_mark_surf_on = scale_surface(Surf.question_mark_on, 1.3)
-bin_off_surf = scale_surface(Surf.bin_off, 1.4)
-bin_on_surf = scale_surface(Surf.bin_on, 1.4)
-
-# Create rectangles
-load_rect_off = Surf.load_off.get_rect(midbottom=(screen_width/2, 450)) 
-load_rect_on = Surf.load_on.get_rect(midbottom=(screen_width/2, 450))
-scores_rect_off = Surf.scores_off.get_rect(midbottom=(screen_width/2, 550)) 
-scores_rect_on = Surf.scores_on.get_rect(midbottom=(screen_width/2, 550))
-easy_rect_on = Surf.easy_on.get_rect(midbottom=(screen_width/2, 250))
-easy_rect_off = Surf.easy_off.get_rect(midbottom=(screen_width/2, 250))
-medium_rect_on = Surf.medium_on.get_rect(midbottom=(screen_width/2, 350))
-medium_rect_off = Surf.medium_off.get_rect(midbottom=(screen_width/2, 350))
-hard_rect_on = Surf.hard_on.get_rect(midbottom=(screen_width/2, 450))
-hard_rect_off = Surf.hard_off.get_rect(midbottom=(screen_width/2, 450))
-custom_rect_on = Surf.custom_on.get_rect(midbottom=(screen_width/2, 550))
-custom_rect_off = Surf.custom_off.get_rect(midbottom=(screen_width/2, 550))
-back_arrow_rect = Surf.back_arrow_off.get_rect(topleft = (20, 20))
-back_arrow_rect_small = Surf.back_arrow_off_small.get_rect(topleft = (10, 15))
-reshuffle_rect = reshuffle_on_surf.get_rect(bottomleft = (10, 20))
-question_mark_rect = question_mark_surf_on.get_rect(topright = (screen_width - 15, 15))
-
-# Creating save slot and bin rectangles
-save_slot_width, save_slot_height = empty_save_surf.get_width(), empty_save_surf.get_height() 
-save_slot_rects = []
-bin_rects = []
-save_y_offset = 160
-
-for slot in range(3):
-    save_slot_rect = pygame.Rect(screen_width/2 - save_slot_width/2 - 15, save_y_offset, save_slot_width, save_slot_height)
-    save_slot_rects.append(save_slot_rect)
-    bin_rects.append(pygame.Rect(save_slot_rects[slot].x + 10 + save_slot_rects[slot].width, save_slot_rects[slot].y + 35, bin_on_surf.get_width(), bin_on_surf.get_height()))
-    save_y_offset += 95
 
 
 """Functions for mine_menu background generation"""
 def random_mine_surf(scale = True): # Takes random mine_filed surface
     if scale is True:
-        return choice([box_surf_game] * 30 + [null_surf_game, flag_surf_game] * 5 + [mine_surf_game] * 2 + [one_surf_game] * 4 + [two_surf_game] * 3 + [three_surf_game, four_surf_game, five_surf_game] * 2 + [six_surf_game, seven_surf_game, eight_surf_game])
+        return choice([box_game_surf] * 30 + [null_game_surf, flag_game_surf] * 5 + [mine_game_surf] * 2 + [one_game_surf] * 4 + [two_game_surf] * 3 + [three_game_surf, four_game_surf, five_game_surf] * 2 + [six_game_surf, seven_game_surf, eight_game_surf])
     else:
-        return choice([box_surf] * 30 + [null_surf, flag_surf] * 5 + [mine_surf] * 2 + [one_surf] * 4 + [two_surf] * 3 + [three_surf, four_surf, five_surf] * 2 + [six_surf, seven_surf, eight_surf])
+        return choice([Surf.box] * 30 + [Surf.null, Surf.flag] * 5 + [Surf.mine] * 2 + [Surf.one] * 4 + [Surf.two] * 3 + [Surf.three, Surf.four, Surf.five] * 2 + [Surf.six, Surf.seven, Surf.eight])
 
 
 def draw_to_menu_bg(buffer_surface, mine_field, cell_size=30): # Draws entire minefiled onto the screen as background
@@ -276,12 +198,12 @@ def save_game(slot, data): # Saves the game data to save_X.json file
 
 
 def delete_game(slot): # Deletes the selected game save file
-    if any(rect.collidepoint(pygame.mouse.get_pos()) for rect in bin_rects):
-        if bin_rects[0].collidepoint(pygame.mouse.get_pos()):
+    if any(rect.collidepoint(pygame.mouse.get_pos()) for rect in Rect.bins):
+        if Rect.bins[0].collidepoint(pygame.mouse.get_pos()):
             slot = 0
-        elif bin_rects[1].collidepoint(pygame.mouse.get_pos()):
+        elif Rect.bins[1].collidepoint(pygame.mouse.get_pos()):
             slot = 1
-        elif bin_rects[2].collidepoint(pygame.mouse.get_pos()):
+        elif Rect.bins[2].collidepoint(pygame.mouse.get_pos()):
             slot = 2
         if load_game(slot) is None:
             return False
@@ -316,38 +238,38 @@ def plot_bool_field(bool_field, field, cell_size = 30): # minefield plotting bas
         for col in range(len(field[row])):
             match bool_field[row,col]:
                 case 0:
-                    screen.blit(box_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+                    screen.blit(box_game_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                 case 1:
                     match field[row,col]:
                         case 0:
-                            screen.blit(null_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+                            screen.blit(null_game_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 1: 
-                            screen.blit(one_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+                            screen.blit(one_game_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 2: 
-                            screen.blit(two_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+                            screen.blit(two_game_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 3: 
-                            screen.blit(three_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+                            screen.blit(three_game_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 4: 
-                            screen.blit(four_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+                            screen.blit(four_game_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 5: 
-                            screen.blit(five_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+                            screen.blit(five_game_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 6: 
-                            screen.blit(six_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+                            screen.blit(six_game_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 7: 
-                            screen.blit(seven_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+                            screen.blit(seven_game_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 8: 
-                            screen.blit(eight_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+                            screen.blit(eight_game_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                         case 9: 
-                            screen.blit(mine_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+                            screen.blit(mine_game_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                 case 2:
-                    screen.blit(flag_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+                    screen.blit(flag_game_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
                 case 3:
-                    screen.blit(blue_flag_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+                    screen.blit(blue_flag_game_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
 
 def plot_empty_field(width, height, cell_size = 30): # plots empty field in game before the first click
     for row in range(height):
         for col in range(width):
-            screen.blit(box_surf_game, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
+            screen.blit(box_game_surf, (col*cell_size+dw+additional_dw, row*cell_size+dh+additional_dh))
 
 """Event functions"""
 def leave_game(game, menu, first_click, screen, cell_size_gl, scale_factor): # Handles transition from game to menu
@@ -367,16 +289,16 @@ def back_to_menu_from_scores(menu, scores_menu, scores_input_text, score_data_to
     score_data_to_blit_bool = False
     return menu, scores_menu, scores_input_text, score_data_to_blit, score_data_to_blit_bool
 
-def game_over(row, column, bool_field, field, cell_size_gl, screen, transparent_bg_surf, end_screen, game, first_click, scale_factor):
+def game_over(row, column, bool_field, field, cell_size_gl, screen, transparent_bg, end_screen, game, first_click, scale_factor):
     for radek in range((len(bool_field))): 
         for sloupec in range((len(bool_field[0]))):
             if field[radek][sloupec] == 9: # marks all mines as revealed if game was lost
                 bool_field[radek][sloupec] = 1
     plot_bool_field(bool_field, field, cell_size_gl)
-    screen.blit(mine_explode_surf_game, (column*cell_size_gl+dw+additional_dw, row*cell_size_gl+dh+additional_dh)) # culprit of loss is red
+    screen.blit(mine_explode_game_surf, (column*cell_size_gl+dw+additional_dw, row*cell_size_gl+dh+additional_dh)) # culprit of loss is red
     pygame.display.flip()
     time.sleep(1.5)
-    screen.blit(transparent_bg_surf, (0, 0))
+    screen.blit(Surf.transparent_bg, (0, 0))
     end_screen = True
     game = False
     first_click = True
@@ -455,38 +377,38 @@ def main():
                         if Rect.new_game_on.collidepoint(pygame.mouse.get_pos()): # specifies which of the defined buttons was clicked on
                             new_game_menu = True # what happens when the button gets clicked, this case changes actiive screens
                             menu = False
-                        elif load_rect_on.collidepoint(pygame.mouse.get_pos()):
+                        elif Rect.load_on.collidepoint(pygame.mouse.get_pos()):
                             menu = False
                             load_screen = True
                             data_list = [load_game(slot) or {} for slot in range(3)]
-                        elif scores_rect_on.collidepoint(pygame.mouse.get_pos()):
+                        elif Rect.scores_on.collidepoint(pygame.mouse.get_pos()):
                             menu = False
                             scores_menu = True
                             scores_input_box_active = True
-                        elif question_mark_rect.collidepoint(pygame.mouse.get_pos()):
+                        elif Rect.question_mark.collidepoint(pygame.mouse.get_pos()):
                             help_screen = True
                             menu = False
 
             elif new_game_menu:  # EVENTS in Menu for choosing a game difficulty 
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1:  
-                    if easy_rect_on.collidepoint(pygame.mouse.get_pos()): # set the game parameters if clickled on any difficulty button
+                    if Rect.easy_on.collidepoint(pygame.mouse.get_pos()): # set the game parameters if clickled on any difficulty button
                         width, height, pocet_min, difficulty = 12, 10, 18, "Easy"
-                    elif medium_rect_on.collidepoint(pygame.mouse.get_pos()):
+                    elif Rect.medium_on.collidepoint(pygame.mouse.get_pos()):
                         width, height, pocet_min, difficulty = 16, 13, 37, "Medium"
-                    elif hard_rect_on.collidepoint(pygame.mouse.get_pos()):
+                    elif Rect.hard_on.collidepoint(pygame.mouse.get_pos()):
                         width, height, pocet_min, difficulty = 29, 20, 100, "Hard"
-                    elif custom_rect_on.collidepoint(pygame.mouse.get_pos()): # If clicked on custom difficulty 
+                    elif Rect.custom_on.collidepoint(pygame.mouse.get_pos()): # If clicked on custom difficulty 
                         custom_mine_field_box_active = True
                         custom_mine_field_screen = True
                         new_game_menu = False
                         wrong_custom_input = False
-                    elif back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
+                    elif Rect.back_arrow.collidepoint(pygame.mouse.get_pos()):
                         menu = True
                         new_game_menu = False
                         continue  # Skip the rest of this loop iteration if going back to menu
 
                     # Set up the game if a difficulty button was clicked
-                    if easy_rect_on.collidepoint(pygame.mouse.get_pos()) or medium_rect_on.collidepoint(pygame.mouse.get_pos()) or hard_rect_on.collidepoint(pygame.mouse.get_pos()):
+                    if Rect.easy_on.collidepoint(pygame.mouse.get_pos()) or Rect.medium_on.collidepoint(pygame.mouse.get_pos()) or Rect.hard_on.collidepoint(pygame.mouse.get_pos()):
                         # Creates all parameters of the game field
                         cell_size_gl = 30
                         scale_factor = 1.0
@@ -514,7 +436,7 @@ def main():
 
             elif custom_mine_field_screen:   # EVENTS in Custom menu
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1:  
-                    if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
+                    if Rect.back_arrow.collidepoint(pygame.mouse.get_pos()):
                         new_game_menu = True
                         custom_mine_field_screen = False
                         custom_mine_field_text = ""
@@ -573,7 +495,7 @@ def main():
 
             elif scores_menu:  # EVENTS in Scores menu 
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                    if back_arrow_rect.collidepoint(pygame.mouse.get_pos()): # Goes back to the menu
+                    if Rect.back_arrow.collidepoint(pygame.mouse.get_pos()): # Goes back to the menu
                         menu, scores_menu, scores_input_text, score_data_to_blit, score_data_to_blit_bool = back_to_menu_from_scores(menu, scores_menu, scores_input_text, score_data_to_blit, score_data_to_blit_bool)
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -629,7 +551,7 @@ def main():
             elif help_screen:   # EVENTS in Help screen
                 if event.type == pygame.MOUSEBUTTONUP:  
                     if event.button == 1: 
-                        if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
+                        if Rect.back_arrow.collidepoint(pygame.mouse.get_pos()):
                             menu = True
                             help_screen = False
                 elif event.type == pygame.KEYDOWN:
@@ -640,7 +562,7 @@ def main():
             elif game:  # EVENTS in Game 
                 # evets for leaving the game
                 if event.type == pygame.MOUSEBUTTONUP:
-                    if event.button == 1 and back_arrow_rect_small.collidepoint(pygame.mouse.get_pos()):
+                    if event.button == 1 and Rect.back_arrow_small.collidepoint(pygame.mouse.get_pos()):
                         game, menu, first_click, screen, cell_size_gl, scale_factor = leave_game(game, menu, first_click, screen, cell_size_gl, scale_factor)
 
                 elif event.type == pygame.KEYDOWN:
@@ -669,7 +591,7 @@ def main():
                                 field, bool_field = pole_funkce.cluster_reveal(field, bool_field, up_row, up_column)
                                 for i in empty_cells_to_plot:
                                     if field[i[1]][i[0]] == 9: #End the game if the mine was revealed
-                                        end_screen, game, first_click, cell_size_gl, scale_factor = game_over(i[1], i[0], bool_field, field, cell_size_gl, screen, transparent_bg_surf, end_screen, game, first_click, scale_factor)
+                                        end_screen, game, first_click, cell_size_gl, scale_factor = game_over(i[1], i[0], bool_field, field, cell_size_gl, screen, Surf.transparent_bg, end_screen, game, first_click, scale_factor)
                                         break         
                             empty_cells_to_plot.clear()
                         
@@ -694,7 +616,7 @@ def main():
                             if bool_field[row][column] == 2 or bool_field[row][column] == 3:
                                 continue
                             if field[row][column] == 9: #Ends the game if the mine was revealed
-                                end_screen, game, first_click, cell_size_gl, scale_factor = game_over(row, column, bool_field, field, cell_size_gl, screen, transparent_bg_surf, end_screen, game, first_click, scale_factor)
+                                end_screen, game, first_click, cell_size_gl, scale_factor = game_over(row, column, bool_field, field, cell_size_gl, screen, Surf.transparent_bg, end_screen, game, first_click, scale_factor)
                             field, bool_field = pole_funkce.update_field(field, bool_field, row, column)
 
                         elif event.button == 2 and mines_rect.collidepoint(pygame.mouse.get_pos()):
@@ -732,15 +654,15 @@ def main():
 
             elif load_screen:   # EVENTS in Load screen
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1:  
-                    if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
+                    if Rect.back_arrow.collidepoint(pygame.mouse.get_pos()):
                         menu = True
                         load_screen = False
-                    elif any(rect.collidepoint(pygame.mouse.get_pos()) for rect in save_slot_rects):
-                        if save_slot_rects[0].collidepoint(pygame.mouse.get_pos()):
+                    elif any(rect.collidepoint(pygame.mouse.get_pos()) for rect in Rect.save_slots):
+                        if Rect.save_slots[0].collidepoint(pygame.mouse.get_pos()):
                             slot = 0
-                        elif save_slot_rects[1].collidepoint(pygame.mouse.get_pos()):
+                        elif Rect.save_slots[1].collidepoint(pygame.mouse.get_pos()):
                             slot = 1
-                        elif save_slot_rects[2].collidepoint(pygame.mouse.get_pos()):
+                        elif Rect.save_slots[2].collidepoint(pygame.mouse.get_pos()):
                             slot = 2
                         if load_game(slot) is None:
                             continue
@@ -767,8 +689,8 @@ def main():
                         screen_height_game = max(height*cell_size_gl + 2*dh + 10, 280)
                         screen = pygame.display.set_mode((screen_width_game, screen_height_game))
 
-                    elif any(rect.collidepoint(pygame.mouse.get_pos()) for rect in bin_rects): # Deletes the clicked save file
-                        delete_game(bin_rects)
+                    elif any(rect.collidepoint(pygame.mouse.get_pos()) for rect in Rect.bins): # Deletes the clicked save file
+                        delete_game(Rect.bins)
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         load_screen = False
@@ -776,18 +698,18 @@ def main():
 
             elif save_screen:   # EVENTS in Save screen
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1:  
-                    if back_arrow_rect.collidepoint(pygame.mouse.get_pos()):
+                    if Rect.back_arrow.collidepoint(pygame.mouse.get_pos()):
                         game = True
                         save_screen = False
                         screen = pygame.display.set_mode((screen_width_game, screen_height_game))
 
-                    elif any(rect.collidepoint(pygame.mouse.get_pos()) for rect in save_slot_rects):
+                    elif any(rect.collidepoint(pygame.mouse.get_pos()) for rect in Rect.save_slots):
                         # Creates or updates the json save file with game parameters
-                        if save_slot_rects[0].collidepoint(pygame.mouse.get_pos()):
+                        if Rect.save_slots[0].collidepoint(pygame.mouse.get_pos()):
                             slot = 0
-                        elif save_slot_rects[1].collidepoint(pygame.mouse.get_pos()):
+                        elif Rect.save_slots[1].collidepoint(pygame.mouse.get_pos()):
                             slot = 1
-                        elif save_slot_rects[2].collidepoint(pygame.mouse.get_pos()):
+                        elif Rect.save_slots[2].collidepoint(pygame.mouse.get_pos()):
                             slot = 2   
                         data_list[slot] = {   
                             "boolField":  bool_field.tolist(),
@@ -802,8 +724,8 @@ def main():
                         }
                         save_game(slot, data_list[slot])  
 
-                    elif any(rect.collidepoint(pygame.mouse.get_pos()) for rect in bin_rects):
-                        delete_game(bin_rects)    
+                    elif any(rect.collidepoint(pygame.mouse.get_pos()) for rect in Rect.bins):
+                        delete_game(Rect.bins)    
 
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     save_screen = False
@@ -851,9 +773,9 @@ def main():
             screen.blit(menu_bg_surface, (0, 0))
             # draw buttons that change appearance with mouse over them
             draw_surf_on_off(Surf.new_game_on, Surf.new_game_off, Rect.new_game_on, Rect.new_game_off)
-            draw_surf_on_off(Surf.load_on, Surf.load_off, load_rect_on, load_rect_off)
-            draw_surf_on_off(Surf.scores_on, Surf.scores_off, scores_rect_on, scores_rect_off)
-            draw_surf_on_off(question_mark_surf_on, question_mark_surf_off, question_mark_rect, question_mark_rect)
+            draw_surf_on_off(Surf.load_on, Surf.load_off, Rect.load_on, Rect.load_off)
+            draw_surf_on_off(Surf.scores_on, Surf.scores_off, Rect.scores_on, Rect.scores_off)
+            draw_surf_on_off(Surf.question_mark_on, Surf.question_mark_off, Rect.question_mark, Rect.question_mark)
             # draw text
             screen.blit(text_miny_surf,text_miny_rect)
 
@@ -866,11 +788,11 @@ def main():
             screen.blit(text_difficulty_surf, text_difficulty_rect)
 
             # draw buttons
-            draw_surf_on_off(Surf.easy_on, Surf.easy_off, easy_rect_on, easy_rect_off)
-            draw_surf_on_off(Surf.medium_on, Surf.medium_off, medium_rect_on, medium_rect_off)
-            draw_surf_on_off(Surf.hard_on, Surf.hard_off, hard_rect_on, hard_rect_off)
-            draw_surf_on_off(Surf.custom_on, Surf.custom_off, custom_rect_on, custom_rect_off)
-            draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, back_arrow_rect, back_arrow_rect)
+            draw_surf_on_off(Surf.easy_on, Surf.easy_off, Rect.easy_on, Rect.easy_off)
+            draw_surf_on_off(Surf.medium_on, Surf.medium_off, Rect.medium_on, Rect.medium_off)
+            draw_surf_on_off(Surf.hard_on, Surf.hard_off, Rect.hard_on, Rect.hard_off)
+            draw_surf_on_off(Surf.custom_on, Surf.custom_off, Rect.custom_on, Rect.custom_off)
+            draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, Rect.back_arrow, Rect.back_arrow)
 
         elif scores_menu:
             screen.fill((200, 200, 200))
@@ -881,7 +803,7 @@ def main():
             pygame.draw.rect(screen, (190, 190, 190), (42, 162, screen_width-84, screen_height-204))
             pygame.draw.rect(screen, (220, 220, 220), (45, 165, screen_width-90, screen_height-210))
 
-            draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, back_arrow_rect, back_arrow_rect)
+            draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, Rect.back_arrow, Rect.back_arrow)
 
             pygame.draw.rect(screen, GRAY if scores_input_box_active else WHITE, scores_input_box, 3)
             wrong_input_to_box_red(screen, scores_input_box, scores_input_box_active, wrong_score_input)
@@ -915,31 +837,31 @@ def main():
 
         elif game:
             # This part is being drawn always (before and after first click)
-            hint_on_rect = hint_on_surf.get_rect(midbottom = (screen_width_game/2, screen_height_game - 10))
+            hint_on_rect = Surf.hint_on.get_rect(midbottom = (screen_width_game/2, screen_height_game - 10))
             remaining_flags_surf = karma_suture_font_23.render(str(remaining_flags), False, "Black")
             reshuffle_count_surf = karma_suture_font_23.render(str(reshuffle_count), False, "Black")
             hint_count_surf = karma_suture_font_23.render(str(hint_count), False, "Black")
             screen.fill((140, 140, 140))
             pygame.draw.rect(screen, (195, 195, 195), (5, 5, screen_width_game-10, screen_height_game-10))
             if (15 < pygame.mouse.get_pos()[0] < 55 and screen_height_game - 50 < pygame.mouse.get_pos()[1] < screen_height_game - 10) or (reshuffle_count == 0):
-                screen.blit(reshuffle_on_surf, (15, screen_height_game-50))
+                screen.blit(Surf.reshuffle_on, (15, screen_height_game-50))
             else:
-                screen.blit(reshuffle_off_surf, (15, screen_height_game-50))
+                screen.blit(Surf.reshuffle_off, (15, screen_height_game-50))
 
             screen.blit(reshuffle_count_surf, (60, screen_height_game-40))
             screen.blit(hint_count_surf, (screen_width_game/2+25, screen_height_game-40))
 
-            draw_surf_on_off(hint_on_surf, hint_off_surf, hint_on_rect, hint_on_rect)
+            draw_surf_on_off(Surf.hint_on, Surf.hint_off, hint_on_rect, hint_on_rect)
 
-            screen.blit(flag_only_surf_big, (screen_width_game-37, screen_height_game-42))
+            screen.blit(Surf.flag_only_big, (screen_width_game-37, screen_height_game-42))
             screen.blit(remaining_flags_surf, (screen_width_game - 42 - remaining_flags_surf.get_width(), screen_height_game - 40))
 
-            draw_surf_on_off(Surf.back_arrow_on_small, Surf.back_arrow_off_small, back_arrow_rect_small, back_arrow_rect_small)
+            draw_surf_on_off(Surf.back_arrow_on_small, Surf.back_arrow_off_small, Rect.back_arrow_small, Rect.back_arrow_small)
 
             if screen_width_game - 46 < pygame.mouse.get_pos()[0] < screen_width_game - 10 and 10 < pygame.mouse.get_pos()[1] < 46:
-                screen.blit(save_icon_on_surf, (screen_width_game - 46, 10))
+                screen.blit(Surf.save_icon_on, (screen_width_game - 46, 10))
             else:
-                screen.blit(save_icon_off_surf, (screen_width_game - 46, 10))
+                screen.blit(Surf.save_icon_off, (screen_width_game - 46, 10))
 
             # This is drawn before the first click
             if first_click is True: 
@@ -952,14 +874,14 @@ def main():
 
                 if len(empty_cells_to_plot) > 0: # This draws 3x3 grid when the user wheel-clicks on the field
                     for i in empty_cells_to_plot:
-                        screen.blit(null_surf_game, (i[0]*cell_size_gl+dw+additional_dw, i[1]*cell_size_gl+dh+additional_dh))
+                        screen.blit(null_game_surf, (i[0]*cell_size_gl+dw+additional_dw, i[1]*cell_size_gl+dh+additional_dh))
 
                 if np.count_nonzero(bool_field == 1) >= width * height - pocet_min:
                     win_screen = True
                     game = False
                     first_click = True
                     plot_bool_field(bool_field, field, cell_size_gl)
-                    screen.blit(transparent_bg_surf, (0, 0))
+                    screen.blit(Surf.transparent_bg, (0, 0))
                     cell_size_gl = 30
 
                 if it%fps == 0:  # Calculates the game time
@@ -989,24 +911,24 @@ def main():
             else:
                 screen.blit(text_save_system_surf, text_save_system_rect)
 
-            draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, back_arrow_rect, back_arrow_rect)
+            draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, Rect.back_arrow, Rect.back_arrow)
 
             for slot in range(3): # This draws the individual save/load files.
                 if load_game(slot) is None:    # On each game_save_surf are being drawn the game parameters (ukazatele)
-                    screen.blit(empty_save_surf, save_slot_rects[slot])   # And those game_save_surfs are then being drawn on the screen
+                    screen.blit(Surf.empty_save, Rect.save_slots[slot])   # And those Surf.game_saves are then being drawn on the screen
                 else:
-                    game_save_surfs[slot].blit(pygame.image.load("surfaces/filled_save.png").convert_alpha(), (0, 0))
-                    game_save_surfs[slot].blit(karma_suture_font_30.render(data_list[slot]["difficulty"], False, "Black"), (10, 10))
-                    game_save_surfs[slot].blit(flag_only_surf, (game_save_surfs[slot].get_width() - flag_only_surf.get_width() - 10, 15))
-                    game_save_surfs[slot].blit(karma_suture_font_23.render(str(data_list[slot]["remainingFlags"]), False, "Black"), (game_save_surfs[slot].get_width() - karma_suture_font_23.render(str(data_list[slot]["remainingFlags"]),  False, "Black").get_width() - flag_only_surf.get_width() - 15, 11))
-                    game_save_surfs[slot].blit(karma_suture_font_23.render(str(len(data_list[slot]["field"])) + "x" + str(len(data_list[slot]["field"][0])),  False, "Black"), (10, 45))
-                    game_save_surfs[slot].blit(karma_suture_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue"), (game_save_surfs[slot].get_width() - karma_suture_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue").get_width() - 10, 45))
+                    Surf.game_saves[slot].blit(pygame.image.load("surfaces/filled_save.png").convert_alpha(), (0, 0))
+                    Surf.game_saves[slot].blit(karma_suture_font_30.render(data_list[slot]["difficulty"], False, "Black"), (10, 10))
+                    Surf.game_saves[slot].blit(Surf.flag_only, (Surf.game_saves[slot].get_width() - Surf.flag_only.get_width() - 10, 15))
+                    Surf.game_saves[slot].blit(karma_suture_font_23.render(str(data_list[slot]["remainingFlags"]), False, "Black"), (Surf.game_saves[slot].get_width() - karma_suture_font_23.render(str(data_list[slot]["remainingFlags"]),  False, "Black").get_width() - Surf.flag_only.get_width() - 15, 11))
+                    Surf.game_saves[slot].blit(karma_suture_font_23.render(str(len(data_list[slot]["field"])) + "x" + str(len(data_list[slot]["field"][0])),  False, "Black"), (10, 45))
+                    Surf.game_saves[slot].blit(karma_suture_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue"), (Surf.game_saves[slot].get_width() - karma_suture_font_23.render(str(data_list[slot]["timePlayed"]) + " s", False, "Blue").get_width() - 10, 45))
                     
-                    if bin_rects[slot].collidepoint(pygame.mouse.get_pos()):
-                        screen.blit(bin_on_surf, bin_rects[slot])
+                    if Rect.bins[slot].collidepoint(pygame.mouse.get_pos()):
+                        screen.blit(Surf.bin_on, Rect.bins[slot])
                     else:
-                        screen.blit(bin_off_surf, bin_rects[slot])
-                    screen.blit(game_save_surfs[slot], save_slot_rects[slot]) 
+                        screen.blit(Surf.bin_off, Rect.bins[slot])
+                    screen.blit(Surf.game_saves[slot], Rect.save_slots[slot]) 
 
         elif submit_score_screen: # Draws the submit score screen
             screen.fill((200, 200, 200))
@@ -1040,7 +962,7 @@ def main():
                 y_offset += 20
             screen.blit(text_custom_field_start_game, (x_center(screen, text_custom_field_start_game), y_offset+5))
 
-            draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, back_arrow_rect, back_arrow_rect)
+            draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, Rect.back_arrow, Rect.back_arrow)
 
         elif help_screen: # Draws the help screen (just a bunch of text)
             screen.fill((200, 200, 200))
@@ -1056,23 +978,23 @@ def main():
                 screen.blit(text, (45, y_offset))
                 y_offset += 20
             screen.blit(text_special_features, (40, y_offset + 10))
-            screen.blit(save_icon_off_surf, (45, y_offset + 30))
+            screen.blit(Surf.save_icon_off, (45, y_offset + 30))
             y_offset += 30
             for text in text_save:
                 screen.blit(text, (90, y_offset))
                 y_offset += 20
             y_offset += 10
-            screen.blit(reshuffle_off_surf, (45, y_offset))
+            screen.blit(Surf.reshuffle_off, (45, y_offset))
             for text in text_reshuffle:
                 screen.blit(text, (90, y_offset))
                 y_offset += 20
             y_offset += 10
-            screen.blit(hint_off_surf, (45, y_offset))
+            screen.blit(Surf.hint_off, (45, y_offset))
             for text in text_hint:
                 screen.blit(text, (90, y_offset))
                 y_offset += 20
             screen.blit(text_have_fun, (x_center(screen, text_have_fun), y_offset + 10))
-            draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, back_arrow_rect, back_arrow_rect)
+            draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, Rect.back_arrow, Rect.back_arrow)
 
         # This happens every iteration
         pygame.display.flip() 

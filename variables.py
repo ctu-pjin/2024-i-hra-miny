@@ -1,9 +1,8 @@
 import pygame
 import os
 
-pygame.init()
 screen_width, screen_height = 480, 600
-pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_mode((0, 0))
 # Initialize Pygame
 os.environ['SDL_VIDEO_CENTERED'] = '1' # Centers the screen on the display
 os.environ['SDL_RENDER_SCALE_QUALITY'] = '2' # '0' is the worst quality | '2' is the best quality | '1' is in the middle
@@ -90,3 +89,14 @@ class Rect:
         self.back_arrow_small = Surf.back_arrow_off_small.get_rect(topleft = (10, 15))
         self.reshuffle = Surf.reshuffle_on.get_rect(bottomleft = (10, 20))
         self.question_mark = Surf.question_mark_on.get_rect(topright = (screen_width - 15, 15))
+        # Creating save slot and bin rectangles
+        save_slot_width, save_slot_height = Surf.empty_save.get_width(), Surf.empty_save.get_height() 
+        self.save_slots = []
+        self.bins = []
+        save_y_offset = 160
+
+        for slot in range(3):
+            save_slot_rect = pygame.Rect(screen_width/2 - save_slot_width/2 - 15, save_y_offset, save_slot_width, save_slot_height)
+            self.save_slots.append(save_slot_rect)
+            self.bins.append(pygame.Rect(self.save_slots[slot].x + 10 + self.save_slots[slot].width, self.save_slots[slot].y + 35, Surf.bin_on.get_width(), Surf.bin_on.get_height()))
+            save_y_offset += 95

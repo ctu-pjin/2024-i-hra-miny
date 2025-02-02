@@ -179,6 +179,10 @@
         "r1FVlYvGd1C4AKymk77Q": {
             "username": "Spline",
             "time": "15"
+        },
+        "euY0tIfVs3ba2kKo2kav": {
+            "username": "spice",
+            "time": "21"
         }
     },
     "(30, 30, 200)": {
@@ -339,6 +343,20 @@
         "X0mauv5wfvTX8Bz9AreA": {
             "username": "Example field",
             "time": "81"
+        }
+    },
+    "(20, 20, 20)": {
+        "gold": {
+            "username": "gold",
+            "time": "31"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "56"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "94"
         }
     }
 }
