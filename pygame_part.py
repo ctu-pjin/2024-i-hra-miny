@@ -8,6 +8,7 @@ import json
 import numpy as np
 import time
 import variables
+from screeninfo import get_monitors
 
 
 # Initialize Pygame
@@ -20,15 +21,13 @@ Surf = variables.Surf()
 Rect = variables.Rect(Surf)
 Font = variables.Font()
 
-from screeninfo import get_monitors
 for m in get_monitors():
-    print(str(m))
-    
+    monitor_width = m.width
+    monitor_height = m.height
+print(monitor_width, monitor_height)
+
 script_dir = os.path.abspath( os.path.dirname("pygame_part.py") )
 print(script_dir)
-
-width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
-print(width, height)
 
 """Preassigning variables"""
 screen_width, screen_height = 480, 600
@@ -455,6 +454,7 @@ def main():
                                 elif len(custom_entry) == 4 and pole_funkce.field_creation_conditions(custom_entry[0:3]): # Checks if the field can be created
                                     # Creates all parameters of the game field
                                     width, height, pocet_min, scale_factor = int(custom_entry[0]), int(custom_entry[1]), int(custom_entry[2]), float(custom_entry[3])
+                                    
                                     difficulty = "Custom"
                                     custom_mine_field_screen = False
                                     custom_mine_field_text = ""

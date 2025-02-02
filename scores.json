@@ -229,6 +229,10 @@
         "bronze": {
             "username": "bronze",
             "time": "235"
+        },
+        "7Icq1J3MMwYggBjdu756": {
+            "username": "mega sk\u00f3re",
+            "time": "13"
         }
     },
     "(10, 10, 85)": {
@@ -357,6 +361,20 @@
         "bronze": {
             "username": "bronze",
             "time": "94"
+        }
+    },
+    "(5, 5, 2)": {
+        "gold": {
+            "username": "gold",
+            "time": "3"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "5"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "9"
         }
     }
 }
