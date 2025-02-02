@@ -7,14 +7,25 @@ import score_funkce as ScFn
 import json
 import numpy as np
 import time
+import variables
 
-
+Surf = variables.Surf()
+Rect = variables.Rect(Surf)
 # Initialize Pygame
 os.environ['SDL_VIDEO_CENTERED'] = '1' # Centers the screen on the display
 os.environ['SDL_RENDER_SCALE_QUALITY'] = '2' # '0' is the worst quality | '2' is the best quality | '1' is in the middle
                                         # May reduce later
 pygame.init()
 
+from screeninfo import get_monitors
+for m in get_monitors():
+    print(str(m))
+    
+script_dir = os.path.abspath( os.path.dirname("pygame_part.py") )
+print(script_dir)
+
+width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
+print(width, height)
 
 """Preassigning variables"""
 screen_width, screen_height = 480, 600
@@ -42,7 +53,7 @@ menu_bg_surface = pygame.Surface((screen_width, screen_height))
 
 # Part for loading fonts
 
-karma_font_160 = pygame.font.Font("fonts/KarmaFuture.otf", 160)
+karma_font_160 = pygame.font.Font(script_dir + "/fonts/KarmaFuture.otf", 160)
 karma_font_60 = pygame.font.Font("fonts/KarmaFuture.otf", 60)
 karma_suture_font_23 = pygame.font.Font("fonts/KarmaSuture.otf", 23)
 karma_suture_font_21 = pygame.font.Font("fonts/KarmaSuture.otf", 21)
@@ -96,24 +107,14 @@ text_have_fun = karma_suture_font_23.render("Have fun!", False, "Black")
 
 # Part for loading images
 
-new_game_surf_off = pygame.image.load("surfaces/new_game_button_off.png").convert_alpha() #surfaces of the object
-new_game_surf_on = pygame.image.load("surfaces/new_game_button_on.png").convert_alpha() 
-load_surf_off = pygame.image.load("surfaces/load_button_off.png").convert_alpha()
-load_surf_on = pygame.image.load("surfaces/load_button_on.png").convert_alpha()
-scores_surf_off = pygame.image.load("surfaces/scores_button_off.png").convert_alpha()
-scores_surf_on = pygame.image.load("surfaces/scores_button_on.png").convert_alpha()
-back_arrow_surf_on = pygame.image.load("surfaces/back_arrow_flow_on.png").convert_alpha()
-back_arrow_surf_off = pygame.image.load("surfaces/back_arrow_flow_off.png").convert_alpha()
-back_arrow_surf_on_small = pygame.transform.scale_by(back_arrow_surf_on, 0.7)
-back_arrow_surf_off_small = pygame.transform.scale_by(back_arrow_surf_off, 0.7)
-easy_surf_on  = pygame.image.load("surfaces/easy_button_on.png").convert_alpha()
-easy_surf_off  = pygame.image.load("surfaces/easy_button_off.png").convert_alpha()
-medium_surf_on  = pygame.image.load("surfaces/medium_button_on.png").convert_alpha()
-medium_surf_off  = pygame.image.load("surfaces/medium_button_off.png").convert_alpha()
-hard_surf_on  = pygame.image.load("surfaces/hard_button_on.png").convert_alpha()
-hard_surf_off  = pygame.image.load("surfaces/hard_button_off.png").convert_alpha()
-custom_surf_on = pygame.image.load("surfaces/custom_button_on.png").convert_alpha()
-custom_surf_off = pygame.image.load("surfaces/custom_button_off.png").convert_alpha()
+Surf.easy_on  = pygame.image.load("surfaces/easy_button_on.png").convert_alpha()
+Surf.easy_off  = pygame.image.load("surfaces/easy_button_off.png").convert_alpha()
+Surf.medium_on  = pygame.image.load("surfaces/medium_button_on.png").convert_alpha()
+Surf.medium_off  = pygame.image.load("surfaces/medium_button_off.png").convert_alpha()
+Surf.hard_on  = pygame.image.load("surfaces/hard_button_on.png").convert_alpha()
+Surf.hard_off  = pygame.image.load("surfaces/hard_button_off.png").convert_alpha()
+Surf.custom_on = pygame.image.load("surfaces/custom_button_on.png").convert_alpha()
+Surf.custom_off = pygame.image.load("surfaces/custom_button_off.png").convert_alpha()
 box_surf = pygame.image.load("mines/box.png").convert()
 null_surf = pygame.image.load("mines/empty.png").convert()
 one_surf = pygame.image.load("mines/one.png").convert()
@@ -151,6 +152,7 @@ question_mark_surf_on = pygame.image.load("surfaces/question_mark_on.png").conve
 bin_on_surf = pygame.image.load("surfaces/bin_opened.png").convert_alpha()
 bin_off_surf = pygame.image.load("surfaces/bin_closed.png").convert_alpha()
 
+pygame.display.set_icon(Surf.mine_explode_only)
 
 scale_factor = 1
 def scale_surface(surface, scale):
@@ -163,46 +165,42 @@ def scale_surface(surface, scale):
 # Creating scaled surfaces for game items
 def scale_game_field(scale_factor):
     global one_surf_game, box_surf_game, two_surf_game, three_surf_game, four_surf_game, five_surf_game, six_surf_game, seven_surf_game, eight_surf_game, null_surf_game, mine_surf_game, mine_explode_surf_game, flag_surf_game, cell_size_gl, blue_flag_surf_game
-    one_surf_game = scale_surface(one_surf, scale_factor)
-    box_surf_game = scale_surface(box_surf, scale_factor)
-    two_surf_game = scale_surface(two_surf, scale_factor)
-    three_surf_game = scale_surface(three_surf, scale_factor)
-    four_surf_game = scale_surface(four_surf, scale_factor)
-    five_surf_game = scale_surface(five_surf, scale_factor)
-    six_surf_game = scale_surface(six_surf, scale_factor)
-    null_surf_game = scale_surface(null_surf, scale_factor)
-    mine_surf_game = scale_surface(mine_surf, scale_factor)
-    mine_explode_surf_game = scale_surface(mine_explode_surf, scale_factor)
-    flag_surf_game = scale_surface(flag_surf, scale_factor)
-    seven_surf_game = scale_surface(seven_surf, scale_factor)
-    eight_surf_game = scale_surface(eight_surf, scale_factor)
-    blue_flag_surf_game = scale_surface(blue_flag_surf, scale_factor)
+    one_surf_game = scale_surface(Surf.one, scale_factor)
+    box_surf_game = scale_surface(Surf.box, scale_factor)
+    two_surf_game = scale_surface(Surf.two, scale_factor)
+    three_surf_game = scale_surface(Surf.three, scale_factor)
+    four_surf_game = scale_surface(Surf.four, scale_factor)
+    five_surf_game = scale_surface(Surf.five, scale_factor)
+    six_surf_game = scale_surface(Surf.six, scale_factor)
+    null_surf_game = scale_surface(Surf.null, scale_factor)
+    mine_surf_game = scale_surface(Surf.mine, scale_factor)
+    mine_explode_surf_game = scale_surface(Surf.mine_explode, scale_factor)
+    flag_surf_game = scale_surface(Surf.flag, scale_factor)
+    seven_surf_game = scale_surface(Surf.seven, scale_factor)
+    eight_surf_game = scale_surface(Surf.eight, scale_factor)
+    blue_flag_surf_game = scale_surface(Surf.blue_flag, scale_factor)
     cell_size_gl *= scale_factor
 
-cell_size_gl *= scale_factor
-
-question_mark_surf_off = scale_surface(question_mark_surf_off, 1.3)
-question_mark_surf_on = scale_surface(question_mark_surf_on, 1.3)
-bin_off_surf = scale_surface(bin_off_surf, 1.4)
-bin_on_surf = scale_surface(bin_on_surf, 1.4)
+question_mark_surf_off = scale_surface(Surf.question_mark_off, 1.3)
+question_mark_surf_on = scale_surface(Surf.question_mark_on, 1.3)
+bin_off_surf = scale_surface(Surf.bin_off, 1.4)
+bin_on_surf = scale_surface(Surf.bin_on, 1.4)
 
 # Create rectangles
-new_game_rect_off = new_game_surf_off.get_rect(midbottom=(screen_width/2, 350)) #rectangle of the surface. Easier to specify an exact location
-new_game_rect_on = new_game_surf_on.get_rect(midbottom=(screen_width/2, 350))
-load_rect_off = load_surf_off.get_rect(midbottom=(screen_width/2, 450)) 
-load_rect_on = load_surf_on.get_rect(midbottom=(screen_width/2, 450))
-scores_rect_off = scores_surf_off.get_rect(midbottom=(screen_width/2, 550)) 
-scores_rect_on = scores_surf_on.get_rect(midbottom=(screen_width/2, 550))
-easy_rect_on = easy_surf_on.get_rect(midbottom=(screen_width/2, 250))
-easy_rect_off = easy_surf_off.get_rect(midbottom=(screen_width/2, 250))
-medium_rect_on = medium_surf_on.get_rect(midbottom=(screen_width/2, 350))
-medium_rect_off = medium_surf_off.get_rect(midbottom=(screen_width/2, 350))
-hard_rect_on = hard_surf_on.get_rect(midbottom=(screen_width/2, 450))
-hard_rect_off = hard_surf_off.get_rect(midbottom=(screen_width/2, 450))
-custom_rect_on = custom_surf_on.get_rect(midbottom=(screen_width/2, 550))
-custom_rect_off = custom_surf_off.get_rect(midbottom=(screen_width/2, 550))
-back_arrow_rect = back_arrow_surf_off.get_rect(topleft = (20, 20))
-back_arrow_rect_small = back_arrow_surf_off_small.get_rect(topleft = (10, 15))
+load_rect_off = Surf.load_off.get_rect(midbottom=(screen_width/2, 450)) 
+load_rect_on = Surf.load_on.get_rect(midbottom=(screen_width/2, 450))
+scores_rect_off = Surf.scores_off.get_rect(midbottom=(screen_width/2, 550)) 
+scores_rect_on = Surf.scores_on.get_rect(midbottom=(screen_width/2, 550))
+easy_rect_on = Surf.easy_on.get_rect(midbottom=(screen_width/2, 250))
+easy_rect_off = Surf.easy_off.get_rect(midbottom=(screen_width/2, 250))
+medium_rect_on = Surf.medium_on.get_rect(midbottom=(screen_width/2, 350))
+medium_rect_off = Surf.medium_off.get_rect(midbottom=(screen_width/2, 350))
+hard_rect_on = Surf.hard_on.get_rect(midbottom=(screen_width/2, 450))
+hard_rect_off = Surf.hard_off.get_rect(midbottom=(screen_width/2, 450))
+custom_rect_on = Surf.custom_on.get_rect(midbottom=(screen_width/2, 550))
+custom_rect_off = Surf.custom_off.get_rect(midbottom=(screen_width/2, 550))
+back_arrow_rect = Surf.back_arrow_off.get_rect(topleft = (20, 20))
+back_arrow_rect_small = Surf.back_arrow_off_small.get_rect(topleft = (10, 15))
 reshuffle_rect = reshuffle_on_surf.get_rect(bottomleft = (10, 20))
 question_mark_rect = question_mark_surf_on.get_rect(topright = (screen_width - 15, 15))
 
@@ -454,7 +452,7 @@ def main():
             if menu: # specifies the active screen and what can occur while its active
                 if event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1: # To check if it is a left mouse click
-                        if new_game_rect_on.collidepoint(pygame.mouse.get_pos()): # specifies which of the defined buttons was clicked on
+                        if Rect.new_game_on.collidepoint(pygame.mouse.get_pos()): # specifies which of the defined buttons was clicked on
                             new_game_menu = True # what happens when the button gets clicked, this case changes actiive screens
                             menu = False
                         elif load_rect_on.collidepoint(pygame.mouse.get_pos()):
@@ -852,9 +850,9 @@ def main():
             update_cell(menu_bg_surface, mine_field) # shifting cells in the background of the menus
             screen.blit(menu_bg_surface, (0, 0))
             # draw buttons that change appearance with mouse over them
-            draw_surf_on_off(new_game_surf_on, new_game_surf_off, new_game_rect_on, new_game_rect_off)
-            draw_surf_on_off(load_surf_on, load_surf_off, load_rect_on, load_rect_off)
-            draw_surf_on_off(scores_surf_on, scores_surf_off, scores_rect_on, scores_rect_off)
+            draw_surf_on_off(Surf.new_game_on, Surf.new_game_off, Rect.new_game_on, Rect.new_game_off)
+            draw_surf_on_off(Surf.load_on, Surf.load_off, load_rect_on, load_rect_off)
+            draw_surf_on_off(Surf.scores_on, Surf.scores_off, scores_rect_on, scores_rect_off)
             draw_surf_on_off(question_mark_surf_on, question_mark_surf_off, question_mark_rect, question_mark_rect)
             # draw text
             screen.blit(text_miny_surf,text_miny_rect)
@@ -868,11 +866,11 @@ def main():
             screen.blit(text_difficulty_surf, text_difficulty_rect)
 
             # draw buttons
-            draw_surf_on_off(easy_surf_on, easy_surf_off, easy_rect_on, easy_rect_off)
-            draw_surf_on_off(medium_surf_on, medium_surf_off, medium_rect_on, medium_rect_off)
-            draw_surf_on_off(hard_surf_on, hard_surf_off, hard_rect_on, hard_rect_off)
-            draw_surf_on_off(custom_surf_on, custom_surf_off, custom_rect_on, custom_rect_off)
-            draw_surf_on_off(back_arrow_surf_on, back_arrow_surf_off, back_arrow_rect, back_arrow_rect)
+            draw_surf_on_off(Surf.easy_on, Surf.easy_off, easy_rect_on, easy_rect_off)
+            draw_surf_on_off(Surf.medium_on, Surf.medium_off, medium_rect_on, medium_rect_off)
+            draw_surf_on_off(Surf.hard_on, Surf.hard_off, hard_rect_on, hard_rect_off)
+            draw_surf_on_off(Surf.custom_on, Surf.custom_off, custom_rect_on, custom_rect_off)
+            draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, back_arrow_rect, back_arrow_rect)
 
         elif scores_menu:
             screen.fill((200, 200, 200))
@@ -883,7 +881,7 @@ def main():
             pygame.draw.rect(screen, (190, 190, 190), (42, 162, screen_width-84, screen_height-204))
             pygame.draw.rect(screen, (220, 220, 220), (45, 165, screen_width-90, screen_height-210))
 
-            draw_surf_on_off(back_arrow_surf_on, back_arrow_surf_off, back_arrow_rect, back_arrow_rect)
+            draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, back_arrow_rect, back_arrow_rect)
 
             pygame.draw.rect(screen, GRAY if scores_input_box_active else WHITE, scores_input_box, 3)
             wrong_input_to_box_red(screen, scores_input_box, scores_input_box_active, wrong_score_input)
@@ -936,7 +934,7 @@ def main():
             screen.blit(flag_only_surf_big, (screen_width_game-37, screen_height_game-42))
             screen.blit(remaining_flags_surf, (screen_width_game - 42 - remaining_flags_surf.get_width(), screen_height_game - 40))
 
-            draw_surf_on_off(back_arrow_surf_on_small, back_arrow_surf_off_small, back_arrow_rect_small, back_arrow_rect_small)
+            draw_surf_on_off(Surf.back_arrow_on_small, Surf.back_arrow_off_small, back_arrow_rect_small, back_arrow_rect_small)
 
             if screen_width_game - 46 < pygame.mouse.get_pos()[0] < screen_width_game - 10 and 10 < pygame.mouse.get_pos()[1] < 46:
                 screen.blit(save_icon_on_surf, (screen_width_game - 46, 10))
@@ -991,7 +989,7 @@ def main():
             else:
                 screen.blit(text_save_system_surf, text_save_system_rect)
 
-            draw_surf_on_off(back_arrow_surf_on, back_arrow_surf_off, back_arrow_rect, back_arrow_rect)
+            draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, back_arrow_rect, back_arrow_rect)
 
             for slot in range(3): # This draws the individual save/load files.
                 if load_game(slot) is None:    # On each game_save_surf are being drawn the game parameters (ukazatele)
@@ -1042,7 +1040,7 @@ def main():
                 y_offset += 20
             screen.blit(text_custom_field_start_game, (x_center(screen, text_custom_field_start_game), y_offset+5))
 
-            draw_surf_on_off(back_arrow_surf_on, back_arrow_surf_off, back_arrow_rect, back_arrow_rect)
+            draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, back_arrow_rect, back_arrow_rect)
 
         elif help_screen: # Draws the help screen (just a bunch of text)
             screen.fill((200, 200, 200))
@@ -1074,7 +1072,7 @@ def main():
                 screen.blit(text, (90, y_offset))
                 y_offset += 20
             screen.blit(text_have_fun, (x_center(screen, text_have_fun), y_offset + 10))
-            draw_surf_on_off(back_arrow_surf_on, back_arrow_surf_off, back_arrow_rect, back_arrow_rect)
+            draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, back_arrow_rect, back_arrow_rect)
 
         # This happens every iteration
         pygame.display.flip() 
