@@ -13,7 +13,8 @@ from screeninfo import get_monitors
 # Initialize Pygame
 os.environ['SDL_VIDEO_CENTERED'] = '1' # Centers the screen on the display
 os.environ['SDL_RENDER_SCALE_QUALITY'] = '2' # '0' is the worst quality | '2' is the best quality | '1' is in the middle
-                                        # May reduce later
+                                 
+# Necessary variable declerations      
 pygame.init()
 Surf = variables.Surf()
 Rect = variables.Rect(Surf)
@@ -297,7 +298,6 @@ def main():
     empty_cells_to_plot = []
     score_data_to_blit = dict()
     it = 0  # Used for counting game time
-    cell_size_gl = 30 
     menu = True # Menu is the first screen that is being drawn
     mines_rect = pygame.Rect(0, 0, 0, 0)
     
