@@ -31,6 +31,10 @@
         "EuoHhYYxIuGwkgAVfa0O": {
             "username": "Rychl\u00fd \u010das 3.0",
             "time": "26"
+        },
+        "BqMPC1Kbruahc9IzQ8SG": {
+            "username": "Poggers sk\u00f3re",
+            "time": "32"
         }
     },
     "(16, 13, 37)": {
@@ -375,6 +379,116 @@
         "bronze": {
             "username": "bronze",
             "time": "9"
+        }
+    },
+    "(20, 20, 40)": {
+        "gold": {
+            "username": "gold",
+            "time": "63"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "114"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "190"
+        }
+    },
+    "(5, 5, 3)": {
+        "gold": {
+            "username": "gold",
+            "time": "4"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "8"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "14"
+        },
+        "NNlCPX6GVo96uUDRm1c6": {
+            "username": "\u0161pica",
+            "time": "5"
+        },
+        "rnBHijqVCF7uQSysvcXw": {
+            "username": "Bazinga",
+            "time": "10"
+        }
+    },
+    "(30, 30, 120)": {
+        "gold": {
+            "username": "gold",
+            "time": "191"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "344"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "573"
+        }
+    },
+    "(50, 30, 150)": {
+        "gold": {
+            "username": "gold",
+            "time": "237"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "427"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "712"
+        }
+    },
+    "(12, 12, 10)": {
+        "gold": {
+            "username": "gold",
+            "time": "15"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "28"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "47"
+        },
+        "xGam60Ivma72eqfF3riA": {
+            "username": "YoLo",
+            "time": "10"
+        }
+    },
+    "(50, 30, 50)": {
+        "gold": {
+            "username": "gold",
+            "time": "78"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "141"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "235"
+        }
+    },
+    "(15, 10, 10)": {
+        "gold": {
+            "username": "gold",
+            "time": "15"
+        },
+        "silver": {
+            "username": "silver",
+            "time": "28"
+        },
+        "bronze": {
+            "username": "bronze",
+            "time": "47"
         }
     }
 }
