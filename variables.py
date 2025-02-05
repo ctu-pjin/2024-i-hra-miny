@@ -10,7 +10,7 @@ os.environ['SDL_RENDER_SCALE_QUALITY'] = '2' # '0' is the worst quality | '2' is
 
 class Surf:
     def __init__(self):
-        self.script_dir = os.path.abspath(os.path.dirname("pygame_part.py"))
+        self.script_dir = os.path.abspath(os.path.dirname(__file__))
         self.new_game_off = pygame.image.load(self.script_dir + "/surfaces/new_game_button_off.png").convert_alpha() #surfaces of the object
         self.new_game_on = pygame.image.load(self.script_dir + "/surfaces/new_game_button_on.png").convert_alpha() 
         self.load_off = pygame.image.load(self.script_dir + "/surfaces/load_button_off.png").convert_alpha()
@@ -104,7 +104,7 @@ class Rect:
 
 class Font:
     def  __init__(self):
-        self.script_dir = os.path.abspath(os.path.dirname("pygame_part.py"))
+        self.script_dir = os.path.abspath(os.path.dirname(__file__))
         self.karma_160 = pygame.font.Font(self.script_dir + "/fonts/KarmaFuture.otf", 160)
         self.karma_60 = pygame.font.Font(self.script_dir + "/fonts/KarmaFuture.otf", 60)
         self.karma_suture_23 = pygame.font.Font(self.script_dir + "/fonts/KarmaSuture.otf", 23)

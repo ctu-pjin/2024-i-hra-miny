@@ -29,6 +29,7 @@ dw = 10
 dh = 50
 additional_dw = 0
 additional_dh = 0
+script_dir = os.path.abspath(os.path.dirname(__file__))
 
 WHITE = (255, 255, 255) # Defying basic colors
 BLACK = (0, 0, 0)
@@ -95,7 +96,7 @@ def update_cell(buffer_surface, mine_field, cell_size=30): # updates the minefil
 """Save and load functions"""
 save_slots = ["save1.json", "save2.json", "save3.json"]
 def load_game(slot): # Loads the game data from save_X.json file to a variable
-    filename = "saves/" + save_slots[slot]
+    filename = script_dir + "/saves/" + save_slots[slot]
     if os.path.exists(filename):
         try:
             with open(filename, 'r') as f:
@@ -109,7 +110,7 @@ def load_game(slot): # Loads the game data from save_X.json file to a variable
 
 
 def save_game(slot, data): # Saves the game data to save_X.json file
-    filename = "saves/" + save_slots[slot]
+    filename = script_dir + "/saves/" + save_slots[slot]
     try:
         with open(filename, 'w') as f: 
             json.dump(data, f)
@@ -129,7 +130,7 @@ def delete_game(slot): # Deletes the selected game save file
         if load_game(slot) is None:
             return False
         
-        filename = "saves/" + save_slots[slot]
+        filename = script_dir + "/saves/" + save_slots[slot]
         try:
             os.remove(filename) # Removes the save file completely
         except:
@@ -301,10 +302,10 @@ def main():
     menu = True # Menu is the first screen that is being drawn
     mines_rect = pygame.Rect(0, 0, 0, 0)
     
-    if os.path.exists('saves'): # save system needs this directory, and if there were no saves in it, github would delete it, so this checks if it exists
+    if os.path.exists(script_dir + '/saves'): # save system needs this directory, and if there were no saves in it, github would delete it, so this checks if it exists
         pass
     else:
-        os.mkdir('saves') # or creates it if needed 
+        os.mkdir(script_dir + '/saves') # or creates it if needed 
 
     while True:  # Main while true loop, that runs on every fps, every tick is the screen redrawn
         for event in pygame.event.get():  # All events are written in this for loop
@@ -458,7 +459,6 @@ def main():
                                     scores_input_text = ""
                                     game_scores = ScFn.get_data()[key]
                                     score_data_to_blit = ScFn.show_data(game_scores)
-                                    print(score_data_to_blit)
                                     score_data_to_blit_bool = True
                                 except:
                                     wrong_score_input = True
@@ -841,7 +841,7 @@ def main():
                 if load_game(slot) is None:    # On each game_save_surf are being drawn the game parameters (ukazatele)
                     screen.blit(Surf.empty_save, Rect.save_slots[slot])   # And those Surf.game_saves are then being drawn on the screen
                 else:
-                    Surf.game_saves[slot].blit(pygame.image.load("surfaces/filled_save.png").convert_alpha(), (0, 0))
+                    Surf.game_saves[slot].blit(pygame.image.load(script_dir + "/surfaces/filled_save.png").convert_alpha(), (0, 0))
                     Surf.game_saves[slot].blit(Font.karma_suture_30.render(data_list[slot]["difficulty"], False, "Black"), (10, 10))
                     Surf.game_saves[slot].blit(Surf.flag_only, (Surf.game_saves[slot].get_width() - Surf.flag_only.get_width() - 10, 15))
                     Surf.game_saves[slot].blit(Font.karma_suture_23.render(str(data_list[slot]["remainingFlags"]), False, "Black"), (Surf.game_saves[slot].get_width() - Font.karma_suture_23.render(str(data_list[slot]["remainingFlags"]),  False, "Black").get_width() - Surf.flag_only.get_width() - 15, 11))

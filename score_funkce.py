@@ -1,7 +1,7 @@
 import json
 from random import choice
 import math
-
+import os
 
 """Score system functions"""
 # Generate a unique ID
@@ -16,7 +16,8 @@ def create_id(id_range):
 # Save data to JSON file
 def save_data(data):
     try:
-        with open("scores.json", 'w') as f:
+        script_dir = os.path.abspath(os.path.dirname(__file__))
+        with open(script_dir + "/scores.json", 'w') as f:
             json.dump(data, f, indent=4)
     except Exception as e:
         print(f"Error saving data: {e}")
@@ -25,7 +26,8 @@ def save_data(data):
 # Load data from JSON file
 def get_data():
     try:
-        with open("scores.json", 'r') as f:
+        script_dir = os.path.abspath(os.path.dirname(__file__))
+        with open(script_dir + "/scores.json", 'r') as f:
             data = json.load(f)
             return data
     except (json.JSONDecodeError, ValueError, FileNotFoundError):
@@ -75,7 +77,6 @@ def show_data(data_dict):
     except (TypeError, KeyError) as e:
         print("Error: Invalid data structure or missing keys. Please check the input data.")
         print(f"Details: {e}")
-    print()
     return sorted_scores
 
 
