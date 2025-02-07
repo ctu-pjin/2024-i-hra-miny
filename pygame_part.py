@@ -1,7 +1,7 @@
+import os
 import pygame
 from sys import exit
 from random import choice, randint
-import os
 import pole_funkce
 import score_funkce as ScFn
 import json
@@ -10,12 +10,18 @@ import time
 import variables
 from screeninfo import get_monitors
 
+os.environ['SDL_VIDEO_CENTERED'] = '1'  # Centers the screen
+os.environ['SDL_RENDER_SCALE_QUALITY'] = '2'
+
+# This gets the monitor parameters
+for m in get_monitors():
+    monitor_width = m.width
+    monitor_height = m.height
+
 # Initialize Pygame
-os.environ['SDL_VIDEO_CENTERED'] = '1' # Centers the screen on the display
-os.environ['SDL_RENDER_SCALE_QUALITY'] = '2' # '0' is the worst quality | '2' is the best quality | '1' is in the middle
-                                 
-# Necessary variable declerations      
 pygame.init()
+
+# Storing variables in classes
 Surf = variables.Surf()
 Rect = variables.Rect(Surf)
 Font = variables.Font()
@@ -233,7 +239,7 @@ def create_screen_parameters(width, height, dw, dh, scale_factor):
     additional_dw = max(0, (260 - width*cell_size_gl - dw*2)/2) # 260 je stejná jako o 3 řádky níže
     additional_dh = max(0, (280 - height*cell_size_gl - dh*2)/2)
     mines_rect = pygame.Rect(dw + additional_dw, dh + additional_dh, width*cell_size_gl, height*cell_size_gl)
-    screen_width_game = max(width*cell_size_gl + dw * 2, 260) # Zde
+    screen_width_game = max(width*cell_size_gl + 2*dw, 260) # Zde
     screen_height_game = max(height*cell_size_gl + 2*dh + 10, 280)
     screen = pygame.display.set_mode((screen_width_game, screen_height_game))
     return additional_dw, additional_dh, mines_rect, screen_width_game, screen_height_game, screen
@@ -292,8 +298,9 @@ def main():
     scores_input_text = ""
     scores_input_box_active = False
 
+    custom_error_message = [""]
     # All these variables are set to False 
-    wrong_custom_input, wrong_score_input, first_click, score_data_to_blit_bool = False, False, False, False
+    wrong_custom_input, wrong_score_input, first_click, score_data_to_blit_bool, too_large_field = False, False, False, False, False
     new_game_menu, win_screen, game, load_screen, save_screen, scores_menu, end_screen, submit_score_screen, custom_mine_field_screen, help_screen = False,False,False,False,False,False,False,False,False,False
     # Preassigning other variables
     empty_cells_to_plot = []
@@ -380,41 +387,67 @@ def main():
                     # Check if the input box was clicked
                     if custom_mine_field_box.collidepoint(event.pos):
                         custom_mine_field_box_active = True
+                        too_large_field = False
                         wrong_custom_input = False
                     else:
                         custom_mine_field_box_active = False
 
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                            new_game_menu = True
-                            custom_mine_field_screen = False
-                            custom_mine_field_text = ""
-                    elif custom_mine_field_box_active:
+                        new_game_menu = True
+                        custom_mine_field_screen = False
+                        custom_mine_field_text = ""
+                        too_large_field = False
+                    elif custom_mine_field_box_active or too_large_field:
                         if event.key == pygame.K_RETURN: # User pressed enter and validated his game username
+                            keys = pygame.key.get_pressed()
                             custom_entry = pole_funkce.separate_string_by_commas(custom_mine_field_text)
                             if len(custom_entry) == 3: # If user did not enter the scale parameter, it will assign it 1.0
                                 custom_entry.append("1.0")
+                            # Check if the number of input parameters are correct
+                            elif len(custom_entry) != 4:
+                                    custom_error_message = ["You need to enter", "3 or 4 parameters", "width, height, mines count, (scale_f)"]
+                                    
                             if len(custom_entry) == 4:
-                                if pole_funkce.is_it_integer(custom_entry[0:3]) is False or pole_funkce.is_it_float([custom_entry[3]]) is False:
-                                    pass # Checks if the input is correct
-                                elif len(custom_entry) == 4 and pole_funkce.field_creation_conditions(custom_entry[0:3]): # Checks if the field can be created
+                                # Check all possible errors
+                                if pole_funkce.is_it_integer(custom_entry[0:3]) is False:
+                                    custom_error_message = ["First 3 parameters", "need to be integers", "example: 15, 15, 30"]
+                                elif pole_funkce.is_it_float([custom_entry[3]]) is False:
+                                    custom_error_message = ["Additional parameter scale factor", "needs to be a float", "example: 0.65"]
+                                elif pole_funkce.field_creation_conditions(custom_entry[0:3]) is False: # Checks if the field can be created
+                                    custom_error_message = ["Field with these parameters", "cannot be created"]
+                                else:
                                     # Creates all parameters of the game field
                                     width, height, pocet_min, scale_factor = int(custom_entry[0]), int(custom_entry[1]), int(custom_entry[2]), float(custom_entry[3])
-                                    
-                                    difficulty = "Custom"
-                                    custom_mine_field_screen = False
-                                    custom_mine_field_text = ""
                                     additional_dw, additional_dh, mines_rect, screen_width_game, screen_height_game, screen = create_screen_parameters(width, height, dw, dh, scale_factor)
-                                    reshuffle_count = 3
-                                    hint_count = 2
-                                    game = True
-                                    first_click = True
-                                    all_scores = ScFn.update_or_add_game_data(width, height, pocet_min)
-                                    key = str((width, height, pocet_min))
-                                    game_scores = all_scores[key]
+                                    if screen_width_game + 10 > monitor_width or screen_height_game + 60 > monitor_height:
+                                        screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
+                                        cell_size_gl = 30
+                                        scale_factor = 1
+                                        too_large_field = True
+                                        optimal_scale_factor = min((monitor_width - 100)/ (width*30 + 2*dw), (monitor_height - 100)/ (height*30 + 2*dh + 10))*0.9
+                                        custom_error_message = ["Field is too large", "adjust scale factor", "For the field of this size", "use scale factor " + str(round(optimal_scale_factor, 2)), "", "if you want to create this field regardless", "press l_ctrl + enter"]
+                                    cell_size_gl = 30
+                                    scale_factor = 1
+                                    if (screen_width_game + 10 <= monitor_width and screen_height_game + 60 <= monitor_height) or keys[pygame.K_LCTRL]: # Creates the field if parameters are right and field can be created
+                                        width, height, pocet_min, scale_factor = int(custom_entry[0]), int(custom_entry[1]), int(custom_entry[2]), float(custom_entry[3])
+                                        additional_dw, additional_dh, mines_rect, screen_width_game, screen_height_game, screen = create_screen_parameters(width, height, dw, dh, scale_factor)
+                                        difficulty = "Custom"
+                                        custom_mine_field_screen = False
+                                        custom_mine_field_text = ""
+                                        reshuffle_count = 3
+                                        hint_count = 2
+                                        game = True
+                                        first_click = True
+                                        all_scores = ScFn.update_or_add_game_data(width, height, pocet_min)
+                                        key = str((width, height, pocet_min))
+                                        game_scores = all_scores[key]
+                                        too_large_field = False
                                 
                             # If an error occurs, this happens
-                            custom_mine_field_text = ""
+                            if too_large_field is False:
+                                custom_mine_field_text = ""
+                            
                             custom_mine_field_box_active = False
                             wrong_custom_input = True
 
@@ -876,15 +909,23 @@ def main():
             screen.blit(TextSurf.optional_scaling_factor, (x_center(screen, TextSurf.optional_scaling_factor), 135))
             
             wrong_input_to_box_red(screen, custom_mine_field_box, custom_mine_field_box_active, wrong_custom_input)
-
+            
             custom_field_input_surface = Font.karma_suture_21.render(custom_mine_field_text, True, BLACK)
             screen.blit(custom_field_input_surface, (custom_mine_field_box.x + 5, custom_mine_field_box.y + 5))
             screen.blit(TextSurf.example_for_custom_field, (x_center(screen, TextSurf.example_for_custom_field), 218))
-            y_offset = 243
-            for text in TextSurf.scaling_factors_explained:
-                screen.blit(text, (x_center(screen, text), y_offset))
-                y_offset += 20
-            screen.blit(TextSurf.custom_field_start_game, (x_center(screen, TextSurf.custom_field_start_game), y_offset+5))
+            
+            if wrong_custom_input:
+                y_offset = 260
+                for text in custom_error_message:
+                    text_surf = Font.karma_suture_21.render(text, True, (110, 3, 3))
+                    screen.blit(text_surf, (x_center(screen, text_surf), y_offset))
+                    y_offset += 29
+            else:
+                y_offset = 243
+                for text in TextSurf.scaling_factors_explained:
+                    screen.blit(text, (x_center(screen, text), y_offset))
+                    y_offset += 20
+                screen.blit(TextSurf.custom_field_start_game, (x_center(screen, TextSurf.custom_field_start_game), y_offset+5))
 
             draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, Rect.back_arrow, Rect.back_arrow)
 

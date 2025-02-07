@@ -2,11 +2,13 @@ import pygame
 import os
 
 screen_width, screen_height = 480, 600
-pygame.display.set_mode((0, 0))
+pygame.display.set_mode((1, 1), pygame.NOFRAME)
+
 # Initialize Pygame
 os.environ['SDL_VIDEO_CENTERED'] = '1' # Centers the screen on the display
 os.environ['SDL_RENDER_SCALE_QUALITY'] = '2' # '0' is the worst quality | '2' is the best quality | '1' is in the middle
                                         # May reduce later
+
 
 class Surf:
     def __init__(self):
