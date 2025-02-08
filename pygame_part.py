@@ -27,8 +27,7 @@ Rect = variables.Rect(Surf)
 Font = variables.Font()
 TextSurf = variables.TextSurf(Font)
 TextRect = variables.TextRect(TextSurf)
-screen_width, screen_height = 480, 600
-MENU_SCREEN_DIMENSIONS = (screen_width, screen_height)
+MENU_SCREEN_DIMENSIONS = (variables.screen_width, variables.screen_height)
 screen = pygame.display.set_mode(MENU_SCREEN_DIMENSIONS)
 cell_size_gl = 30
 dw = 10
@@ -37,7 +36,7 @@ additional_dw = 0
 additional_dh = 0
 script_dir = os.path.abspath(os.path.dirname(__file__))
 
-WHITE = (255, 255, 255) # Defying basic colors
+WHITE = (255, 255, 255) # Defining basic colors
 BLACK = (0, 0, 0)
 GRAY = (200, 200, 200)
 
@@ -277,11 +276,11 @@ def main():
     current_it = 0
     difficulty = str()
     data_list = []
-    menu_bg_surface = pygame.Surface((screen_width, screen_height))
+    menu_bg_surface = pygame.Surface((variables.screen_width, variables.screen_height))
     pygame.display.set_icon(Surf.mine_explode_only)
     scale_factor = 1
     clock = pygame.time.Clock() # Clock is used to tick with a specific fps, so the game runs stable
-    mine_field = random_mine_screen_generation(screen_width, screen_height)
+    mine_field = random_mine_screen_generation(variables.screen_width, variables.screen_height)
     draw_to_menu_bg(menu_bg_surface, mine_field)
     data_list = [load_game(slot) or {} for slot in range(3)]
 
@@ -294,7 +293,7 @@ def main():
     custom_mine_field_text = ""
     custom_mine_field_box_active = False
 
-    scores_input_box = pygame.Rect(50, 115, screen_width-100, 40)
+    scores_input_box = pygame.Rect(50, 115, variables.screen_width-100, 40)
     scores_input_text = ""
     scores_input_box_active = False
 
@@ -740,8 +739,8 @@ def main():
             screen.fill(GRAY)
             update_cell(menu_bg_surface, mine_field)
             screen.blit(menu_bg_surface, (0, 0))
-            pygame.draw.rect(screen, (50, 50, 50), (screen_width/2-160, 50, 320, 520))
-            pygame.draw.rect(screen, (130, 130, 130), (screen_width/2-155, 55, 310, 510))
+            pygame.draw.rect(screen, (50, 50, 50), (variables.screen_width/2-160, 50, 320, 520))
+            pygame.draw.rect(screen, (130, 130, 130), (variables.screen_width/2-155, 55, 310, 510))
             screen.blit(TextSurf.difficulty, TextRect.difficulty)
 
             # draw buttons
@@ -755,10 +754,10 @@ def main():
             screen.fill(GRAY)
             update_cell(menu_bg_surface, mine_field)
             screen.blit(menu_bg_surface, (0, 0))
-            pygame.draw.rect(screen, (50, 50, 50), (30, 60, screen_width-60, screen_height-90))
-            pygame.draw.rect(screen, (130, 130, 130), (35, 65, screen_width-70, screen_height-100))
-            pygame.draw.rect(screen, (190, 190, 190), (42, 162, screen_width-84, screen_height-204))
-            pygame.draw.rect(screen, (220, 220, 220), (45, 165, screen_width-90, screen_height-210))
+            pygame.draw.rect(screen, (50, 50, 50), (30, 60, variables.screen_width-60, variables.screen_height-90))
+            pygame.draw.rect(screen, (130, 130, 130), (35, 65, variables.screen_width-70, variables.screen_height-100))
+            pygame.draw.rect(screen, (190, 190, 190), (42, 162, variables.screen_width-84, variables.screen_height-204))
+            pygame.draw.rect(screen, (220, 220, 220), (45, 165, variables.screen_width-90, variables.screen_height-210))
 
             draw_surf_on_off(Surf.back_arrow_on, Surf.back_arrow_off, Rect.back_arrow, Rect.back_arrow)
 
@@ -767,7 +766,7 @@ def main():
 
             scores_input_surface = Font.karma_suture_21.render(scores_input_text, True, BLACK)
             screen.blit(scores_input_surface, (scores_input_box.x + 5, scores_input_box.y + 5))
-            screen.blit(TextSurf.leaderboards, (screen_width/2 - TextSurf.leaderboards.get_width()/2, 72))
+            screen.blit(TextSurf.leaderboards, (variables.screen_width/2 - TextSurf.leaderboards.get_width()/2, 72))
             
 
             if score_data_to_blit_bool: # If there are data to draw, this will happen
@@ -861,8 +860,8 @@ def main():
         elif load_screen or save_screen: # Draws the load and save screen
             update_cell(menu_bg_surface, mine_field)
             screen.blit(menu_bg_surface, (0, 0))
-            pygame.draw.rect(screen, (50, 50, 50), (screen_width/2-190, 50, 380, 420))
-            pygame.draw.rect(screen, (130, 130, 130), (screen_width/2-185, 55, 370, 410))
+            pygame.draw.rect(screen, (50, 50, 50), (variables.screen_width/2-190, 50, 380, 420))
+            pygame.draw.rect(screen, (130, 130, 130), (variables.screen_width/2-185, 55, 370, 410))
             if load_screen:
                 screen.blit(TextSurf.load_system, TextRect.save_system)
             else:
@@ -933,8 +932,8 @@ def main():
             screen.fill(GRAY)
             update_cell(menu_bg_surface, mine_field)
             screen.blit(menu_bg_surface, (0, 0))
-            pygame.draw.rect(screen, (130, 130, 130), (30, 60, screen_width-60, screen_height-90))
-            pygame.draw.rect(screen, GRAY, (35, 65, screen_width-70, screen_height-100))
+            pygame.draw.rect(screen, (130, 130, 130), (30, 60, variables.screen_width-60, variables.screen_height-90))
+            pygame.draw.rect(screen, GRAY, (35, 65, variables.screen_width-70, variables.screen_height-100))
             screen.blit(TextSurf.welcome, (x_center(screen, TextSurf.welcome), 75))
             screen.blit(TextSurf.mine_sweeper, (x_center(screen, TextSurf.mine_sweeper),100))
             screen.blit(TextSurf.controls, (40, 130))
