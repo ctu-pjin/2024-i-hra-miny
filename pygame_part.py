@@ -425,7 +425,7 @@ def main():
                                         cell_size_gl = 30
                                         scale_factor = 1
                                         too_large_field = True
-                                        optimal_scale_factor = min((monitor_width - 100)/ (width*30 + 2*dw), (monitor_height - 100)/ (height*30 + 2*dh + 10))*0.9
+                                        optimal_scale_factor = min((monitor_width - 10)/ (width*30 + 2*dw), (monitor_height - 100)/ (height*30 + 2*dh + 10))*0.92
                                         custom_error_message = ["Field is too large", "adjust scale factor", "For the field of this size", "use scale factor " + str(round(optimal_scale_factor, 2)), "", "if you want to create this field regardless", "press l_ctrl + enter"]
                                     cell_size_gl = 30
                                     scale_factor = 1
